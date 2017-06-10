@@ -8,7 +8,8 @@ llvm_version = '4.0.0'
 llvm_tarball_md5sum = 'ea9139a604be702454f6acf160b4f3a2'
 tarball_name = 'llvm-%s.src.tar.xz' % llvm_version
 docset_name = 'LLVM.docset'
-output = docset_name + '/Contents/Resources/Documents/'
+online_docpath = 'releases.llvm.org/%s/docs' % llvm_version
+output = '%s/Contents/Resources/Documents' % (docset_name)
 
 def md5(fname):
     hash = hashlib.md5()
@@ -80,7 +81,7 @@ def add_urls(db, cur):
           'Service'	: 'Passes.html'
           }
 
-  base_path = './'
+  base_path = ''
 
   # loop through index pages:
   for p in pages:
@@ -103,6 +104,11 @@ def add_urls(db, cur):
             path = base_path + pages[p].split('/')[-1] + path
         else:
             path = base_path + path
+
+        while path.endswith('/../index.html'):
+            base = path.split('/')[:-3]
+            base.append('index.html')
+            path = '/'.join(base)
 
         # Populate the SQLite Index
         update_db(db, cur, name, typ, path)
@@ -129,7 +135,7 @@ def add_infoplist():
           '    <string>{4}</string>' \
           '</dict>' \
           '</plist>'.format(name, name, name, 'index.html',
-                  'http://llvm.org/releases/%s/docs/' % llvm_version)
+                  'http://%s/' % online_docpath)
   open(docset_name + '/Contents/Info.plist', 'wb').write(info)
 
 if __name__ == '__main__':
