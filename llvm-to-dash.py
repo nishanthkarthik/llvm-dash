@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup as bs
 from shutil import rmtree
 
 # CONFIGURATION
-llvm_version = '3.7.0'
-llvm_tarball_md5sum = 'b98b9495e5655a672d6cb83e1a180f8e'
+llvm_version = '4.0.0'
+llvm_tarball_md5sum = 'ea9139a604be702454f6acf160b4f3a2'
 tarball_name = 'llvm-%s.src.tar.xz' % llvm_version
 docset_name = 'LLVM.docset'
 output = docset_name + '/Contents/Resources/Documents/'
@@ -128,7 +128,8 @@ def add_infoplist():
           '    <key>DashDocSetFallbackURL</key>' \
           '    <string>{4}</string>' \
           '</dict>' \
-          '</plist>'.format(name, name, name, 'index.html', 'http://llvm.org/releases/3.7.0/docs/')
+          '</plist>'.format(name, name, name, 'index.html',
+                  'http://llvm.org/releases/%s/docs/' % llvm_version)
   open(docset_name + '/Contents/Info.plist', 'wb').write(info)
 
 if __name__ == '__main__':
@@ -139,8 +140,8 @@ if __name__ == '__main__':
   extract_llvm_tarball()
 
   # add icon
-  icon = 'http://d2wwfe3odivqm9.cloudfront.net/wp-content/uploads/2013/12/llvm-logo-100x100.png'
-  urllib.urlretrieve(icon, docset_name + '/icon.png')
+  from shutil import copyfile
+  copyfile('icon.png', docset_name + '/icon.png')
 
   # create and open SQLite db
   db = sqlite3.connect(docset_name + '/Contents/Resources/docSet.dsidx')
