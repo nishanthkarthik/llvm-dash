@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Overview &mdash; LLVM 3.7 documentation</title>
+    <title>Overview &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="#" />
+    <link rel="top" title="LLVM 4 documentation" href="#" />
     <link rel="next" title="LLVM Language Reference Manual" href="LangRef.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
@@ -112,9 +112,6 @@ build system</a>.</dd>
 <dt><a class="reference internal" href="GettingStartedVS.html"><em>Getting Started with the LLVM System using Microsoft Visual Studio</em></a></dt>
 <dd>An addendum to the main Getting Started guide for those using Visual Studio
 on Windows.</dd>
-<dt><a class="reference internal" href="BuildingLLVMWithAutotools.html"><em>Building LLVM With Autotools</em></a></dt>
-<dd>An addendum to the Getting Started guide with instructions for building LLVM
-with the Autotools build system.</dd>
 <dt><a class="reference internal" href="tutorial/index.html"><em>LLVM Tutorial: Table of Contents</em></a></dt>
 <dd>Tutorials about using LLVM. Includes a tutorial about making a custom
 language with LLVM.</dd>
@@ -187,8 +184,12 @@ class hierarchy.</dd>
 <dd></dd>
 <dt><a class="reference internal" href="CompilerWriterInfo.html"><em>Architecture &amp; Platform Information for Compiler Writers</em></a></dt>
 <dd>A list of helpful links for compiler writers.</dd>
-<dt><a class="reference internal" href="LibFuzzer.html"><em>LibFuzzer &#8211; a library for coverage-guided fuzz testing.</em></a></dt>
+<dt><a class="reference internal" href="LibFuzzer.html"><em>libFuzzer – a library for coverage-guided fuzz testing.</em></a></dt>
 <dd>A library for writing in-process guided fuzzers.</dd>
+<dt><a class="reference internal" href="ScudoHardenedAllocator.html"><em>Scudo Hardened Allocator</em></a></dt>
+<dd>A library that implements a security-hardened <cite>malloc()</cite>.</dd>
+<dt><a class="reference internal" href="OptBisect.html"><em>Using -opt-bisect-limit to debug optimization errors</em></a></dt>
+<dd>A command line option for debugging optimization-induced failures.</dd>
 </dl>
 </div>
 <div class="section" id="subsystem-documentation">
@@ -205,12 +206,17 @@ class hierarchy.</dd>
 <dd>The design and implementation of the LLVM code generator.  Useful if you are
 working on retargetting LLVM to a new architecture, designing a new codegen
 pass, or enhancing existing components.</dd>
+<dt><a class="reference internal" href="MIRLangRef.html"><em>Machine IR (MIR) Format Reference Manual</em></a></dt>
+<dd>A reference manual for the MIR serialization format, which is used to test
+LLVM&#8217;s code generation passes.</dd>
 <dt><a class="reference internal" href="TableGen/index.html"><em>TableGen</em></a></dt>
 <dd>Describes the TableGen tool, which is used heavily by the LLVM code
 generator.</dd>
 <dt><a class="reference internal" href="AliasAnalysis.html"><em>LLVM Alias Analysis Infrastructure</em></a></dt>
 <dd>Information on how to write a new alias analysis implementation or how to
 use existing analyses.</dd>
+<dt><a class="reference internal" href="MemorySSA.html"><em>MemorySSA</em></a></dt>
+<dd>Information about the MemorySSA utility in LLVM, as well as how to use it.</dd>
 <dt><a class="reference internal" href="GarbageCollection.html"><em>Garbage Collection with LLVM</em></a></dt>
 <dd>The interfaces source-language compilers should use for compiling GC&#8217;d
 programs.</dd>
@@ -271,6 +277,16 @@ collection support.</dd>
 <dd>Description of the <code class="docutils literal"><span class="pre">inalloca</span></code> argument attribute.</dd>
 <dt><a class="reference internal" href="FaultMaps.html"><em>FaultMaps and implicit checks</em></a></dt>
 <dd>LLVM support for folding control flow into faulting machine instructions.</dd>
+<dt><a class="reference internal" href="CompileCudaWithLLVM.html"><em>Compiling CUDA with clang</em></a></dt>
+<dd>LLVM support for CUDA.</dd>
+<dt><a class="reference internal" href="Coroutines.html"><em>Coroutines in LLVM</em></a></dt>
+<dd>LLVM support for coroutines.</dd>
+<dt><a class="reference internal" href="GlobalISel.html"><em>Global Instruction Selection</em></a></dt>
+<dd>This describes the prototype instruction selection replacement, GlobalISel.</dd>
+<dt><a class="reference internal" href="XRay.html"><em>XRay Instrumentation</em></a></dt>
+<dd>High-level documentation of how to use XRay in LLVM.</dd>
+<dt><a class="reference internal" href="PDB/index.html"><em>The Microsoft PDB File Format</em></a></dt>
+<dd>A detailed description of the Microsoft PDB (Program Database) file format.</dd>
 </dl>
 </div>
 <div class="section" id="development-process-documentation">
@@ -289,8 +305,6 @@ tree, while using LLVM header files and libraries.</dd>
 <dt><a class="reference internal" href="LLVMBuild.html"><em>LLVMBuild Guide</em></a></dt>
 <dd>Describes the LLVMBuild organization and files used by LLVM to specify
 component descriptions.</dd>
-<dt><a class="reference internal" href="MakefileGuide.html"><em>LLVM Makefile Guide</em></a></dt>
-<dd>Describes how the LLVM makefiles work and how to use them.</dd>
 <dt><a class="reference internal" href="HowToReleaseLLVM.html"><em>How To Release LLVM To The Public</em></a></dt>
 <dd>This is a guide to preparing LLVM releases. Most developers can ignore it.</dd>
 <dt><a class="reference internal" href="ReleaseProcess.html"><em>How To Validate a New Release</em></a></dt>
@@ -352,6 +366,20 @@ can be found in #llvm on <a class="reference external" href="irc://irc.oftc.net/
 near-trunk clang instead of gcc.</li>
 </ul>
 </div>
+<div class="section" id="community-wide-proposals">
+<h2>Community wide proposals<a class="headerlink" href="#community-wide-proposals" title="Permalink to this headline">¶</a></h2>
+<p>Proposals for massive changes in how the community behaves and how the work flow
+can be better.</p>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="docutils">
+<dt><a class="reference internal" href="CodeOfConduct.html"><em>LLVM Community Code of Conduct</em></a></dt>
+<dd>Proposal to adopt a code of conduct on the LLVM social spaces (lists, events,
+IRC, etc).</dd>
+<dt><a class="reference internal" href="Proposals/GitHubMove.html"><em>Moving LLVM Projects to GitHub</em></a></dt>
+<dd>Proposal to move from SVN/Git to GitHub.</dd>
+</dl>
+</div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
@@ -381,9 +409,9 @@ near-trunk clang instead of gcc.</li>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

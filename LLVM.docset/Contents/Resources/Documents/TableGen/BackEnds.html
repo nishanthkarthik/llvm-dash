@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>TableGen BackEnds &mdash; LLVM 3.7 documentation</title>
+    <title>TableGen BackEnds &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="../index.html" />
     <link rel="up" title="TableGen" href="index.html" />
     <link rel="next" title="TableGen Language Reference" href="LangRef.html" />
     <link rel="prev" title="TableGen" href="index.html" />
@@ -156,7 +156,7 @@ sections. Based on whether the file is included by a header or a source file,
 or even in which context of each file the include is being used, you have
 todefine a macro just before including it, to get the right output:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="cp">#define GET_REGINFO_TARGET_DESC</span>
-<span class="cp">#include &quot;ARMGenRegisterInfo.inc&quot;</span>
+<span class="cp">#include</span> <span class="cpf">&quot;ARMGenRegisterInfo.inc&quot;</span><span class="cp"></span>
 </pre></div>
 </div>
 <p>And just part of the generated file would be included. This is useful if
@@ -168,14 +168,14 @@ output multiple blocks:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="cp">#define GET_REGISTER_MATCHER</span>
 <span class="cp">#define GET_SUBTARGET_FEATURE_NAME</span>
 <span class="cp">#define GET_MATCHER_IMPLEMENTATION</span>
-<span class="cp">#include &quot;ARMGenAsmMatcher.inc&quot;</span>
+<span class="cp">#include</span> <span class="cpf">&quot;ARMGenAsmMatcher.inc&quot;</span><span class="cp"></span>
 </pre></div>
 </div>
 <p>The macros will be undef&#8217;d automatically as they&#8217;re used, in the include file.</p>
 <p>On all LLVM back-ends, the <code class="docutils literal"><span class="pre">llvm-tblgen</span></code> binary will be executed on the root
 TableGen file <code class="docutils literal"><span class="pre">&lt;Target&gt;.td</span></code>, which should include all others. This guarantees
 that all information needed is accessible, and that no duplication is needed
-in the TbleGen files.</p>
+in the TableGen files.</p>
 <div class="section" id="codeemitter">
 <h3><a class="toc-backref" href="#id3">CodeEmitter</a><a class="headerlink" href="#codeemitter" title="Permalink to this headline">¶</a></h3>
 <p><strong>Purpose</strong>: CodeEmitterGen uses the descriptions of instructions and their fields to
@@ -200,10 +200,11 @@ initialization issues.</p>
 <h3><a class="toc-backref" href="#id5">InstrInfo</a><a class="headerlink" href="#instrinfo" title="Permalink to this headline">¶</a></h3>
 <p><strong>Purpose</strong>: This tablegen backend is responsible for emitting a description of the target
 instruction set for the code generator. (what are the differences from CodeEmitter?)</p>
-<p><strong>Output</strong>: C++ code with enums and structures representing the register mappings,
+<p><strong>Output</strong>: C++ code with enums and structures representing the instruction mappings,
 properties, masks, etc.</p>
 <p><strong>Usage</strong>: Both on <code class="docutils literal"><span class="pre">&lt;Target&gt;BaseInstrInfo</span></code> and <code class="docutils literal"><span class="pre">&lt;Target&gt;MCTargetDesc</span></code> (headers
-and source files) with macros defining in which they are for declaration vs.</p>
+and source files) with macros defining in which they are for declaration vs.
+initialization issues.</p>
 </div>
 <div class="section" id="asmwriter">
 <h3><a class="toc-backref" href="#id6">AsmWriter</a><a class="headerlink" href="#asmwriter" title="Permalink to this headline">¶</a></h3>
@@ -234,7 +235,7 @@ to cater for all default decodings, after all hand-made ones.</p>
 <div class="section" id="pseudolowering">
 <h3><a class="toc-backref" href="#id9">PseudoLowering</a><a class="headerlink" href="#pseudolowering" title="Permalink to this headline">¶</a></h3>
 <p><strong>Purpose</strong>: Generate pseudo instruction lowering.</p>
-<p><strong>Output</strong>: Implements <code class="docutils literal"><span class="pre">ARMAsmPrinter::emitPseudoExpansionLowering()</span></code>.</p>
+<p><strong>Output</strong>: Implements <code class="docutils literal"><span class="pre">&lt;Target&gt;AsmPrinter::emitPseudoExpansionLowering()</span></code>.</p>
 <p><strong>Usage</strong>: Included directly into <code class="docutils literal"><span class="pre">&lt;Target&gt;AsmPrinter.cpp</span></code>.</p>
 </div>
 <div class="section" id="callingconv">
@@ -244,7 +245,7 @@ conventions supported by this target.</p>
 <p><strong>Output</strong>: Implement static functions to deal with calling conventions
 chained by matching styles, returning false on no match.</p>
 <p><strong>Usage</strong>: Used in ISelLowering and FastIsel as function pointers to
-implementation returned by a CC sellection function.</p>
+implementation returned by a CC selection function.</p>
 </div>
 <div class="section" id="dagisel">
 <h3><a class="toc-backref" href="#id11">DAGISel</a><a class="headerlink" href="#dagisel" title="Permalink to this headline">¶</a></h3>
@@ -488,9 +489,9 @@ should highlight the APIs in <code class="docutils literal"><span class="pre">Ta
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

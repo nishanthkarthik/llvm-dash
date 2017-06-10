@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Source Level Debugging with LLVM &mdash; LLVM 3.7 documentation</title>
+    <title>Source Level Debugging with LLVM &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="index.html" />
     <link rel="next" title="Auto-Vectorization in LLVM" href="Vectorizers.html" />
     <link rel="prev" title="System Library" href="SystemLibrary.html" />
 <style type="text/css">
@@ -119,6 +119,11 @@
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#codeview-debug-info-format" id="id39">CodeView Debug Info Format</a><ul>
+<li><a class="reference internal" href="#format-background" id="id40">Format Background</a></li>
+<li><a class="reference internal" href="#working-with-codeview" id="id41">Working with CodeView</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="introduction">
@@ -168,13 +173,16 @@ specific language or family of languages.</p>
 away during the compilation process.  This meta information provides an LLVM
 user a relationship between generated code and the original program source
 code.</p>
-<p>Currently, debug information is consumed by DwarfDebug to produce dwarf
-information used by the gdb debugger.  Other targets could use the same
-information to produce stabs or other debug forms.</p>
+<p>Currently, there are two backend consumers of debug info: DwarfDebug and
+CodeViewDebug. DwarfDebug produces DWARF suitable for use with GDB, LLDB, and
+other DWARF-based debuggers. <a class="reference internal" href="#codeview"><span>CodeViewDebug</span></a> produces CodeView,
+the Microsoft debug info format, which is usable with Microsoft debuggers such
+as Visual Studio and WinDBG. LLVM&#8217;s debug information format is mostly derived
+from and inspired by DWARF, but it is feasible to translate into other target
+debug info formats such as STABS.</p>
 <p>It would also be reasonable to use debug information to feed profiling tools
 for analysis of generated code, or, tools for reconstructing the original
 source from generated code.</p>
-<p>TODO - expound a bit more.</p>
 </div>
 <div class="section" id="debugging-optimized-code">
 <span id="intro-debugopt"></span><h3><a class="toc-backref" href="#id10">Debugging optimized code</a><a class="headerlink" href="#debugging-optimized-code" title="Permalink to this headline">¶</a></h3>
@@ -189,11 +197,10 @@ optimizations themselves.  However, some optimizations may impact the
 ability to modify the current state of the program with a debugger, such
 as setting program variables, or calling functions that have been
 deleted.</li>
-<li>As desired, LLVM optimizations can be upgraded to be aware of the LLVM
-debugging information, allowing them to update the debugging information
-as they perform aggressive optimizations.  This means that, with effort,
-the LLVM optimizers could optimize debug code just as well as non-debug
-code.</li>
+<li>As desired, LLVM optimizations can be upgraded to be aware of debugging
+information, allowing them to update the debugging information as they
+perform aggressive optimizations.  This means that, with effort, the LLVM
+optimizers could optimize debug code just as well as non-debug code.</li>
 <li>LLVM debug information does not prevent optimizations from
 happening (for example inlining, basic block reordering/merging/cleanup,
 tail duplication, etc).</li>
@@ -208,11 +215,11 @@ the program as it executes from a debugger.  Compiling a program with
 &#8220;<code class="docutils literal"><span class="pre">-O3</span> <span class="pre">-g</span></code>&#8221; gives you full debug information that is always available and
 accurate for reading (e.g., you get accurate stack traces despite tail call
 elimination and inlining), but you might lose the ability to modify the program
-and call functions where were optimized out of the program, or inlined away
+and call functions which were optimized out of the program, or inlined away
 completely.</p>
-<p><a class="reference internal" href="TestingGuide.html#test-suite-quickstart"><span>LLVM test suite</span></a> provides a framework to test
+<p>The <a class="reference internal" href="TestingGuide.html#test-suite-quickstart"><span>LLVM test suite</span></a> provides a framework to test
 optimizer&#8217;s handling of debugging information.  It can be run like this:</p>
-<div class="highlight-bash"><div class="highlight"><pre>% <span class="nb">cd </span>llvm/projects/test-suite/MultiSource/Benchmarks  <span class="c"># or some other level</span>
+<div class="highlight-bash"><div class="highlight"><pre>% <span class="nb">cd</span> llvm/projects/test-suite/MultiSource/Benchmarks  <span class="c1"># or some other level</span>
 % make <span class="nv">TEST</span><span class="o">=</span>dbgopt
 </pre></div>
 </div>
@@ -271,7 +278,7 @@ description of the variable.  The third argument is a <a class="reference extern
 value.  The first argument is the new value (wrapped as metadata).  The second
 argument is the offset in the user source variable where the new value is
 written.  The third argument is a <a class="reference external" href="LangRef.html#dilocalvariable">local variable</a> containing a description of the variable.  The
-third argument is a <a class="reference external" href="LangRef.html#diexpression">complex expression</a>.</p>
+fourth argument is a <a class="reference external" href="LangRef.html#diexpression">complex expression</a>.</p>
 </div>
 </div>
 </div>
@@ -299,8 +306,8 @@ following C fragment, for example:</p>
 </pre></div>
 </div>
 <p>Compiled to LLVM, this function would be represented like this:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>; Function Attrs: nounwind ssp uwtable
-define void @foo() #0 {
+<div class="highlight-text"><div class="highlight"><pre>; Function Attrs: nounwind ssp uwtable
+define void @foo() #0 !dbg !4 {
 entry:
   %X = alloca i32, align 4
   %Y = alloca i32, align 4
@@ -328,24 +335,24 @@ attributes #1 = { nounwind readnone }
 !llvm.module.flags = !{!7, !8, !9}
 !llvm.ident = !{!10}
 
-!0 = !DICompileUnit(language: DW_LANG_C99, file: !1, producer: &quot;clang version 3.7.0 (trunk 231150) (llvm/trunk 231154)&quot;, isOptimized: false, runtimeVersion: 0, emissionKind: 1, enums: !2, retainedTypes: !2, subprograms: !3, globals: !2, imports: !2)
+!0 = !DICompileUnit(language: DW_LANG_C99, file: !1, producer: &quot;clang version 3.7.0 (trunk 231150) (llvm/trunk 231154)&quot;, isOptimized: false, runtimeVersion: 0, emissionKind: FullDebug, enums: !2, retainedTypes: !2, subprograms: !3, globals: !2, imports: !2)
 !1 = !DIFile(filename: &quot;/dev/stdin&quot;, directory: &quot;/Users/dexonsmith/data/llvm/debug-info&quot;)
 !2 = !{}
 !3 = !{!4}
-!4 = !DISubprogram(name: &quot;foo&quot;, scope: !1, file: !1, line: 1, type: !5, isLocal: false, isDefinition: true, scopeLine: 1, isOptimized: false, function: void ()* @foo, variables: !2)
+!4 = distinct !DISubprogram(name: &quot;foo&quot;, scope: !1, file: !1, line: 1, type: !5, isLocal: false, isDefinition: true, scopeLine: 1, isOptimized: false, variables: !2)
 !5 = !DISubroutineType(types: !6)
 !6 = !{null}
 !7 = !{i32 2, !&quot;Dwarf Version&quot;, i32 2}
 !8 = !{i32 2, !&quot;Debug Info Version&quot;, i32 3}
 !9 = !{i32 1, !&quot;PIC Level&quot;, i32 2}
 !10 = !{!&quot;clang version 3.7.0 (trunk 231150) (llvm/trunk 231154)&quot;}
-!11 = !DILocalVariable(tag: DW_TAG_auto_variable, name: &quot;X&quot;, scope: !4, file: !1, line: 2, type: !12)
+!11 = !DILocalVariable(name: &quot;X&quot;, scope: !4, file: !1, line: 2, type: !12)
 !12 = !DIBasicType(name: &quot;int&quot;, size: 32, align: 32, encoding: DW_ATE_signed)
 !13 = !DIExpression()
 !14 = !DILocation(line: 2, column: 9, scope: !4)
-!15 = !DILocalVariable(tag: DW_TAG_auto_variable, name: &quot;Y&quot;, scope: !4, file: !1, line: 3, type: !12)
+!15 = !DILocalVariable(name: &quot;Y&quot;, scope: !4, file: !1, line: 3, type: !12)
 !16 = !DILocation(line: 3, column: 9, scope: !4)
-!17 = !DILocalVariable(tag: DW_TAG_auto_variable, name: &quot;Z&quot;, scope: !18, file: !1, line: 5, type: !12)
+!17 = !DILocalVariable(name: &quot;Z&quot;, scope: !18, file: !1, line: 5, type: !12)
 !18 = distinct !DILexicalBlock(scope: !4, file: !1, line: 4, column: 5)
 !19 = !DILocation(line: 5, column: 11, scope: !18)
 !20 = !DILocation(line: 6, column: 11, scope: !18)
@@ -360,18 +367,17 @@ information.  In particular, it shows how the <code class="docutils literal"><sp
 location information, which are attached to an instruction, are applied
 together to allow a debugger to analyze the relationship between statements,
 variable definitions, and the code used to implement the function.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.dbg.declare</span><span class="p">(</span><span class="kt">metadata</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%X</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv-Anonymous">!11</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv-Anonymous">!13</span><span class="p">),</span> <span class="nv">!dbg</span> <span class="nv-Anonymous">!14</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.dbg.declare</span><span class="p">(</span><span class="kt">metadata</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%X</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!11</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!13</span><span class="p">),</span> <span class="nv">!dbg</span> <span class="nv nv-Anonymous">!14</span>
   <span class="c">; [debug line = 2:7] [debug variable = X]</span>
 </pre></div>
 </div>
 <p>The first intrinsic <code class="docutils literal"><span class="pre">%llvm.dbg.declare</span></code> encodes debugging information for the
 variable <code class="docutils literal"><span class="pre">X</span></code>.  The metadata <code class="docutils literal"><span class="pre">!dbg</span> <span class="pre">!14</span></code> attached to the intrinsic provides
 scope information for the variable <code class="docutils literal"><span class="pre">X</span></code>.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="nv-Anonymous">!14</span> <span class="p">=</span> <span class="nv">!DILocation</span><span class="p">(</span><span class="nl">line:</span> <span class="m">2</span><span class="p">,</span> <span class="nl">column:</span> <span class="m">9</span><span class="p">,</span> <span class="nl">scope:</span> <span class="nv-Anonymous">!4</span><span class="p">)</span>
-<span class="nv-Anonymous">!4</span> <span class="p">=</span> <span class="nv">!DISubprogram</span><span class="p">(</span><span class="nl">name:</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="nl">scope:</span> <span class="nv-Anonymous">!1</span><span class="p">,</span> <span class="nl">file:</span> <span class="nv-Anonymous">!1</span><span class="p">,</span> <span class="nl">line:</span> <span class="m">1</span><span class="p">,</span> <span class="nl">type:</span> <span class="nv-Anonymous">!5</span><span class="p">,</span>
-                   <span class="nl">isLocal:</span> <span class="k">false</span><span class="p">,</span> <span class="nl">isDefinition:</span> <span class="k">true</span><span class="p">,</span> <span class="nl">scopeLine:</span> <span class="m">1</span><span class="p">,</span>
-                   <span class="nl">isOptimized:</span> <span class="k">false</span><span class="p">,</span> <span class="nl">function:</span> <span class="kt">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">,</span>
-                   <span class="nl">variables:</span> <span class="nv-Anonymous">!2</span><span class="p">)</span>
+<div class="highlight-text"><div class="highlight"><pre>!14 = !DILocation(line: 2, column: 9, scope: !4)
+!4 = distinct !DISubprogram(name: &quot;foo&quot;, scope: !1, file: !1, line: 1, type: !5,
+                            isLocal: false, isDefinition: true, scopeLine: 1,
+                            isOptimized: false, variables: !2)
 </pre></div>
 </div>
 <p>Here <code class="docutils literal"><span class="pre">!14</span></code> is metadata providing <a class="reference external" href="LangRef.html#dilocation">location information</a>.  In this example, scope is encoded by <code class="docutils literal"><span class="pre">!4</span></code>, a
@@ -379,14 +385,14 @@ scope information for the variable <code class="docutils literal"><span class="p
 information attached to the intrinsics indicates that the variable <code class="docutils literal"><span class="pre">X</span></code> is
 declared at line number 2 at a function level scope in function <code class="docutils literal"><span class="pre">foo</span></code>.</p>
 <p>Now lets take another example.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.dbg.declare</span><span class="p">(</span><span class="kt">metadata</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%Z</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv-Anonymous">!17</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv-Anonymous">!13</span><span class="p">),</span> <span class="nv">!dbg</span> <span class="nv-Anonymous">!19</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.dbg.declare</span><span class="p">(</span><span class="kt">metadata</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%Z</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!17</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!13</span><span class="p">),</span> <span class="nv">!dbg</span> <span class="nv nv-Anonymous">!19</span>
   <span class="c">; [debug line = 5:9] [debug variable = Z]</span>
 </pre></div>
 </div>
 <p>The third intrinsic <code class="docutils literal"><span class="pre">%llvm.dbg.declare</span></code> encodes debugging information for
 variable <code class="docutils literal"><span class="pre">Z</span></code>.  The metadata <code class="docutils literal"><span class="pre">!dbg</span> <span class="pre">!19</span></code> attached to the intrinsic provides
 scope information for the variable <code class="docutils literal"><span class="pre">Z</span></code>.</p>
-<div class="highlight-llvm"><div class="highlight"><pre>!18 = distinct !DILexicalBlock(scope: !4, file: !1, line: 4, column: 5)
+<div class="highlight-text"><div class="highlight"><pre>!18 = distinct !DILexicalBlock(scope: !4, file: !1, line: 4, column: 5)
 !19 = !DILocation(line: 5, column: 11, scope: !18)
 </pre></div>
 </div>
@@ -418,12 +424,11 @@ in <code class="docutils literal"><span class="pre">lib/IR/DIBuilder.cpp</span><
 <h3><a class="toc-backref" href="#id17">C/C++ source file information</a><a class="headerlink" href="#c-c-source-file-information" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal"><span class="pre">llvm::Instruction</span></code> provides easy access to metadata attached with an
 instruction.  One can extract line number information encoded in LLVM IR using
-<code class="docutils literal"><span class="pre">Instruction::getMetadata()</span></code> and <code class="docutils literal"><span class="pre">DILocation::getLineNumber()</span></code>.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">MDNode</span> <span class="o">*</span><span class="n">N</span> <span class="o">=</span> <span class="n">I</span><span class="o">-&gt;</span><span class="n">getMetadata</span><span class="p">(</span><span class="s">&quot;dbg&quot;</span><span class="p">))</span> <span class="p">{</span>  <span class="c1">// Here I is an LLVM instruction</span>
-  <span class="n">DILocation</span> <span class="n">Loc</span><span class="p">(</span><span class="n">N</span><span class="p">);</span>                      <span class="c1">// DILocation is in DebugInfo.h</span>
-  <span class="kt">unsigned</span> <span class="n">Line</span> <span class="o">=</span> <span class="n">Loc</span><span class="p">.</span><span class="n">getLineNumber</span><span class="p">();</span>
-  <span class="n">StringRef</span> <span class="n">File</span> <span class="o">=</span> <span class="n">Loc</span><span class="p">.</span><span class="n">getFilename</span><span class="p">();</span>
-  <span class="n">StringRef</span> <span class="n">Dir</span> <span class="o">=</span> <span class="n">Loc</span><span class="p">.</span><span class="n">getDirectory</span><span class="p">();</span>
+<code class="docutils literal"><span class="pre">Instruction::getDebugLoc()</span></code> and <code class="docutils literal"><span class="pre">DILocation::getLine()</span></code>.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">DILocation</span> <span class="o">*</span><span class="n">Loc</span> <span class="o">=</span> <span class="n">I</span><span class="o">-&gt;</span><span class="n">getDebugLoc</span><span class="p">())</span> <span class="p">{</span> <span class="c1">// Here I is an LLVM instruction</span>
+  <span class="kt">unsigned</span> <span class="n">Line</span> <span class="o">=</span> <span class="n">Loc</span><span class="o">-&gt;</span><span class="n">getLine</span><span class="p">();</span>
+  <span class="n">StringRef</span> <span class="n">File</span> <span class="o">=</span> <span class="n">Loc</span><span class="o">-&gt;</span><span class="n">getFilename</span><span class="p">();</span>
+  <span class="n">StringRef</span> <span class="n">Dir</span> <span class="o">=</span> <span class="n">Loc</span><span class="o">-&gt;</span><span class="n">getDirectory</span><span class="p">();</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -431,62 +436,65 @@ instruction.  One can extract line number information encoded in LLVM IR using
 <div class="section" id="c-c-global-variable-information">
 <h3><a class="toc-backref" href="#id18">C/C++ global variable information</a><a class="headerlink" href="#c-c-global-variable-information" title="Permalink to this headline">¶</a></h3>
 <p>Given an integer global variable declared as follows:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="kt">int</span> <span class="n">MyGlobal</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">_Alignas</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="kt">int</span> <span class="n">MyGlobal</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>a C/C++ front-end would generate the following descriptors:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>;;
+<div class="highlight-text"><div class="highlight"><pre>;;
 ;; Define the global itself.
 ;;
-@MyGlobal = global i32 100, align 4
+@MyGlobal = global i32 100, align 8, !dbg !0
 
 ;;
 ;; List of debug info of globals
 ;;
-!llvm.dbg.cu = !{!0}
+!llvm.dbg.cu = !{!1}
 
 ;; Some unrelated metadata.
 !llvm.module.flags = !{!6, !7}
+!llvm.ident = !{!8}
+
+;; Define the global variable itself
+!0 = distinct !DIGlobalVariable(name: &quot;MyGlobal&quot;, scope: !1, file: !2, line: 1, type: !5, isLocal: false, isDefinition: true, align: 64)
 
 ;; Define the compile unit.
-!0 = !DICompileUnit(language: DW_LANG_C99, file: !1,
-                    producer:
-                    &quot;clang version 3.7.0 (trunk 231150) (llvm/trunk 231154)&quot;,
-                    isOptimized: false, runtimeVersion: 0, emissionKind: 1,
-                    enums: !2, retainedTypes: !2, subprograms: !2, globals:
-                    !3, imports: !2)
+!1 = distinct !DICompileUnit(language: DW_LANG_C99, file: !2,
+                             producer: &quot;clang version 4.0.0 (http://llvm.org/git/clang.git ae4deadbea242e8ea517eef662c30443f75bd086) (http://llvm.org/git/llvm.git 818b4c1539df3e51dc7e62c89ead4abfd348827d)&quot;,
+                             isOptimized: false, runtimeVersion: 0, emissionKind: FullDebug,
+                             enums: !3, globals: !4)
 
 ;;
 ;; Define the file
 ;;
-!1 = !DIFile(filename: &quot;/dev/stdin&quot;,
+!2 = !DIFile(filename: &quot;/dev/stdin&quot;,
              directory: &quot;/Users/dexonsmith/data/llvm/debug-info&quot;)
 
 ;; An empty array.
-!2 = !{}
+!3 = !{}
 
 ;; The Array of Global Variables
-!3 = !{!4}
-
-;;
-;; Define the global variable itself.
-;;
-!4 = !DIGlobalVariable(name: &quot;MyGlobal&quot;, scope: !0, file: !1, line: 1,
-                       type: !5, isLocal: false, isDefinition: true,
-                       variable: i32* @MyGlobal)
+!4 = !{!0}
 
 ;;
 ;; Define the type
 ;;
-!5 = !DIBasicType(name: &quot;int&quot;, size: 32, align: 32, encoding: DW_ATE_signed)
+!5 = !DIBasicType(name: &quot;int&quot;, size: 32, encoding: DW_ATE_signed)
 
 ;; Dwarf version to output.
-!6 = !{i32 2, !&quot;Dwarf Version&quot;, i32 2}
+!6 = !{i32 2, !&quot;Dwarf Version&quot;, i32 4}
 
 ;; Debug info schema version.
 !7 = !{i32 2, !&quot;Debug Info Version&quot;, i32 3}
+
+;; Compiler identification
+!8 = !{!&quot;clang version 4.0.0 (http://llvm.org/git/clang.git ae4deadbea242e8ea517eef662c30443f75bd086) (http://llvm.org/git/llvm.git 818b4c1539df3e51dc7e62c89ead4abfd348827d)&quot;}
 </pre></div>
 </div>
+<p>The align value in DIGlobalVariable description specifies variable alignment in
+case it was forced by C11 _Alignas(), C++11 alignas() keywords or compiler
+attribute __attribute__((aligned ())). In other case (when this field is missing)
+alignment is considered default. This is used when producing DWARF output
+for DW_AT_alignment value.</p>
 </div>
 <div class="section" id="c-c-function-information">
 <h3><a class="toc-backref" href="#id19">C/C++ function information</a><a class="headerlink" href="#c-c-function-information" title="Permalink to this headline">¶</a></h3>
@@ -497,18 +505,18 @@ instruction.  One can extract line number information encoded in LLVM IR using
 </pre></div>
 </div>
 <p>a C/C++ front-end would generate the following descriptors:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>;;
+<div class="highlight-text"><div class="highlight"><pre>;;
 ;; Define the anchor for subprograms.
 ;;
 !4 = !DISubprogram(name: &quot;main&quot;, scope: !1, file: !1, line: 1, type: !5,
                    isLocal: false, isDefinition: true, scopeLine: 1,
                    flags: DIFlagPrototyped, isOptimized: false,
-                   function: i32 (i32, i8**)* @main, variables: !2)
+                   variables: !2)
 
 ;;
 ;; Define the subprogram itself.
 ;;
-define i32 @main(i32 %argc, i8** %argv) {
+define i32 @main(i32 %argc, i8** %argv) !dbg !4 {
 ...
 }
 </pre></div>
@@ -707,51 +715,59 @@ current translation unit.</p>
 <h4><a class="toc-backref" href="#id26">New DWARF Constants</a><a class="headerlink" href="#new-dwarf-constants" title="Permalink to this headline">¶</a></h4>
 <table border="1" class="docutils">
 <colgroup>
-<col width="73%" />
-<col width="11%" />
+<col width="84%" />
 <col width="16%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head" colspan="2">Name</th>
+<tr class="row-odd"><th class="head">Name</th>
 <th class="head">Value</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td colspan="2">DW_APPLE_PROPERTY_readonly</td>
+<tr class="row-even"><td>DW_APPLE_PROPERTY_readonly</td>
 <td>0x01</td>
 </tr>
-<tr class="row-odd"><td colspan="2">DW_APPLE_PROPERTY_getter</td>
+<tr class="row-odd"><td>DW_APPLE_PROPERTY_getter</td>
 <td>0x02</td>
 </tr>
-<tr class="row-even"><td colspan="2">DW_APPLE_PROPERTY_assign</td>
+<tr class="row-even"><td>DW_APPLE_PROPERTY_assign</td>
 <td>0x04</td>
 </tr>
-<tr class="row-odd"><td colspan="2">DW_APPLE_PROPERTY_readwrite</td>
+<tr class="row-odd"><td>DW_APPLE_PROPERTY_readwrite</td>
 <td>0x08</td>
 </tr>
-<tr class="row-even"><td colspan="2">DW_APPLE_PROPERTY_retain</td>
+<tr class="row-even"><td>DW_APPLE_PROPERTY_retain</td>
 <td>0x10</td>
 </tr>
-<tr class="row-odd"><td colspan="2">DW_APPLE_PROPERTY_copy</td>
+<tr class="row-odd"><td>DW_APPLE_PROPERTY_copy</td>
 <td>0x20</td>
 </tr>
-<tr class="row-even"><td colspan="2">DW_APPLE_PROPERTY_nonatomic</td>
+<tr class="row-even"><td>DW_APPLE_PROPERTY_nonatomic</td>
 <td>0x40</td>
 </tr>
-<tr class="row-odd"><td colspan="2">DW_APPLE_PROPERTY_setter</td>
+<tr class="row-odd"><td>DW_APPLE_PROPERTY_setter</td>
 <td>0x80</td>
 </tr>
-<tr class="row-even"><td colspan="2">DW_APPLE_PROPERTY_atomic</td>
+<tr class="row-even"><td>DW_APPLE_PROPERTY_atomic</td>
 <td>0x100</td>
 </tr>
-<tr class="row-odd"><td colspan="2">DW_APPLE_PROPERTY_weak</td>
+<tr class="row-odd"><td>DW_APPLE_PROPERTY_weak</td>
 <td>0x200</td>
 </tr>
-<tr class="row-even"><td colspan="2">DW_APPLE_PROPERTY_strong</td>
+<tr class="row-even"><td>DW_APPLE_PROPERTY_strong</td>
 <td>0x400</td>
 </tr>
-<tr class="row-odd"><td colspan="2">DW_APPLE_PROPERTY_unsafe_unretained</td>
+<tr class="row-odd"><td>DW_APPLE_PROPERTY_unsafe_unretained</td>
 <td>0x800</td>
+</tr>
+<tr class="row-even"><td>DW_APPLE_PROPERTY_nullability</td>
+<td>0x1000</td>
+</tr>
+<tr class="row-odd"><td>DW_APPLE_PROPERTY_null_resettable</td>
+<td>0x2000</td>
+</tr>
+<tr class="row-even"><td>DW_APPLE_PROPERTY_class</td>
+<td>0x4000</td>
 </tr>
 </tbody>
 </table>
@@ -780,7 +796,7 @@ qualified name.  Debugger users tend not to enter their search strings as
 &#8220;<code class="docutils literal"><span class="pre">a::b::c</span></code>&#8221;.  So the name entered in the name table must be demangled in
 order to chop it up appropriately and additional names must be manually entered
 into the table to make it effective as a name lookup table for debuggers to
-se.</p>
+use.</p>
 <p>All debuggers currently ignore the &#8220;<code class="docutils literal"><span class="pre">.debug_pubnames</span></code>&#8221; table as a result of
 its inconsistent and useless public-only name content making it a waste of
 space in the object file.  These tables, when they are written to disk, are not
@@ -875,13 +891,13 @@ for the current string value.</p>
 </div>
 <p>The problem with this layout for debuggers is that we need to optimize for the
 negative lookup case where the symbol we&#8217;re searching for is not present.  So
-if we were to lookup &#8220;<code class="docutils literal"><span class="pre">printf</span></code>&#8221; in the table above, we would make a 32 hash
-for &#8220;<code class="docutils literal"><span class="pre">printf</span></code>&#8221;, it might match <code class="docutils literal"><span class="pre">bucket[3]</span></code>.  We would need to go to the
-offset 0x000034f0 and start looking to see if our 32 bit hash matches.  To do
-so, we need to read the next pointer, then read the hash, compare it, and skip
-to the next bucket.  Each time we are skipping many bytes in memory and
-touching new cache pages just to do the compare on the full 32 bit hash.  All
-of these accesses then tell us that we didn&#8217;t have a match.</p>
+if we were to lookup &#8220;<code class="docutils literal"><span class="pre">printf</span></code>&#8221; in the table above, we would make a 32-bit
+hash for &#8220;<code class="docutils literal"><span class="pre">printf</span></code>&#8221;, it might match <code class="docutils literal"><span class="pre">bucket[3]</span></code>.  We would need to go to
+the offset 0x000034f0 and start looking to see if our 32 bit hash matches.  To
+do so, we need to read the next pointer, then read the hash, compare it, and
+skip to the next bucket.  Each time we are skipping many bytes in memory and
+touching new pages just to do the compare on the full 32 bit hash.  All of
+these accesses then tell us that we didn&#8217;t have a match.</p>
 </div>
 <div class="section" id="name-hash-tables">
 <h5><a class="toc-backref" href="#id31">Name Hash Tables</a><a class="headerlink" href="#name-hash-tables" title="Permalink to this headline">¶</a></h5>
@@ -1266,6 +1282,7 @@ tag is one of:</p>
 <li>DW_TAG_packed_type</li>
 <li>DW_TAG_volatile_type</li>
 <li>DW_TAG_restrict_type</li>
+<li>DW_TAG_atomic_type</li>
 <li>DW_TAG_interface_type</li>
 <li>DW_TAG_unspecified_type</li>
 <li>DW_TAG_shared_type</li>
@@ -1342,6 +1359,72 @@ names as follows:</p>
 </div>
 </div>
 </div>
+<div class="section" id="codeview-debug-info-format">
+<span id="codeview"></span><h2><a class="toc-backref" href="#id39">CodeView Debug Info Format</a><a class="headerlink" href="#codeview-debug-info-format" title="Permalink to this headline">¶</a></h2>
+<p>LLVM supports emitting CodeView, the Microsoft debug info format, and this
+section describes the design and implementation of that support.</p>
+<div class="section" id="format-background">
+<h3><a class="toc-backref" href="#id40">Format Background</a><a class="headerlink" href="#format-background" title="Permalink to this headline">¶</a></h3>
+<p>CodeView as a format is clearly oriented around C++ debugging, and in C++, the
+majority of debug information tends to be type information. Therefore, the
+overriding design constraint of CodeView is the separation of type information
+from other &#8220;symbol&#8221; information so that type information can be efficiently
+merged across translation units. Both type information and symbol information is
+generally stored as a sequence of records, where each record begins with a
+16-bit record size and a 16-bit record kind.</p>
+<p>Type information is usually stored in the <code class="docutils literal"><span class="pre">.debug$T</span></code> section of the object
+file.  All other debug info, such as line info, string table, symbol info, and
+inlinee info, is stored in one or more <code class="docutils literal"><span class="pre">.debug$S</span></code> sections. There may only be
+one <code class="docutils literal"><span class="pre">.debug$T</span></code> section per object file, since all other debug info refers to
+it. If a PDB (enabled by the <code class="docutils literal"><span class="pre">/Zi</span></code> MSVC option) was used during compilation,
+the <code class="docutils literal"><span class="pre">.debug$T</span></code> section will contain only an <code class="docutils literal"><span class="pre">LF_TYPESERVER2</span></code> record pointing
+to the PDB. When using PDBs, symbol information appears to remain in the object
+file <code class="docutils literal"><span class="pre">.debug$S</span></code> sections.</p>
+<p>Type records are referred to by their index, which is the number of records in
+the stream before a given record plus <code class="docutils literal"><span class="pre">0x1000</span></code>. Many common basic types, such
+as the basic integral types and unqualified pointers to them, are represented
+using type indices less than <code class="docutils literal"><span class="pre">0x1000</span></code>. Such basic types are built in to
+CodeView consumers and do not require type records.</p>
+<p>Each type record may only contain type indices that are less than its own type
+index. This ensures that the graph of type stream references is acyclic. While
+the source-level type graph may contain cycles through pointer types (consider a
+linked list struct), these cycles are removed from the type stream by always
+referring to the forward declaration record of user-defined record types. Only
+&#8220;symbol&#8221; records in the <code class="docutils literal"><span class="pre">.debug$S</span></code> streams may refer to complete,
+non-forward-declaration type records.</p>
+</div>
+<div class="section" id="working-with-codeview">
+<h3><a class="toc-backref" href="#id41">Working with CodeView</a><a class="headerlink" href="#working-with-codeview" title="Permalink to this headline">¶</a></h3>
+<p>These are instructions for some common tasks for developers working to improve
+LLVM&#8217;s CodeView support. Most of them revolve around using the CodeView dumper
+embedded in <code class="docutils literal"><span class="pre">llvm-readobj</span></code>.</p>
+<ul>
+<li><p class="first">Testing MSVC&#8217;s output:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cl -c -Z7 foo.cpp # Use /Z7 to keep types in the object file
+$ llvm-readobj -codeview foo.obj
+</pre></div>
+</div>
+</li>
+<li><p class="first">Getting LLVM IR debug info out of Clang:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ clang -g -gcodeview --target=x86_64-windows-msvc foo.cpp -S -emit-llvm
+</pre></div>
+</div>
+<p>Use this to generate LLVM IR for LLVM test cases.</p>
+</li>
+<li><p class="first">Generate and dump CodeView from LLVM IR metadata:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ llc foo.ll -filetype=obj -o foo.obj
+$ llvm-readobj -codeview foo.obj &gt; foo.txt
+</pre></div>
+</div>
+<p>Use this pattern in lit test cases and FileCheck the output of llvm-readobj</p>
+</li>
+</ul>
+<p>Improving LLVM&#8217;s CodeView support is a process of finding interesting type
+records, constructing a C++ test case that makes MSVC emit those records,
+dumping the records, understanding them, and then generating equivalent records
+in LLVM&#8217;s backend.</p>
+</div>
+</div>
 </div>
 
 
@@ -1367,9 +1450,9 @@ names as follows:</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LLVM Alias Analysis Infrastructure &mdash; LLVM 3.7 documentation</title>
+    <title>LLVM Alias Analysis Infrastructure &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
-    <link rel="next" title="LLVM Bitcode File Format" href="BitCodeFormat.html" />
-    <link rel="prev" title="LibFuzzer – a library for coverage-guided fuzz testing." href="LibFuzzer.html" />
+    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="next" title="MemorySSA" href="MemorySSA.html" />
+    <link rel="prev" title="Using -opt-bisect-limit to debug optimization errors" href="OptBisect.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
@@ -47,10 +47,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="BitCodeFormat.html" title="LLVM Bitcode File Format"
+          <a href="MemorySSA.html" title="MemorySSA"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="LibFuzzer.html" title="LibFuzzer – a library for coverage-guided fuzz testing."
+          <a href="OptBisect.html" title="Using -opt-bisect-limit to debug optimization errors"
              accesskey="P">previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">Documentation</a>&raquo;</li>
@@ -158,8 +158,7 @@ which can provide it, allowing for powerful analyses and transformations to work
 well together.</p>
 <p>This document contains information necessary to successfully implement this
 interface, use it, and to test both sides.  It also explains some of the finer
-points about what exactly results mean.  If you feel that something is unclear
-or should be added, please <a class="reference external" href="mailto:sabre&#37;&#52;&#48;nondot&#46;org">let me know</a>.</p>
+points about what exactly results mean.</p>
 </div>
 <div class="section" id="aliasanalysis-class-overview">
 <h2><a class="toc-backref" href="#id2"><code class="docutils literal"><span class="pre">AliasAnalysis</span></code> Class Overview</a><a class="headerlink" href="#aliasanalysis-class-overview" title="Permalink to this headline">¶</a></h2>
@@ -287,7 +286,7 @@ this property are side-effect free, only depending on their input arguments and
 the state of memory when they are called.  This property allows calls to these
 functions to be eliminated and moved around, as long as there is no store
 instruction that changes the contents of memory.  Note that all functions that
-satisfy the <code class="docutils literal"><span class="pre">doesNotAccessMemory</span></code> method also satisfies <code class="docutils literal"><span class="pre">onlyReadsMemory</span></code>.</p>
+satisfy the <code class="docutils literal"><span class="pre">doesNotAccessMemory</span></code> method also satisfy <code class="docutils literal"><span class="pre">onlyReadsMemory</span></code>.</p>
 </div>
 </div>
 </div>
@@ -342,7 +341,7 @@ analysis run method (<code class="docutils literal"><span class="pre">run</span>
 <h3><a class="toc-backref" href="#id13">Required methods to override</a><a class="headerlink" href="#required-methods-to-override" title="Permalink to this headline">¶</a></h3>
 <p>You must override the <code class="docutils literal"><span class="pre">getAdjustedAnalysisPointer</span></code> method on all subclasses
 of <code class="docutils literal"><span class="pre">AliasAnalysis</span></code>. An example implementation of this method would look like:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="o">*</span><span class="n">getAdjustedAnalysisPointer</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ID</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="o">*</span><span class="nf">getAdjustedAnalysisPointer</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span><span class="o">*</span> <span class="n">ID</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">ID</span> <span class="o">==</span> <span class="o">&amp;</span><span class="n">AliasAnalysis</span><span class="o">::</span><span class="n">ID</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">AliasAnalysis</span><span class="o">*</span><span class="p">)</span><span class="k">this</span><span class="p">;</span>
   <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
@@ -459,11 +458,10 @@ keep an AliasAnalysis consistent, however there&#8217;s no way for a pass to dec
 in its <code class="docutils literal"><span class="pre">getAnalysisUsage</span></code> that it does so. Some passes attempt to use
 <code class="docutils literal"><span class="pre">AU.addPreserved&lt;AliasAnalysis&gt;</span></code>, however this doesn&#8217;t actually have any
 effect.</p>
-<p><code class="docutils literal"><span class="pre">AliasAnalysisCounter</span></code> (<code class="docutils literal"><span class="pre">-count-aa</span></code>) and <code class="docutils literal"><span class="pre">AliasDebugger</span></code> (<code class="docutils literal"><span class="pre">-debug-aa</span></code>)
-are implemented as <code class="docutils literal"><span class="pre">ModulePass</span></code> classes, so if your alias analysis uses
-<code class="docutils literal"><span class="pre">FunctionPass</span></code>, it won&#8217;t be able to use these utilities. If you try to use
-them, the pass manager will silently route alias analysis queries directly to
-<code class="docutils literal"><span class="pre">BasicAliasAnalysis</span></code> instead.</p>
+<p><code class="docutils literal"><span class="pre">AliasAnalysisCounter</span></code> (<code class="docutils literal"><span class="pre">-count-aa</span></code>) are implemented as <code class="docutils literal"><span class="pre">ModulePass</span></code>
+classes, so if your alias analysis uses <code class="docutils literal"><span class="pre">FunctionPass</span></code>, it won&#8217;t be able to
+use these utilities. If you try to use them, the pass manager will silently
+route alias analysis queries directly to <code class="docutils literal"><span class="pre">BasicAliasAnalysis</span></code> instead.</p>
 <p>Similarly, the <code class="docutils literal"><span class="pre">opt</span> <span class="pre">-p</span></code> option introduces <code class="docutils literal"><span class="pre">ModulePass</span></code> passes between each
 pass, which prevents the use of <code class="docutils literal"><span class="pre">FunctionPass</span></code> alias analysis passes.</p>
 <p>The <code class="docutils literal"><span class="pre">AliasAnalysis</span></code> API does have functions for notifying implementations when
@@ -666,7 +664,7 @@ transformations:</p>
 there are no instructions in the loop that modifies the memory loaded.</li>
 <li>It uses mod/ref information to hoist function calls out of loops that do not
 write to memory and are loop-invariant.</li>
-<li>If uses alias information to promote memory objects that are loaded and stored
+<li>It uses alias information to promote memory objects that are loaded and stored
 to in loops to live in a register instead.  It can do this if there are no may
 aliases to the loaded/stored memory location.</li>
 </ul>
@@ -725,6 +723,12 @@ algorithm will have a lower number of may aliases).</p>
 </div>
 <div class="section" id="memory-dependence-analysis">
 <h2><a class="toc-backref" href="#id45">Memory Dependence Analysis</a><a class="headerlink" href="#memory-dependence-analysis" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We are currently in the process of migrating things from
+<code class="docutils literal"><span class="pre">MemoryDependenceAnalysis</span></code> to <a class="reference internal" href="MemorySSA.html"><em>MemorySSA</em></a>. Please try to use
+that instead.</p>
+</div>
 <p>If you&#8217;re just looking to be a client of alias analysis information, consider
 using the Memory Dependence Analysis interface instead.  MemDep is a lazy,
 caching layer on top of alias analysis that is able to answer the question of
@@ -747,10 +751,10 @@ directly.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="BitCodeFormat.html" title="LLVM Bitcode File Format"
+          <a href="MemorySSA.html" title="MemorySSA"
              >next</a> |</li>
         <li class="right" >
-          <a href="LibFuzzer.html" title="LibFuzzer – a library for coverage-guided fuzz testing."
+          <a href="OptBisect.html" title="Using -opt-bisect-limit to debug optimization errors"
              >previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">Documentation</a>&raquo;</li>
@@ -758,9 +762,9 @@ directly.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

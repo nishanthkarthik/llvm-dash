@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Writing an LLVM Pass &mdash; LLVM 3.7 documentation</title>
+    <title>Writing an LLVM Pass &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="index.html" />
     <link rel="next" title="How To Use Attributes" href="HowToUseAttributes.html" />
     <link rel="prev" title="Garbage Collection with LLVM" href="GarbageCollection.html" />
 <style type="text/css">
@@ -183,35 +183,32 @@ inspects it.  The source code and files for this pass are available in the LLVM
 source tree in the <code class="docutils literal"><span class="pre">lib/Transforms/Hello</span></code> directory.</p>
 <div class="section" id="setting-up-the-build-environment">
 <span id="writing-an-llvm-pass-makefile"></span><h3><a class="toc-backref" href="#id7">Setting up the build environment</a><a class="headerlink" href="#setting-up-the-build-environment" title="Permalink to this headline">¶</a></h3>
-<p>First, configure and build LLVM.  This needs to be done directly inside the
-LLVM source tree rather than in a separate objects directory.  Next, you need
-to create a new directory somewhere in the LLVM source base.  For this example,
-we&#8217;ll assume that you made <code class="docutils literal"><span class="pre">lib/Transforms/Hello</span></code>.  Finally, you must set up
-a build script (<code class="docutils literal"><span class="pre">Makefile</span></code>) that will compile the source code for the new
-pass.  To do this, copy the following into <code class="docutils literal"><span class="pre">Makefile</span></code>:</p>
-<div class="highlight-make"><div class="highlight"><pre><span class="c"># Makefile for hello pass</span>
+<p>First, configure and build LLVM.  Next, you need to create a new directory
+somewhere in the LLVM source base.  For this example, we&#8217;ll assume that you
+made <code class="docutils literal"><span class="pre">lib/Transforms/Hello</span></code>.  Finally, you must set up a build script
+that will compile the source code for the new pass.  To do this,
+copy the following into <code class="docutils literal"><span class="pre">CMakeLists.txt</span></code>:</p>
+<div class="highlight-cmake"><div class="highlight"><pre><span class="nb">add_llvm_loadable_module</span><span class="p">(</span> <span class="s">LLVMHello</span>
+  <span class="s">Hello.cpp</span>
 
-<span class="c"># Path to top level of LLVM hierarchy</span>
-<span class="nv">LEVEL</span> <span class="o">=</span> ../../..
-
-<span class="c"># Name of the library to build</span>
-<span class="nv">LIBRARYNAME</span> <span class="o">=</span> Hello
-
-<span class="c"># Make the shared library become a loadable module so the tools can</span>
-<span class="c"># dlopen/dlsym on the resulting library.</span>
-<span class="nv">LOADABLE_MODULE</span> <span class="o">=</span> 1
-
-<span class="c"># Include the makefile implementation stuff</span>
-<span class="cp">include $(LEVEL)/Makefile.common</span>
+  <span class="s">PLUGIN_TOOL</span>
+  <span class="s">opt</span>
+  <span class="p">)</span>
 </pre></div>
 </div>
-<p>This makefile specifies that all of the <code class="docutils literal"><span class="pre">.cpp</span></code> files in the current directory
-are to be compiled and linked together into a shared object
-<code class="docutils literal"><span class="pre">$(LEVEL)/Debug+Asserts/lib/Hello.so</span></code> that can be dynamically loaded by the
-<strong class="program">opt</strong> or <strong class="program">bugpoint</strong> tools via their <a class="reference internal" href="CommandGuide/opt.html#cmdoption-load"><code class="xref std std-option docutils literal"><span class="pre">-load</span></code></a> options.
-If your operating system uses a suffix other than <code class="docutils literal"><span class="pre">.so</span></code> (such as Windows or Mac
-OS X), the appropriate extension will be used.</p>
-<p>If you are used CMake to build LLVM, see <a class="reference internal" href="CMake.html#cmake-out-of-source-pass"><span>Developing LLVM passes out of source</span></a>.</p>
+<p>and the following line into <code class="docutils literal"><span class="pre">lib/Transforms/CMakeLists.txt</span></code>:</p>
+<div class="highlight-cmake"><div class="highlight"><pre><span class="nb">add_subdirectory</span><span class="p">(</span><span class="s">Hello</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(Note that there is already a directory named <code class="docutils literal"><span class="pre">Hello</span></code> with a sample &#8220;Hello&#8221;
+pass; you may play with it &#8211; in which case you don&#8217;t need to modify any
+<code class="docutils literal"><span class="pre">CMakeLists.txt</span></code> files &#8211; or, if you want to create everything from scratch,
+use another name.)</p>
+<p>This build script specifies that <code class="docutils literal"><span class="pre">Hello.cpp</span></code> file in the current directory
+is to be compiled and linked into a shared object <code class="docutils literal"><span class="pre">$(LEVEL)/lib/LLVMHello.so</span></code> that
+can be dynamically loaded by the <strong class="program">opt</strong> tool via its <a class="reference internal" href="CommandGuide/opt.html#cmdoption-load"><code class="xref std std-option docutils literal"><span class="pre">-load</span></code></a>
+option. If your operating system uses a suffix other than <code class="docutils literal"><span class="pre">.so</span></code> (such as
+Windows or Mac OS X), the appropriate extension will be used.</p>
 <p>Now that we have the build scripts set up, we just need to write the code for
 the pass itself.</p>
 </div>
@@ -219,9 +216,9 @@ the pass itself.</p>
 <span id="writing-an-llvm-pass-basiccode"></span><h3><a class="toc-backref" href="#id8">Basic code required</a><a class="headerlink" href="#basic-code-required" title="Permalink to this headline">¶</a></h3>
 <p>Now that we have a way to compile our new pass, we just have to write it.
 Start out with:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;llvm/Pass.h&quot;</span>
-<span class="cp">#include &quot;llvm/IR/Function.h&quot;</span>
-<span class="cp">#include &quot;llvm/Support/raw_ostream.h&quot;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&quot;llvm/Pass.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/Function.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/Support/raw_ostream.h&quot;</span><span class="cp"></span>
 </pre></div>
 </div>
 <p>Which are needed because we are writing a <a class="reference external" href="http://llvm.org/doxygen/classllvm_1_1Pass.html">Pass</a>, we are operating on
@@ -255,12 +252,12 @@ for now, know that <code class="docutils literal"><span class="pre">FunctionPass
 </div>
 <p>This declares pass identifier used by LLVM to identify pass.  This allows LLVM
 to avoid using expensive C++ runtime information.</p>
-<div class="highlight-c++"><div class="highlight"><pre>    <span class="kt">bool</span> <span class="n">runOnFunction</span><span class="p">(</span><span class="n">Function</span> <span class="o">&amp;</span><span class="n">F</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
-      <span class="n">errs</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Hello: &quot;</span><span class="p">;</span>
-      <span class="n">errs</span><span class="p">().</span><span class="n">write_escaped</span><span class="p">(</span><span class="n">F</span><span class="p">.</span><span class="n">getName</span><span class="p">())</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
-      <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
-    <span class="p">}</span>
-  <span class="p">};</span> <span class="c1">// end of struct Hello</span>
+<div class="highlight-c++"><div class="highlight"><pre>  <span class="kt">bool</span> <span class="nf">runOnFunction</span><span class="p">(</span><span class="n">Function</span> <span class="o">&amp;</span><span class="n">F</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
+    <span class="n">errs</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Hello: &quot;</span><span class="p">;</span>
+    <span class="n">errs</span><span class="p">().</span><span class="n">write_escaped</span><span class="p">(</span><span class="n">F</span><span class="p">.</span><span class="n">getName</span><span class="p">())</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span> <span class="c1">// end of struct Hello</span>
 <span class="p">}</span>  <span class="c1">// end of anonymous namespace</span>
 </pre></div>
 </div>
@@ -284,33 +281,34 @@ without modifying it then the third argument is set to <code class="docutils lit
 an analysis pass, for example dominator tree pass, then <code class="docutils literal"><span class="pre">true</span></code> is supplied as
 the fourth argument.</p>
 <p>As a whole, the <code class="docutils literal"><span class="pre">.cpp</span></code> file looks like:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;llvm/Pass.h&quot;</span>
-<span class="cp">#include &quot;llvm/IR/Function.h&quot;</span>
-<span class="cp">#include &quot;llvm/Support/raw_ostream.h&quot;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&quot;llvm/Pass.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/Function.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/Support/raw_ostream.h&quot;</span><span class="cp"></span>
 
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">llvm</span><span class="p">;</span>
 
 <span class="k">namespace</span> <span class="p">{</span>
-  <span class="k">struct</span> <span class="nl">Hello</span> <span class="p">:</span> <span class="k">public</span> <span class="n">FunctionPass</span> <span class="p">{</span>
-    <span class="k">static</span> <span class="kt">char</span> <span class="n">ID</span><span class="p">;</span>
-    <span class="n">Hello</span><span class="p">()</span> <span class="o">:</span> <span class="n">FunctionPass</span><span class="p">(</span><span class="n">ID</span><span class="p">)</span> <span class="p">{}</span>
+<span class="k">struct</span> <span class="nl">Hello</span> <span class="p">:</span> <span class="k">public</span> <span class="n">FunctionPass</span> <span class="p">{</span>
+  <span class="k">static</span> <span class="kt">char</span> <span class="n">ID</span><span class="p">;</span>
+  <span class="n">Hello</span><span class="p">()</span> <span class="o">:</span> <span class="n">FunctionPass</span><span class="p">(</span><span class="n">ID</span><span class="p">)</span> <span class="p">{}</span>
 
-    <span class="kt">bool</span> <span class="n">runOnFunction</span><span class="p">(</span><span class="n">Function</span> <span class="o">&amp;</span><span class="n">F</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
-      <span class="n">errs</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Hello: &quot;</span><span class="p">;</span>
-      <span class="n">errs</span><span class="p">().</span><span class="n">write_escaped</span><span class="p">(</span><span class="n">F</span><span class="p">.</span><span class="n">getName</span><span class="p">())</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span><span class="p">;</span>
-      <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
-    <span class="p">}</span>
-  <span class="p">};</span>
-<span class="p">}</span>
+  <span class="kt">bool</span> <span class="n">runOnFunction</span><span class="p">(</span><span class="n">Function</span> <span class="o">&amp;</span><span class="n">F</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
+    <span class="n">errs</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Hello: &quot;</span><span class="p">;</span>
+    <span class="n">errs</span><span class="p">().</span><span class="n">write_escaped</span><span class="p">(</span><span class="n">F</span><span class="p">.</span><span class="n">getName</span><span class="p">())</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span> <span class="c1">// end of struct Hello</span>
+<span class="p">}</span>  <span class="c1">// end of anonymous namespace</span>
 
 <span class="kt">char</span> <span class="n">Hello</span><span class="o">::</span><span class="n">ID</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="k">static</span> <span class="n">RegisterPass</span><span class="o">&lt;</span><span class="n">Hello</span><span class="o">&gt;</span> <span class="n">X</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">,</span> <span class="s">&quot;Hello World Pass&quot;</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+<span class="k">static</span> <span class="n">RegisterPass</span><span class="o">&lt;</span><span class="n">Hello</span><span class="o">&gt;</span> <span class="n">X</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">,</span> <span class="s">&quot;Hello World Pass&quot;</span><span class="p">,</span>
+                             <span class="nb">false</span> <span class="cm">/* Only looks at CFG */</span><span class="p">,</span>
+                             <span class="nb">false</span> <span class="cm">/* Analysis Pass */</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Now that it&#8217;s all together, compile the file with a simple &#8220;<code class="docutils literal"><span class="pre">gmake</span></code>&#8221; command
-in the local directory and you should get a new file
-&#8220;<code class="docutils literal"><span class="pre">Debug+Asserts/lib/Hello.so</span></code>&#8221; under the top level directory of the LLVM
-source tree (not in the local directory).  Note that everything in this file is
+from the top level of your build directory and you should get a new file
+&#8220;<code class="docutils literal"><span class="pre">lib/LLVMHello.so</span></code>&#8221;.  Note that everything in this file is
 contained in an anonymous namespace &#8212; this reflects the fact that passes
 are self contained units that do not need external interfaces (although they
 can have them) to be useful.</p>
@@ -325,7 +323,7 @@ registered your pass with <code class="docutils literal"><span class="pre">Regis
 compile &#8220;Hello World&#8221; to LLVM.  We can now run the bitcode file (hello.bc) for
 the program through our transformation like this (or course, any bitcode file
 will work):</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load ../../../Debug+Asserts/lib/Hello.so -hello &lt; hello.bc &gt; /dev/null
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load lib/LLVMHello.so -hello &lt; hello.bc &gt; /dev/null
 <span class="go">Hello: __main</span>
 <span class="go">Hello: puts</span>
 <span class="go">Hello: main</span>
@@ -338,20 +336,20 @@ the program in any interesting way, we just throw away the result of
 <strong class="program">opt</strong> (sending it to <code class="docutils literal"><span class="pre">/dev/null</span></code>).</p>
 <p>To see what happened to the other string you registered, try running
 <strong class="program">opt</strong> with the <a class="reference internal" href="CommandGuide/opt.html#cmdoption-help"><code class="xref std std-option docutils literal"><span class="pre">-help</span></code></a> option:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load ../../../Debug+Asserts/lib/Hello.so -help
-<span class="go">OVERVIEW: llvm .bc -&gt; .bc modular optimizer</span>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load lib/LLVMHello.so -help
+<span class="go">OVERVIEW: llvm .bc -&gt; .bc modular optimizer and analysis printer</span>
 
-<span class="go">USAGE: opt [options] &lt;input bitcode&gt;</span>
+<span class="go">USAGE: opt [subcommand] [options] &lt;input bitcode file&gt;</span>
 
 <span class="go">OPTIONS:</span>
 <span class="go">  Optimizations available:</span>
 <span class="go">...</span>
-<span class="go">    -globalopt                - Global Variable Optimizer</span>
-<span class="go">    -globalsmodref-aa         - Simple mod/ref analysis for globals</span>
+<span class="go">    -guard-widening           - Widen guards</span>
 <span class="go">    -gvn                      - Global Value Numbering</span>
+<span class="go">    -gvn-hoist                - Early GVN Hoisting of Expressions</span>
 <span class="go">    -hello                    - Hello World Pass</span>
 <span class="go">    -indvars                  - Induction Variable Simplification</span>
-<span class="go">    -inline                   - Function Integration/Inlining</span>
+<span class="go">    -inferattrs               - Infer set function attributes</span>
 <span class="go">...</span>
 </pre></div>
 </div>
@@ -363,21 +361,20 @@ pass is.  The <a class="reference internal" href="#writing-an-llvm-pass-passmana
 nice command line option (<a class="reference internal" href="CommandGuide/llc.html#cmdoption--time-passes"><code class="xref std std-option docutils literal"><span class="pre">--time-passes</span></code></a>) that allows you to get
 information about the execution time of your pass along with the other passes
 you queue up.  For example:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load ../../../Debug+Asserts/lib/Hello.so -hello -time-passes &lt; hello.bc &gt; /dev/null
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load lib/LLVMHello.so -hello -time-passes &lt; hello.bc &gt; /dev/null
 <span class="go">Hello: __main</span>
 <span class="go">Hello: puts</span>
 <span class="go">Hello: main</span>
-<span class="go">===============================================================================</span>
+<span class="go">===-------------------------------------------------------------------------===</span>
 <span class="go">                      ... Pass execution timing report ...</span>
-<span class="go">===============================================================================</span>
-<span class="go">  Total Execution Time: 0.02 seconds (0.0479059 wall clock)</span>
+<span class="go">===-------------------------------------------------------------------------===</span>
+<span class="go">  Total Execution Time: 0.0007 seconds (0.0005 wall clock)</span>
 
-<span class="go">   ---User Time---   --System Time--   --User+System--   ---Wall Time---  --- Pass Name ---</span>
-<span class="go">   0.0100 (100.0%)   0.0000 (  0.0%)   0.0100 ( 50.0%)   0.0402 ( 84.0%)  Bitcode Writer</span>
-<span class="go">   0.0000 (  0.0%)   0.0100 (100.0%)   0.0100 ( 50.0%)   0.0031 (  6.4%)  Dominator Set Construction</span>
-<span class="go">   0.0000 (  0.0%)   0.0000 (  0.0%)   0.0000 (  0.0%)   0.0013 (  2.7%)  Module Verifier</span>
-<span class="go">   0.0000 (  0.0%)   0.0000 (  0.0%)   0.0000 (  0.0%)   0.0033 (  6.9%)  Hello World Pass</span>
-<span class="go">   0.0100 (100.0%)   0.0100 (100.0%)   0.0200 (100.0%)   0.0479 (100.0%)  TOTAL</span>
+<span class="go">   ---User Time---   --User+System--   ---Wall Time---  --- Name ---</span>
+<span class="go">   0.0004 ( 55.3%)   0.0004 ( 55.3%)   0.0004 ( 75.7%)  Bitcode Writer</span>
+<span class="go">   0.0003 ( 44.7%)   0.0003 ( 44.7%)   0.0001 ( 13.6%)  Hello World Pass</span>
+<span class="go">   0.0000 (  0.0%)   0.0000 (  0.0%)   0.0001 ( 10.7%)  Module Verifier</span>
+<span class="go">   0.0007 (100.0%)   0.0007 (100.0%)   0.0005 (100.0%)  Total</span>
 </pre></div>
 </div>
 <p>As you can see, our implementation above is pretty fast.  The additional
@@ -430,7 +427,7 @@ declarations.</p>
 overload the <code class="docutils literal"><span class="pre">runOnModule</span></code> method with the following signature:</p>
 <div class="section" id="the-runonmodule-method">
 <h4><a class="toc-backref" href="#id13">The <code class="docutils literal"><span class="pre">runOnModule</span></code> method</a><a class="headerlink" href="#the-runonmodule-method" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="n">runOnModule</span><span class="p">(</span><span class="n">Module</span> <span class="o">&amp;</span><span class="n">M</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="nf">runOnModule</span><span class="p">(</span><span class="n">Module</span> <span class="o">&amp;</span><span class="n">M</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal"><span class="pre">runOnModule</span></code> method performs the interesting work of the pass.  It
@@ -478,7 +475,7 @@ overlap with any other pass executions (thus it should be very fast).</p>
 </div>
 <div class="section" id="the-runonscc-method">
 <span id="writing-an-llvm-pass-runonscc"></span><h4><a class="toc-backref" href="#id16">The <code class="docutils literal"><span class="pre">runOnSCC</span></code> method</a><a class="headerlink" href="#the-runonscc-method" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="n">runOnSCC</span><span class="p">(</span><span class="n">CallGraphSCC</span> <span class="o">&amp;</span><span class="n">SCC</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="nf">runOnSCC</span><span class="p">(</span><span class="n">CallGraphSCC</span> <span class="o">&amp;</span><span class="n">SCC</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal"><span class="pre">runOnSCC</span></code> method performs the interesting work of the pass, and should
@@ -533,7 +530,7 @@ needs, adding prototypes to the module if necessary.</p>
 </div>
 <div class="section" id="the-runonfunction-method">
 <span id="writing-an-llvm-pass-runonfunction"></span><h4><a class="toc-backref" href="#id20">The <code class="docutils literal"><span class="pre">runOnFunction</span></code> method</a><a class="headerlink" href="#the-runonfunction-method" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="n">runOnFunction</span><span class="p">(</span><span class="n">Function</span> <span class="o">&amp;</span><span class="n">F</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="nf">runOnFunction</span><span class="p">(</span><span class="n">Function</span> <span class="o">&amp;</span><span class="n">F</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal"><span class="pre">runOnFunction</span></code> method must be implemented by your subclass to do the
@@ -560,6 +557,13 @@ interface.  Implementing a loop pass is usually straightforward.
 <code class="docutils literal"><span class="pre">LoopPass</span></code>es may overload three virtual methods to do their work.  All
 these methods should return <code class="docutils literal"><span class="pre">true</span></code> if they modified the program, or <code class="docutils literal"><span class="pre">false</span></code>
 if they didn&#8217;t.</p>
+<p>A <code class="docutils literal"><span class="pre">LoopPass</span></code> subclass which is intended to run as part of the main loop pass
+pipeline needs to preserve all of the same <em>function</em> analyses that the other
+loop passes in its pipeline require. To make that easier,
+a <code class="docutils literal"><span class="pre">getLoopAnalysisUsage</span></code> function is provided by <code class="docutils literal"><span class="pre">LoopUtils.h</span></code>. It can be
+called within the subclass&#8217;s <code class="docutils literal"><span class="pre">getAnalysisUsage</span></code> override to get consistent
+and correct behavior. Analogously, <code class="docutils literal"><span class="pre">INITIALIZE_PASS_DEPENDENCY(LoopPass)</span></code>
+will initialize this set of function analyses.</p>
 <div class="section" id="the-doinitialization-loop-lppassmanager-method">
 <h4><a class="toc-backref" href="#id23">The <code class="docutils literal"><span class="pre">doInitialization(Loop</span> <span class="pre">*,</span> <span class="pre">LPPassManager</span> <span class="pre">&amp;)</span></code> method</a><a class="headerlink" href="#the-doinitialization-loop-lppassmanager-method" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="nf">doInitialization</span><span class="p">(</span><span class="n">Loop</span> <span class="o">*</span><span class="p">,</span> <span class="n">LPPassManager</span> <span class="o">&amp;</span><span class="n">LPM</span><span class="p">);</span>
@@ -573,7 +577,7 @@ should be used to access <code class="docutils literal"><span class="pre">Functi
 </div>
 <div class="section" id="the-runonloop-method">
 <span id="writing-an-llvm-pass-runonloop"></span><h4><a class="toc-backref" href="#id24">The <code class="docutils literal"><span class="pre">runOnLoop</span></code> method</a><a class="headerlink" href="#the-runonloop-method" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="n">runOnLoop</span><span class="p">(</span><span class="n">Loop</span> <span class="o">*</span><span class="p">,</span> <span class="n">LPPassManager</span> <span class="o">&amp;</span><span class="n">LPM</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="nf">runOnLoop</span><span class="p">(</span><span class="n">Loop</span> <span class="o">*</span><span class="p">,</span> <span class="n">LPPassManager</span> <span class="o">&amp;</span><span class="n">LPM</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal"><span class="pre">runOnLoop</span></code> method must be implemented by your subclass to do the
@@ -613,7 +617,7 @@ should be used to access <code class="docutils literal"><span class="pre">Functi
 </div>
 <div class="section" id="the-runonregion-method">
 <span id="writing-an-llvm-pass-runonregion"></span><h4><a class="toc-backref" href="#id28">The <code class="docutils literal"><span class="pre">runOnRegion</span></code> method</a><a class="headerlink" href="#the-runonregion-method" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="n">runOnRegion</span><span class="p">(</span><span class="n">Region</span> <span class="o">*</span><span class="p">,</span> <span class="n">RGPassManager</span> <span class="o">&amp;</span><span class="n">RGM</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="nf">runOnRegion</span><span class="p">(</span><span class="n">Region</span> <span class="o">*</span><span class="p">,</span> <span class="n">RGPassManager</span> <span class="o">&amp;</span><span class="n">RGM</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal"><span class="pre">runOnRegion</span></code> method must be implemented by your subclass to do the
@@ -659,7 +663,7 @@ pass executions (thus it should be very fast).</p>
 </div>
 <div class="section" id="the-runonbasicblock-method">
 <span id="writing-an-llvm-pass-runonbasicblock"></span><h4><a class="toc-backref" href="#id32">The <code class="docutils literal"><span class="pre">runOnBasicBlock</span></code> method</a><a class="headerlink" href="#the-runonbasicblock-method" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="n">runOnBasicBlock</span><span class="p">(</span><span class="n">BasicBlock</span> <span class="o">&amp;</span><span class="n">BB</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="nf">runOnBasicBlock</span><span class="p">(</span><span class="n">BasicBlock</span> <span class="o">&amp;</span><span class="n">BB</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>Override this function to do the work of the <code class="docutils literal"><span class="pre">BasicBlockPass</span></code>.  This function
@@ -697,7 +701,7 @@ are not allowed to do any of the following:</p>
 </ol>
 <div class="section" id="the-runonmachinefunction-machinefunction-mf-method">
 <span id="writing-an-llvm-pass-runonmachinefunction"></span><h4><a class="toc-backref" href="#id35">The <code class="docutils literal"><span class="pre">runOnMachineFunction(MachineFunction</span> <span class="pre">&amp;MF)</span></code> method</a><a class="headerlink" href="#the-runonmachinefunction-machinefunction-mf-method" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="n">runOnMachineFunction</span><span class="p">(</span><span class="n">MachineFunction</span> <span class="o">&amp;</span><span class="n">MF</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">bool</span> <span class="nf">runOnMachineFunction</span><span class="p">(</span><span class="n">MachineFunction</span> <span class="o">&amp;</span><span class="n">MF</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">runOnMachineFunction</span></code> can be considered the main entry point of a
@@ -723,12 +727,12 @@ template parameter is the name of the pass that is to be used on the command
 line to specify that the pass should be added to a program (for example, with
 <strong class="program">opt</strong> or <strong class="program">bugpoint</strong>).  The first argument is the name of the
 pass, which is to be used for the <a class="reference internal" href="CommandGuide/opt.html#cmdoption-help"><code class="xref std std-option docutils literal"><span class="pre">-help</span></code></a> output of programs, as well
-as for debug output generated by the <code class="xref std std-option docutils literal"><span class="pre">--debug-pass</span></code> option.</p>
+as for debug output generated by the <cite>&#8211;debug-pass</cite> option.</p>
 <p>If you want your pass to be easily dumpable, you should implement the virtual
 print method:</p>
 <div class="section" id="the-print-method">
 <h4><a class="toc-backref" href="#id37">The <code class="docutils literal"><span class="pre">print</span></code> method</a><a class="headerlink" href="#the-print-method" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">void</span> <span class="n">print</span><span class="p">(</span><span class="n">llvm</span><span class="o">::</span><span class="n">raw_ostream</span> <span class="o">&amp;</span><span class="n">O</span><span class="p">,</span> <span class="k">const</span> <span class="n">Module</span> <span class="o">*</span><span class="n">M</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">void</span> <span class="nf">print</span><span class="p">(</span><span class="n">llvm</span><span class="o">::</span><span class="n">raw_ostream</span> <span class="o">&amp;</span><span class="n">O</span><span class="p">,</span> <span class="k">const</span> <span class="n">Module</span> <span class="o">*</span><span class="n">M</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal"><span class="pre">print</span></code> method must be implemented by &#8220;analyses&#8221; in order to print a
@@ -759,7 +763,7 @@ specifies.  If a pass does not implement the <a class="reference internal" href=
 prerequisite passes, and invalidating <strong>all</strong> other passes.</p>
 <div class="section" id="the-getanalysisusage-method">
 <span id="writing-an-llvm-pass-getanalysisusage"></span><h4><a class="toc-backref" href="#id39">The <code class="docutils literal"><span class="pre">getAnalysisUsage</span></code> method</a><a class="headerlink" href="#the-getanalysisusage-method" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">void</span> <span class="n">getAnalysisUsage</span><span class="p">(</span><span class="n">AnalysisUsage</span> <span class="o">&amp;</span><span class="n">Info</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">virtual</span> <span class="kt">void</span> <span class="nf">getAnalysisUsage</span><span class="p">(</span><span class="n">AnalysisUsage</span> <span class="o">&amp;</span><span class="n">Info</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>By implementing the <code class="docutils literal"><span class="pre">getAnalysisUsage</span></code> method, the required and invalidated
@@ -897,13 +901,13 @@ analysis group.  The default implementation of the alias analysis interface
 just does a few simple checks that don&#8217;t require significant analysis to
 compute (such as: two different globals can never alias each other, etc).
 Passes that use the <a class="reference external" href="http://llvm.org/doxygen/classllvm_1_1AliasAnalysis.html">AliasAnalysis</a> interface (for
-example the <a class="reference external" href="http://llvm.org/doxygen/structGCSE.html">gcse</a> pass), do not
+example the <a class="reference external" href="http://llvm.org/doxygen/classllvm_1_1GVN.html">gvn</a> pass), do not
 care which implementation of alias analysis is actually provided, they just use
 the designated interface.</p>
 <p>From the user&#8217;s perspective, commands work just like normal.  Issuing the
-command <code class="docutils literal"><span class="pre">opt</span> <span class="pre">-gcse</span> <span class="pre">...</span></code> will cause the <code class="docutils literal"><span class="pre">basicaa</span></code> class to be instantiated
-and added to the pass sequence.  Issuing the command <code class="docutils literal"><span class="pre">opt</span> <span class="pre">-somefancyaa</span> <span class="pre">-gcse</span>
-<span class="pre">...</span></code> will cause the <code class="docutils literal"><span class="pre">gcse</span></code> pass to use the <code class="docutils literal"><span class="pre">somefancyaa</span></code> alias analysis
+command <code class="docutils literal"><span class="pre">opt</span> <span class="pre">-gvn</span> <span class="pre">...</span></code> will cause the <code class="docutils literal"><span class="pre">basicaa</span></code> class to be instantiated
+and added to the pass sequence.  Issuing the command <code class="docutils literal"><span class="pre">opt</span> <span class="pre">-somefancyaa</span> <span class="pre">-gvn</span>
+<span class="pre">...</span></code> will cause the <code class="docutils literal"><span class="pre">gvn</span></code> pass to use the <code class="docutils literal"><span class="pre">somefancyaa</span></code> alias analysis
 (which doesn&#8217;t actually exist, it&#8217;s just a hypothetical example) instead.</p>
 </div>
 <div class="section" id="using-registeranalysisgroup">
@@ -1003,67 +1007,62 @@ information about all of the variants of the <code class="docutils literal"><spa
 &#8220;<code class="docutils literal"><span class="pre">opt</span> <span class="pre">-help-hidden</span></code>&#8221;).</p>
 <p>By using the &#8211;debug-pass=Structure option, for example, we can see how our
 <a class="reference internal" href="#writing-an-llvm-pass-basiccode"><span>Hello World</span></a> pass interacts with other
-passes.  Lets try it out with the gcse and licm passes:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load ../../../Debug+Asserts/lib/Hello.so -gcse -licm --debug-pass<span class="o">=</span>Structure &lt; hello.bc &gt; /dev/null
-<span class="go">Module Pass Manager</span>
-<span class="go">  Function Pass Manager</span>
-<span class="go">    Dominator Set Construction</span>
-<span class="go">    Immediate Dominators Construction</span>
-<span class="go">    Global Common Subexpression Elimination</span>
-<span class="go">--  Immediate Dominators Construction</span>
-<span class="go">--  Global Common Subexpression Elimination</span>
-<span class="go">    Natural Loop Construction</span>
-<span class="go">    Loop Invariant Code Motion</span>
-<span class="go">--  Natural Loop Construction</span>
-<span class="go">--  Loop Invariant Code Motion</span>
+passes.  Lets try it out with the gvn and licm passes:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load lib/LLVMHello.so -gvn -licm --debug-pass<span class="o">=</span>Structure &lt; hello.bc &gt; /dev/null
+<span class="go">ModulePass Manager</span>
+<span class="go">  FunctionPass Manager</span>
+<span class="go">    Dominator Tree Construction</span>
+<span class="go">    Basic Alias Analysis (stateless AA impl)</span>
+<span class="go">    Function Alias Analysis Results</span>
+<span class="go">    Memory Dependence Analysis</span>
+<span class="go">    Global Value Numbering</span>
+<span class="go">    Natural Loop Information</span>
+<span class="go">    Canonicalize natural loops</span>
+<span class="go">    Loop-Closed SSA Form Pass</span>
+<span class="go">    Basic Alias Analysis (stateless AA impl)</span>
+<span class="go">    Function Alias Analysis Results</span>
+<span class="go">    Scalar Evolution Analysis</span>
+<span class="go">    Loop Pass Manager</span>
+<span class="go">      Loop Invariant Code Motion</span>
 <span class="go">    Module Verifier</span>
-<span class="go">--  Dominator Set Construction</span>
-<span class="go">--  Module Verifier</span>
 <span class="go">  Bitcode Writer</span>
-<span class="go">--Bitcode Writer</span>
 </pre></div>
 </div>
-<p>This output shows us when passes are constructed and when the analysis results
-are known to be dead (prefixed with &#8220;<code class="docutils literal"><span class="pre">--</span></code>&#8221;).  Here we see that GCSE uses
-dominator and immediate dominator information to do its job.  The LICM pass
-uses natural loop information, which uses dominator sets, but not immediate
-dominators.  Because immediate dominators are no longer useful after the GCSE
-pass, it is immediately destroyed.  The dominator sets are then reused to
-compute natural loop information, which is then used by the LICM pass.</p>
+<p>This output shows us when passes are constructed.
+Here we see that GVN uses dominator tree information to do its job.  The LICM pass
+uses natural loop information, which uses dominator tree as well.</p>
 <p>After the LICM pass, the module verifier runs (which is automatically added by
-the <strong class="program">opt</strong> tool), which uses the dominator set to check that the
-resultant LLVM code is well formed.  After it finishes, the dominator set
-information is destroyed, after being computed once, and shared by three
-passes.</p>
+the <strong class="program">opt</strong> tool), which uses the dominator tree to check that the
+resultant LLVM code is well formed. Note that the dominator tree is computed
+once, and shared by three passes.</p>
 <p>Lets see how this changes when we run the <a class="reference internal" href="#writing-an-llvm-pass-basiccode"><span>Hello World</span></a> pass in between the two passes:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load ../../../Debug+Asserts/lib/Hello.so -gcse -hello -licm --debug-pass<span class="o">=</span>Structure &lt; hello.bc &gt; /dev/null
-<span class="go">Module Pass Manager</span>
-<span class="go">  Function Pass Manager</span>
-<span class="go">    Dominator Set Construction</span>
-<span class="go">    Immediate Dominators Construction</span>
-<span class="go">    Global Common Subexpression Elimination</span>
-<span class="go">--  Dominator Set Construction</span>
-<span class="go">--  Immediate Dominators Construction</span>
-<span class="go">--  Global Common Subexpression Elimination</span>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load lib/LLVMHello.so -gvn -hello -licm --debug-pass<span class="o">=</span>Structure &lt; hello.bc &gt; /dev/null
+<span class="go">ModulePass Manager</span>
+<span class="go">  FunctionPass Manager</span>
+<span class="go">    Dominator Tree Construction</span>
+<span class="go">    Basic Alias Analysis (stateless AA impl)</span>
+<span class="go">    Function Alias Analysis Results</span>
+<span class="go">    Memory Dependence Analysis</span>
+<span class="go">    Global Value Numbering</span>
 <span class="go">    Hello World Pass</span>
-<span class="go">--  Hello World Pass</span>
-<span class="go">    Dominator Set Construction</span>
-<span class="go">    Natural Loop Construction</span>
-<span class="go">    Loop Invariant Code Motion</span>
-<span class="go">--  Natural Loop Construction</span>
-<span class="go">--  Loop Invariant Code Motion</span>
+<span class="go">    Dominator Tree Construction</span>
+<span class="go">    Natural Loop Information</span>
+<span class="go">    Canonicalize natural loops</span>
+<span class="go">    Loop-Closed SSA Form Pass</span>
+<span class="go">    Basic Alias Analysis (stateless AA impl)</span>
+<span class="go">    Function Alias Analysis Results</span>
+<span class="go">    Scalar Evolution Analysis</span>
+<span class="go">    Loop Pass Manager</span>
+<span class="go">      Loop Invariant Code Motion</span>
 <span class="go">    Module Verifier</span>
-<span class="go">--  Dominator Set Construction</span>
-<span class="go">--  Module Verifier</span>
 <span class="go">  Bitcode Writer</span>
-<span class="go">--Bitcode Writer</span>
 <span class="go">Hello: __main</span>
 <span class="go">Hello: puts</span>
 <span class="go">Hello: main</span>
 </pre></div>
 </div>
 <p>Here we see that the <a class="reference internal" href="#writing-an-llvm-pass-basiccode"><span>Hello World</span></a> pass
-has killed the Dominator Set pass, even though it doesn&#8217;t modify the code at
+has killed the Dominator Tree pass, even though it doesn&#8217;t modify the code at
 all!  To fix this, we need to add the following <a class="reference internal" href="#writing-an-llvm-pass-getanalysisusage"><span>getAnalysisUsage</span></a> method to our pass:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="c1">// We don&#39;t modify the program, so we preserve all analyses</span>
 <span class="kt">void</span> <span class="nf">getAnalysisUsage</span><span class="p">(</span><span class="n">AnalysisUsage</span> <span class="o">&amp;</span><span class="n">AU</span><span class="p">)</span> <span class="k">const</span> <span class="k">override</span> <span class="p">{</span>
@@ -1072,26 +1071,26 @@ all!  To fix this, we need to add the following <a class="reference internal" hr
 </pre></div>
 </div>
 <p>Now when we run our pass, we get this output:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load ../../../Debug+Asserts/lib/Hello.so -gcse -hello -licm --debug-pass<span class="o">=</span>Structure &lt; hello.bc &gt; /dev/null
-<span class="go">Pass Arguments:  -gcse -hello -licm</span>
-<span class="go">Module Pass Manager</span>
-<span class="go">  Function Pass Manager</span>
-<span class="go">    Dominator Set Construction</span>
-<span class="go">    Immediate Dominators Construction</span>
-<span class="go">    Global Common Subexpression Elimination</span>
-<span class="go">--  Immediate Dominators Construction</span>
-<span class="go">--  Global Common Subexpression Elimination</span>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -load lib/LLVMHello.so -gvn -hello -licm --debug-pass<span class="o">=</span>Structure &lt; hello.bc &gt; /dev/null
+<span class="go">Pass Arguments:  -gvn -hello -licm</span>
+<span class="go">ModulePass Manager</span>
+<span class="go">  FunctionPass Manager</span>
+<span class="go">    Dominator Tree Construction</span>
+<span class="go">    Basic Alias Analysis (stateless AA impl)</span>
+<span class="go">    Function Alias Analysis Results</span>
+<span class="go">    Memory Dependence Analysis</span>
+<span class="go">    Global Value Numbering</span>
 <span class="go">    Hello World Pass</span>
-<span class="go">--  Hello World Pass</span>
-<span class="go">    Natural Loop Construction</span>
-<span class="go">    Loop Invariant Code Motion</span>
-<span class="go">--  Loop Invariant Code Motion</span>
-<span class="go">--  Natural Loop Construction</span>
+<span class="go">    Natural Loop Information</span>
+<span class="go">    Canonicalize natural loops</span>
+<span class="go">    Loop-Closed SSA Form Pass</span>
+<span class="go">    Basic Alias Analysis (stateless AA impl)</span>
+<span class="go">    Function Alias Analysis Results</span>
+<span class="go">    Scalar Evolution Analysis</span>
+<span class="go">    Loop Pass Manager</span>
+<span class="go">      Loop Invariant Code Motion</span>
 <span class="go">    Module Verifier</span>
-<span class="go">--  Dominator Set Construction</span>
-<span class="go">--  Module Verifier</span>
 <span class="go">  Bitcode Writer</span>
-<span class="go">--Bitcode Writer</span>
 <span class="go">Hello: __main</span>
 <span class="go">Hello: puts</span>
 <span class="go">Hello: main</span>
@@ -1147,7 +1146,7 @@ passes.  Here we will describe how to <em>register</em> a register allocator mac
 pass.</p>
 <p>Implement your register allocator machine pass.  In your register allocator
 <code class="docutils literal"><span class="pre">.cpp</span></code> file add the following include:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;llvm/CodeGen/RegAllocRegistry.h&quot;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&quot;llvm/CodeGen/RegAllocRegistry.h&quot;</span><span class="cp"></span>
 </pre></div>
 </div>
 <p>Also in your register allocator <code class="docutils literal"><span class="pre">.cpp</span></code> file, define a creator function in the
@@ -1238,7 +1237,7 @@ time to load.  Be patient.  Since we cannot set a breakpoint in our pass yet
 and have it stop before it invokes our pass, but after it has loaded the shared
 object.  The most foolproof way of doing this is to set a breakpoint in
 <code class="docutils literal"><span class="pre">PassManager::run</span></code> and then run the process with the arguments you want:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="o">(</span>gdb<span class="o">)</span> <span class="nb">break </span>llvm::PassManager::run
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="o">(</span>gdb<span class="o">)</span> <span class="nb">break</span> llvm::PassManager::run
 <span class="go">Breakpoint 1 at 0x2413bc: file Pass.cpp, line 70.</span>
 <span class="go">(gdb) run test.bc -load $(LLVMTOP)/llvm/Debug+Asserts/lib/[libname].so -[passoption]</span>
 <span class="go">Starting program: opt test.bc -load $(LLVMTOP)/llvm/Debug+Asserts/lib/[libname].so -[passoption]</span>
@@ -1263,7 +1262,7 @@ capability.  The only solution I know of is to de-inline a function (move it
 from the body of a class to a <code class="docutils literal"><span class="pre">.cpp</span></code> file).</li>
 <li>Restarting the program breaks breakpoints.  After following the information
 above, you have succeeded in getting some breakpoints planted in your pass.
-Nex thing you know, you restart the program (i.e., you type &#8220;<code class="docutils literal"><span class="pre">run</span></code>&#8221; again),
+Next thing you know, you restart the program (i.e., you type &#8220;<code class="docutils literal"><span class="pre">run</span></code>&#8221; again),
 and you start getting errors about breakpoints being unsettable.  The only
 way I have found to &#8220;fix&#8221; this problem is to delete the breakpoints that are
 already set in your pass, run the program, and re-set the breakpoints once
@@ -1320,9 +1319,9 @@ Despite that, we have kept the LLVM passes SMP ready, and you should too.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

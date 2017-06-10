@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>TableGen Language Introduction &mdash; LLVM 3.7 documentation</title>
+    <title>TableGen Language Introduction &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="../index.html" />
     <link rel="up" title="TableGen" href="index.html" />
     <link rel="next" title="TableGen Deficiencies" href="Deficiencies.html" />
     <link rel="prev" title="TableGen Language Reference" href="LangRef.html" />
@@ -169,8 +169,6 @@ supported include:</p>
 <dd>binary integer value.
 Note that this is sized by the number of bits given and will not be
 silently extended/truncated.</dd>
-<dt><code class="docutils literal"><span class="pre">07654321</span></code></dt>
-<dd>octal integer value (indicated by a leading 0)</dd>
 <dt><code class="docutils literal"><span class="pre">7</span></code></dt>
 <dd>decimal integer value</dd>
 <dt><code class="docutils literal"><span class="pre">0x7F</span></code></dt>
@@ -275,7 +273,7 @@ colon character (&#8220;<code class="docutils literal"><span class="pre">:</span
 needed for the class, they are enclosed in curly braces (&#8220;<code class="docutils literal"><span class="pre">{}</span></code>&#8221;); otherwise,
 the record ends with a semicolon.</p>
 <p>Here is a simple TableGen file:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>class C { bit V = 1; }
+<div class="highlight-text"><div class="highlight"><pre>class C { bit V = 1; }
 def X : C;
 def Y : C {
   string Greeting = &quot;hello&quot;;
@@ -306,7 +304,7 @@ derived class or definition wants to override.  Let expressions consist of the
 &#8216;<code class="docutils literal"><span class="pre">let</span></code>&#8216; keyword followed by a value name, an equal sign (&#8220;<code class="docutils literal"><span class="pre">=</span></code>&#8221;), and a new
 value.  For example, a new class could be added to the example above, redefining
 the <code class="docutils literal"><span class="pre">V</span></code> field for all of its subclasses:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>class D : C { let V = 0; }
+<div class="highlight-text"><div class="highlight"><pre>class D : C { let V = 0; }
 def Z : D;
 </pre></div>
 </div>
@@ -320,7 +318,7 @@ despite the fact that it derives (indirectly) from the <code class="docutils lit
 concrete classes.  Parameterized TableGen classes specify a list of variable
 bindings (which may optionally have defaults) that are bound when used.  Here is
 a simple example:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>class FPFormat&lt;bits&lt;3&gt; val&gt; {
+<div class="highlight-text"><div class="highlight"><pre>class FPFormat&lt;bits&lt;3&gt; val&gt; {
   bits&lt;3&gt; Value = val;
 }
 def NotFP      : FPFormat&lt;0&gt;;
@@ -338,7 +336,7 @@ list of &#8220;enumeration values&#8221;, each with a &#8220;<code class="docuti
 integer.</p>
 <p>The more esoteric forms of <a class="reference internal" href="#tablegen-expressions">TableGen expressions</a> are useful in conjunction
 with template arguments.  As an example:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>class ModRefVal&lt;bits&lt;2&gt; val&gt; {
+<div class="highlight-text"><div class="highlight"><pre>class ModRefVal&lt;bits&lt;2&gt; val&gt; {
   bits&lt;2&gt; Value = val;
 }
 
@@ -366,7 +364,7 @@ def hork : Value&lt;ModRef&gt;;
 be used to decouple the interface provided to the user of the class from the
 actual internal data representation expected by the class.  In this case,
 running <code class="docutils literal"><span class="pre">llvm-tblgen</span></code> on the example prints the following definitions:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>def bork {      // Value
+<div class="highlight-text"><div class="highlight"><pre>def bork {      // Value
   bit isMod = 1;
   bit isRef = 0;
 }
@@ -395,7 +393,7 @@ come in two forms: &#8220;<code class="docutils literal"><span class="pre">reg</
 (e.g. SPARC). In this case, you&#8217;d like to specify in one place that this
 commonality exists, then in a separate place indicate what all the ops are.</p>
 <p>Here is an example TableGen fragment that shows this idea:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>def ops;
+<div class="highlight-text"><div class="highlight"><pre>def ops;
 def GPR;
 def Imm;
 class inst&lt;int opc, string asmstr, dag operandlist&gt;;
@@ -419,7 +417,7 @@ to them, so this defines <code class="docutils literal"><span class="pre">ADD_rr
 inherit from multiple multiclasses, instantiating definitions from each
 multiclass.  Using a multiclass this way is exactly equivalent to instantiating
 the classes multiple times yourself, e.g. by writing:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>def ops;
+<div class="highlight-text"><div class="highlight"><pre>def ops;
 def GPR;
 def Imm;
 class inst&lt;int opc, string asmstr, dag operandlist&gt;;
@@ -444,7 +442,7 @@ def MUL_ri : riinst&lt;0b100, &quot;mul&quot;&gt;;
 </div>
 <p>A <code class="docutils literal"><span class="pre">defm</span></code> can also be used inside a multiclass providing several levels of
 multiclass instantiations.</p>
-<div class="highlight-llvm"><div class="highlight"><pre>class Instruction&lt;bits&lt;4&gt; opc, string Name&gt; {
+<div class="highlight-text"><div class="highlight"><pre>class Instruction&lt;bits&lt;4&gt; opc, string Name&gt; {
   bits&lt;4&gt; opcode = opc;
   string name = Name;
 }
@@ -483,7 +481,7 @@ def ADDX { ...
 <p><code class="docutils literal"><span class="pre">defm</span></code> declarations can inherit from classes too, the rule to follow is that
 the class list must start after the last multiclass, and there must be at least
 one multiclass before them.</p>
-<div class="highlight-llvm"><div class="highlight"><pre>class XD { bits&lt;4&gt; Prefix = 11; }
+<div class="highlight-text"><div class="highlight"><pre>class XD { bits&lt;4&gt; Prefix = 11; }
 class XS { bits&lt;4&gt; Prefix = 12; }
 
 class I&lt;bits&lt;4&gt; op&gt; {
@@ -524,7 +522,7 @@ def InstrSSrr {
 specified file in place of the include directive.  The filename should be
 specified as a double quoted string immediately after the &#8216;<code class="docutils literal"><span class="pre">include</span></code>&#8216; keyword.
 Example:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>include &quot;foo.td&quot;
+<div class="highlight-text"><div class="highlight"><pre>include &quot;foo.td&quot;
 </pre></div>
 </div>
 </div>
@@ -537,7 +535,7 @@ really just another way that TableGen allows the end-user to factor out
 commonality from the records.</p>
 <p>File-scope &#8220;let&#8221; expressions take a comma-separated list of bindings to apply,
 and one or more records to bind the values in.  Here are some examples:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>let isTerminator = 1, isReturn = 1, isBarrier = 1, hasCtrlDep = 1 in
+<div class="highlight-text"><div class="highlight"><pre>let isTerminator = 1, isReturn = 1, isBarrier = 1, hasCtrlDep = 1 in
   def RET : I&lt;0xC3, RawFrm, (outs), (ins), &quot;ret&quot;, [(X86retflag 0)]&gt;;
 
 let isCall = 1 in
@@ -561,7 +559,7 @@ opened, as in the case with the <code class="docutils literal"><span class="pre"
 ways to factor out commonality from the records, specially if using several
 levels of multiclass instantiations. This also avoids the need of using &#8220;let&#8221;
 expressions within subsequent records inside a multiclass.</p>
-<div class="highlight-llvm"><div class="highlight"><pre>multiclass basic_r&lt;bits&lt;4&gt; opc&gt; {
+<div class="highlight-text"><div class="highlight"><pre>multiclass basic_r&lt;bits&lt;4&gt; opc&gt; {
   let Predicates = [HasSSE2] in {
     def rr : Instruction&lt;opc, &quot;rr&quot;&gt;;
     def rm : Instruction&lt;opc, &quot;rm&quot;&gt;;
@@ -587,7 +585,7 @@ defm ADD : basic_ss&lt;0xf&gt;;
 <p>TableGen supports the &#8216;<code class="docutils literal"><span class="pre">foreach</span></code>&#8216; block, which textually replicates the loop
 body, substituting iterator values for iterator references in the body.
 Example:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>foreach i = [0, 1, 2, 3] in {
+<div class="highlight-text"><div class="highlight"><pre>foreach i = [0, 1, 2, 3] in {
   def R#i : Register&lt;...&gt;;
   def F#i : Register&lt;...&gt;;
 }
@@ -596,7 +594,7 @@ Example:</p>
 <p>This will create objects <code class="docutils literal"><span class="pre">R0</span></code>, <code class="docutils literal"><span class="pre">R1</span></code>, <code class="docutils literal"><span class="pre">R2</span></code> and <code class="docutils literal"><span class="pre">R3</span></code>.  <code class="docutils literal"><span class="pre">foreach</span></code> blocks
 may be nested. If there is only one item in the body the braces may be
 elided:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>foreach i = [0, 1, 2, 3] in
+<div class="highlight-text"><div class="highlight"><pre>foreach i = [0, 1, 2, 3] in
   def R#i : Register&lt;...&gt;;
 </pre></div>
 </div>
@@ -639,9 +637,9 @@ physical register definitions.</dd>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

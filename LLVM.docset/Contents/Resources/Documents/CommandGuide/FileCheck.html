@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>FileCheck - Flexible pattern matching file verifier &mdash; LLVM 3.7 documentation</title>
+    <title>FileCheck - Flexible pattern matching file verifier &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="../index.html" />
     <link rel="up" title="LLVM Command Guide" href="index.html" />
     <link rel="next" title="tblgen - Target Description To C++ Code Generator" href="tblgen.html" />
     <link rel="prev" title="llvm-bcanalyzer - LLVM bitcode analyzer" href="llvm-bcanalyzer.html" />
@@ -105,9 +105,29 @@ change for different run options, but most lines remain the same.</p>
 </dd></dl>
 
 <dl class="option">
+<dt id="cmdoption--check-prefixes">
+<code class="descname">--check-prefixes</code><code class="descclassname"> prefix1,prefix2,...</code><a class="headerlink" href="#cmdoption--check-prefixes" title="Permalink to this definition">¶</a></dt>
+<dd><p>An alias of <a class="reference internal" href="#cmdoption--check-prefix"><code class="xref std std-option docutils literal"><span class="pre">--check-prefix</span></code></a> that allows multiple prefixes to be
+specified as a comma separated list.</p>
+</dd></dl>
+
+<dl class="option">
 <dt id="cmdoption--input-file">
 <code class="descname">--input-file</code><code class="descclassname"> filename</code><a class="headerlink" href="#cmdoption--input-file" title="Permalink to this definition">¶</a></dt>
 <dd><p>File to check (defaults to stdin).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--match-full-lines">
+<code class="descname">--match-full-lines</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--match-full-lines" title="Permalink to this definition">¶</a></dt>
+<dd><p>By default, FileCheck allows matches of anywhere on a line. This
+option will require all positive matches to cover an entire
+line. Leading and trailing whitespace is ignored, unless
+<a class="reference internal" href="#cmdoption--strict-whitespace"><code class="xref std std-option docutils literal"><span class="pre">--strict-whitespace</span></code></a> is also specified. (Note: negative
+matches from <code class="docutils literal"><span class="pre">CHECK-NOT</span></code> are not affected by this option!)</p>
+<p>Passing this option is equivalent to inserting <code class="docutils literal"><span class="pre">{{^</span> <span class="pre">*}}</span></code> or
+<code class="docutils literal"><span class="pre">{{^}}</span></code> before, and <code class="docutils literal"><span class="pre">{{</span> <span class="pre">*$}}</span></code> or <code class="docutils literal"><span class="pre">{{$}}</span></code> after every positive
+check pattern.</p>
 </dd></dl>
 
 <dl class="option">
@@ -162,7 +182,7 @@ against the filename argument specified (the original <code class="docutils lite
 <span class="nl">entry:</span>
 <span class="c">; CHECK: sub1:</span>
 <span class="c">; CHECK: subl</span>
-        <span class="nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">tail</span> <span class="k">call</span> <span class="k">i32</span> <span class="vg">@llvm.atomic.load.sub.i32.p0i32</span><span class="p">(</span><span class="k">i32</span><span class="p">*</span> <span class="nv">%p</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%v</span><span class="p">)</span>
+        <span class="nv nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">tail</span> <span class="k">call</span> <span class="k">i32</span> <span class="vg">@llvm.atomic.load.sub.i32.p0i32</span><span class="p">(</span><span class="k">i32</span><span class="p">*</span> <span class="nv">%p</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%v</span><span class="p">)</span>
         <span class="k">ret</span> <span class="kt">void</span>
 <span class="p">}</span>
 
@@ -170,7 +190,7 @@ against the filename argument specified (the original <code class="docutils lite
 <span class="nl">entry:</span>
 <span class="c">; CHECK: inc4:</span>
 <span class="c">; CHECK: incq</span>
-        <span class="nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">tail</span> <span class="k">call</span> <span class="k">i64</span> <span class="vg">@llvm.atomic.load.add.i64.p0i64</span><span class="p">(</span><span class="k">i64</span><span class="p">*</span> <span class="nv">%p</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span><span class="p">)</span>
+        <span class="nv nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">tail</span> <span class="k">call</span> <span class="k">i64</span> <span class="vg">@llvm.atomic.load.add.i64.p0i64</span><span class="p">(</span><span class="k">i64</span><span class="p">*</span> <span class="nv">%p</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span><span class="p">)</span>
         <span class="k">ret</span> <span class="kt">void</span>
 <span class="p">}</span>
 </pre></div>
@@ -191,7 +211,7 @@ else in the file, that would not count: &#8220;<code class="docutils literal"><s
 exists anywhere in the file.</p>
 <div class="section" id="the-filecheck-check-prefix-option">
 <h3>The FileCheck -check-prefix option<a class="headerlink" href="#the-filecheck-check-prefix-option" title="Permalink to this headline">¶</a></h3>
-<p>The FileCheck <code class="xref std std-option docutils literal"><span class="pre">-check-prefix</span></code> option allows multiple test
+<p>The FileCheck <cite>-check-prefix</cite> option allows multiple test
 configurations to be driven from one <cite>.ll</cite> file.  This is useful in many
 circumstances, for example, testing different architectural variants with
 <strong class="program">llc</strong>.  Here&#8217;s a simple example:</p>
@@ -253,7 +273,7 @@ check prefix, just use &#8220;<code class="docutils literal"><span class="pre">&
 <p>&#8220;<code class="docutils literal"><span class="pre">CHECK-SAME:</span></code>&#8221; is particularly powerful in conjunction with &#8220;<code class="docutils literal"><span class="pre">CHECK-NOT:</span></code>&#8221;
 (described below).</p>
 <p>For example, the following works like you&#8217;d expect:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="nv-Anonymous">!0</span> <span class="p">=</span> <span class="nv">!DILocation</span><span class="p">(</span><span class="nl">line:</span> <span class="m">5</span><span class="p">,</span> <span class="nl">scope:</span> <span class="nv-Anonymous">!1</span><span class="p">,</span> <span class="nl">inlinedAt:</span> <span class="nv-Anonymous">!2</span><span class="p">)</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span class="nv nv-Anonymous">!0</span> <span class="p">=</span> <span class="nv">!DILocation</span><span class="p">(</span><span class="nl">line:</span> <span class="m">5</span><span class="p">,</span> <span class="nl">scope:</span> <span class="nv nv-Anonymous">!1</span><span class="p">,</span> <span class="nl">inlinedAt:</span> <span class="nv nv-Anonymous">!2</span><span class="p">)</span>
 
 <span class="c">; CHECK:       !DILocation(line: 5,</span>
 <span class="c">; CHECK-NOT:               column:</span>
@@ -327,14 +347,14 @@ sequences from the instruction scheduler. For example,</p>
 <p>If you are defining <cite>and</cite> using variables in the same <code class="docutils literal"><span class="pre">CHECK-DAG:</span></code> block,
 be aware that the definition rule can match <cite>after</cite> its use.</p>
 <p>So, for instance, the code below will pass:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>; CHECK-DAG: vmov.32 [[REG2:d[0-9]+]][0]
+<div class="highlight-text"><div class="highlight"><pre>; CHECK-DAG: vmov.32 [[REG2:d[0-9]+]][0]
 ; CHECK-DAG: vmov.32 [[REG2]][1]
 vmov.32 d0[1]
 vmov.32 d0[0]
 </pre></div>
 </div>
 <p>While this other code, will not:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>; CHECK-DAG: vmov.32 [[REG2:d[0-9]+]][0]
+<div class="highlight-text"><div class="highlight"><pre>; CHECK-DAG: vmov.32 [[REG2:d[0-9]+]][0]
 ; CHECK-DAG: vmov.32 [[REG2]][1]
 vmov.32 d1[1]
 vmov.32 d0[0]
@@ -369,10 +389,10 @@ For example,</p>
 <span class="c">; CHECK: mov [[SAVETHIS:r[0-9]+]], r0</span>
 <span class="c">; CHECK: bl A_ctor_base</span>
 <span class="c">; CHECK: mov r0, [[SAVETHIS]]</span>
-  <span class="nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">bitcast</span> <span class="nv">%struct.C</span><span class="p">*</span> <span class="nv">%this</span> <span class="k">to</span> <span class="nv">%struct.A</span><span class="p">*</span>
-  <span class="nv">%call</span> <span class="p">=</span> <span class="k">tail</span> <span class="k">call</span> <span class="nv">%struct.A</span><span class="p">*</span> <span class="vg">@A_ctor_base</span><span class="p">(</span><span class="nv">%struct.A</span><span class="p">*</span> <span class="nv-Anonymous">%0</span><span class="p">)</span>
-  <span class="nv-Anonymous">%1</span> <span class="p">=</span> <span class="k">bitcast</span> <span class="nv">%struct.C</span><span class="p">*</span> <span class="nv">%this</span> <span class="k">to</span> <span class="nv">%struct.B</span><span class="p">*</span>
-  <span class="nv">%call2</span> <span class="p">=</span> <span class="k">tail</span> <span class="k">call</span> <span class="nv">%struct.B</span><span class="p">*</span> <span class="vg">@B_ctor_base</span><span class="p">(</span><span class="nv">%struct.B</span><span class="p">*</span> <span class="nv-Anonymous">%1</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%x</span><span class="p">)</span>
+  <span class="nv nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">bitcast</span> <span class="nv">%struct.C</span><span class="p">*</span> <span class="nv">%this</span> <span class="k">to</span> <span class="nv">%struct.A</span><span class="p">*</span>
+  <span class="nv">%call</span> <span class="p">=</span> <span class="k">tail</span> <span class="k">call</span> <span class="nv">%struct.A</span><span class="p">*</span> <span class="vg">@A_ctor_base</span><span class="p">(</span><span class="nv">%struct.A</span><span class="p">*</span> <span class="nv nv-Anonymous">%0</span><span class="p">)</span>
+  <span class="nv nv-Anonymous">%1</span> <span class="p">=</span> <span class="k">bitcast</span> <span class="nv">%struct.C</span><span class="p">*</span> <span class="nv">%this</span> <span class="k">to</span> <span class="nv">%struct.B</span><span class="p">*</span>
+  <span class="nv">%call2</span> <span class="p">=</span> <span class="k">tail</span> <span class="k">call</span> <span class="nv">%struct.B</span><span class="p">*</span> <span class="vg">@B_ctor_base</span><span class="p">(</span><span class="nv">%struct.B</span><span class="p">*</span> <span class="nv nv-Anonymous">%1</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%x</span><span class="p">)</span>
   <span class="k">ret</span> <span class="nv">%struct.C</span><span class="p">*</span> <span class="nv">%this</span>
 <span class="p">}</span>
 
@@ -461,6 +481,21 @@ relative line number references, for example:</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="matching-newline-characters">
+<h3>Matching Newline Characters<a class="headerlink" href="#matching-newline-characters" title="Permalink to this headline">¶</a></h3>
+<p>To match newline characters in regular expressions the character class
+<code class="docutils literal"><span class="pre">[[:space:]]</span></code> can be used. For example, the following pattern:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="c1">// CHECK: DW_AT_location [DW_FORM_sec_offset] ([[DLOC:0x[0-9a-f]+]]){{[[:space:]].*}}&quot;intd&quot;</span>
+</pre></div>
+</div>
+<p>matches output of the form (from llvm-dwarfdump):</p>
+<div class="highlight-text"><div class="highlight"><pre>DW_AT_location [DW_FORM_sec_offset]   (0x00000233)
+DW_AT_name [DW_FORM_strp]  ( .debug_str[0x000000c9] = &quot;intd&quot;)
+</pre></div>
+</div>
+<p>letting us set the <strong class="program">FileCheck</strong> variable <code class="docutils literal"><span class="pre">DLOC</span></code> to the desired value
+<code class="docutils literal"><span class="pre">0x00000233</span></code>, extracted from the line immediately preceding &#8220;<code class="docutils literal"><span class="pre">intd</span></code>&#8221;.</p>
+</div>
 </div>
 </div>
 
@@ -488,9 +523,9 @@ relative line number references, for example:</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

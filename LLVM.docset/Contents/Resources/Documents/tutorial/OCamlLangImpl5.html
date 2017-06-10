@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>5. Kaleidoscope: Extending the Language: Control Flow &mdash; LLVM 3.7 documentation</title>
+    <title>5. Kaleidoscope: Extending the Language: Control Flow &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="../index.html" />
     <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
     <link rel="next" title="6. Kaleidoscope: Extending the Language: User-defined Operators" href="OCamlLangImpl6.html" />
     <link rel="prev" title="4. Kaleidoscope: Adding JIT and Optimizer Support" href="OCamlLangImpl4.html" />
@@ -233,11 +233,11 @@ Kaleidoscope looks like this:</p>
 </div>
 <p>To visualize the control flow graph, you can use a nifty feature of the
 LLVM &#8216;<a class="reference external" href="http://llvm.org/cmds/opt.html">opt</a>&#8216; tool. If you put this LLVM
-IR into &#8220;t.ll&#8221; and run &#8220;<code class="docutils literal"><span class="pre">llvm-as</span> <span class="pre">&lt;</span> <span class="pre">t.ll</span> <span class="pre">|</span> <span class="pre">opt</span> <span class="pre">-analyze</span> <span class="pre">-view-cfg</span></code>&#8221;, <a class="reference external" href="../ProgrammersManual.html#ViewGraph">a
+IR into &#8220;t.ll&#8221; and run &#8220;<code class="docutils literal"><span class="pre">llvm-as</span> <span class="pre">&lt;</span> <span class="pre">t.ll</span> <span class="pre">|</span> <span class="pre">opt</span> <span class="pre">-analyze</span> <span class="pre">-view-cfg</span></code>&#8221;, <a class="reference external" href="../ProgrammersManual.html#viewing-graphs-while-debugging-code">a
 window will pop up</a> and you&#8217;ll
 see this graph:</p>
 <div class="figure align-center" id="id1">
-<img alt="Example CFG" src="../_images/LangImpl5-cfg.png" />
+<img alt="Example CFG" src="../_images/LangImpl05-cfg.png" />
 <p class="caption"><span class="caption-text">Example CFG</span></p>
 </div>
 <p>Another way to get this is to call
@@ -693,9 +693,9 @@ operators</a> to our poor innocent language.</p>
 <h2><a class="toc-backref" href="#id15">5.4. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="Permalink to this headline">¶</a></h2>
 <p>Here is the complete code listing for our running example, enhanced with
 the if/then/else and for expressions.. To build this example, use:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="c"># Compile</span>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c1"># Compile</span>
 ocamlbuild toy.byte
-<span class="c"># Run</span>
+<span class="c1"># Run</span>
 ./toy.byte
 </pre></div>
 </div>
@@ -1344,7 +1344,7 @@ ocamlbuild toy.byte
 </div>
 </dd>
 <dt>bindings.c</dt>
-<dd><div class="first last highlight-c"><div class="highlight"><pre><span class="cp">#include &lt;stdio.h&gt;</span>
+<dd><div class="first last highlight-c"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
 
 <span class="cm">/* putchard - putchar that takes a double and returns 0. */</span>
 <span class="k">extern</span> <span class="kt">double</span> <span class="nf">putchard</span><span class="p">(</span><span class="kt">double</span> <span class="n">X</span><span class="p">)</span> <span class="p">{</span>
@@ -1384,9 +1384,9 @@ operators</a></p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

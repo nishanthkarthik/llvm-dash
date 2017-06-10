@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>How To Validate a New Release &mdash; LLVM 3.7 documentation</title>
+    <title>How To Validate a New Release &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
-    <link rel="next" title="Code Reviews with Phabricator" href="Phabricator.html" />
+    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="next" title="Moving LLVM Projects to GitHub" href="Proposals/GitHubMove.html" />
     <link rel="prev" title="Advice on Packaging LLVM" href="Packaging.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
@@ -47,7 +47,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="Phabricator.html" title="Code Reviews with Phabricator"
+          <a href="Proposals/GitHubMove.html" title="Moving LLVM Projects to GitHub"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="Packaging.html" title="Advice on Packaging LLVM"
@@ -110,7 +110,7 @@ taken more lightly than correctness.</li>
 <div class="section" id="test-release-sh">
 <h3>test-release.sh<a class="headerlink" href="#test-release-sh" title="Permalink to this headline">¶</a></h3>
 <p>This script will check-out, configure and compile LLVM+Clang (+ most add-ons, like <code class="docutils literal"><span class="pre">compiler-rt</span></code>,
-<code class="docutils literal"><span class="pre">libcxx</span></code> and <code class="docutils literal"><span class="pre">clang-extra-tools</span></code>) in three stages, and will test the final stage.
+<code class="docutils literal"><span class="pre">libcxx</span></code>, <code class="docutils literal"><span class="pre">libomp</span></code> and <code class="docutils literal"><span class="pre">clang-extra-tools</span></code>) in three stages, and will test the final stage.
 It&#8217;ll have installed the final binaries on the Phase3/Releasei(+Asserts) directory, and
 that&#8217;s the one you should use for the test-suite and other external tests.</p>
 <p>To run the script on a specific release candidate run:</p>
@@ -236,7 +236,7 @@ releasing an unstable (but untested) binary package.</li>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="Phabricator.html" title="Code Reviews with Phabricator"
+          <a href="Proposals/GitHubMove.html" title="Moving LLVM Projects to GitHub"
              >next</a> |</li>
         <li class="right" >
           <a href="Packaging.html" title="Advice on Packaging LLVM"
@@ -247,9 +247,9 @@ releasing an unstable (but untested) binary package.</li>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

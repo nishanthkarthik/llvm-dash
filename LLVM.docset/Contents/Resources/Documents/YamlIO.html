@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>YAML I/O &mdash; LLVM 3.7 documentation</title>
+    <title>YAML I/O &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="index.html" />
     <link rel="next" title="The Often Misunderstood GEP Instruction" href="GetElementPtr.html" />
     <link rel="prev" title="LLVM’s Analysis and Transform Passes" href="Passes.html" />
 <style type="text/css">
@@ -109,32 +109,32 @@ yaml is just &#8220;scalars&#8221;, &#8220;mappings&#8221;, and &#8220;sequences
 or string.  The pound/hash symbol (#) begins a comment line.   A mapping is
 a set of key-value pairs where the key ends with a colon.  For example:</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># a mapping</span>
-<span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Tom</span>
-<span class="l-Scalar-Plain">hat-size</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">7</span>
+<span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+<span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">7</span>
 </pre></div>
 </div>
 <p>A sequence is a list of items where each item starts with a leading dash (&#8216;-&#8216;).
 For example:</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># a sequence</span>
-<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">x86</span>
-<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">x86_64</span>
-<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">PowerPC</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">x86</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">x86_64</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">PowerPC</span>
 </pre></div>
 </div>
 <p>You can combine mappings and sequences by indenting.  For example a sequence
 of mappings in which one of the mapping values is itself a sequence:</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># a sequence of mappings with one key&#39;s value being a sequence</span>
-<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Tom</span>
-  <span class="l-Scalar-Plain">cpus</span><span class="p-Indicator">:</span>
-   <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">x86</span>
-   <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">x86_64</span>
-<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Bob</span>
-  <span class="l-Scalar-Plain">cpus</span><span class="p-Indicator">:</span>
-   <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">x86</span>
-<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Dan</span>
-  <span class="l-Scalar-Plain">cpus</span><span class="p-Indicator">:</span>
-   <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">PowerPC</span>
-   <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">x86</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+  <span class="l l-Scalar l-Scalar-Plain">cpus</span><span class="p p-Indicator">:</span>
+   <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">x86</span>
+   <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">x86_64</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Bob</span>
+  <span class="l l-Scalar l-Scalar-Plain">cpus</span><span class="p p-Indicator">:</span>
+   <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">x86</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Dan</span>
+  <span class="l l-Scalar l-Scalar-Plain">cpus</span><span class="p p-Indicator">:</span>
+   <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">PowerPC</span>
+   <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">x86</span>
 </pre></div>
 </div>
 <p>Sometime sequences are known to be short and the one entry per line is too
@@ -142,12 +142,12 @@ verbose, so YAML offers an alternate syntax for sequences called a &#8220;Flow
 Sequence&#8221; in which you put comma separated sequence elements into square
 brackets.  The above example could then be simplified to :</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># a sequence of mappings with one key&#39;s value being a flow sequence</span>
-<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Tom</span>
-  <span class="l-Scalar-Plain">cpus</span><span class="p-Indicator">:</span>      <span class="p-Indicator">[</span> <span class="nv">x86</span><span class="p-Indicator">,</span> <span class="nv">x86_64</span> <span class="p-Indicator">]</span>
-<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Bob</span>
-  <span class="l-Scalar-Plain">cpus</span><span class="p-Indicator">:</span>      <span class="p-Indicator">[</span> <span class="nv">x86</span> <span class="p-Indicator">]</span>
-<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Dan</span>
-  <span class="l-Scalar-Plain">cpus</span><span class="p-Indicator">:</span>      <span class="p-Indicator">[</span> <span class="nv">PowerPC</span><span class="p-Indicator">,</span> <span class="nv">x86</span> <span class="p-Indicator">]</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+  <span class="l l-Scalar l-Scalar-Plain">cpus</span><span class="p p-Indicator">:</span>      <span class="p p-Indicator">[</span> <span class="nv">x86</span><span class="p p-Indicator">,</span> <span class="nv">x86_64</span> <span class="p p-Indicator">]</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Bob</span>
+  <span class="l l-Scalar l-Scalar-Plain">cpus</span><span class="p p-Indicator">:</span>      <span class="p p-Indicator">[</span> <span class="nv">x86</span> <span class="p p-Indicator">]</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Dan</span>
+  <span class="l l-Scalar l-Scalar-Plain">cpus</span><span class="p p-Indicator">:</span>      <span class="p p-Indicator">[</span> <span class="nv">PowerPC</span><span class="p p-Indicator">,</span> <span class="nv">x86</span> <span class="p p-Indicator">]</span>
 </pre></div>
 </div>
 </div>
@@ -227,10 +227,10 @@ programmatically use YAML I/O to write a YAML document:</p>
 </pre></div>
 </div>
 <p>This would write the following:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Tom</span>
-  <span class="l-Scalar-Plain">hat-size</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">8</span>
-<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Dan</span>
-  <span class="l-Scalar-Plain">hat-size</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">7</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+  <span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">8</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Dan</span>
+  <span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">7</span>
 </pre></div>
 </div>
 <p>And you can also read such YAML documents with the following code:</p>
@@ -262,17 +262,17 @@ single file.  That is why reading YAML produces a vector of your document type.<
 expressed in your XxxTraits&lt;&gt; specializations).  YAML I/O
 will print out an error message and your Input object&#8217;s error() method will
 return true. For instance the following document:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Tom</span>
-  <span class="l-Scalar-Plain">shoe-size</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">12</span>
-<span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Dan</span>
-  <span class="l-Scalar-Plain">hat-size</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">7</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+  <span class="l l-Scalar l-Scalar-Plain">shoe-size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">12</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Dan</span>
+  <span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">7</span>
 </pre></div>
 </div>
 <p>Has a key (shoe-size) that is not defined in the schema.  YAML I/O will
 automatically generate this error:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">YAML:2:2</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">error</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">unknown key &#39;shoe-size&#39;</span>
-  <span class="l-Scalar-Plain">shoe-size</span><span class="p-Indicator">:</span>       <span class="l-Scalar-Plain">12</span>
-  <span class="l-Scalar-Plain">^~~~~~~~~</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">YAML:2:2</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">error</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">unknown key &#39;shoe-size&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">shoe-size</span><span class="p p-Indicator">:</span>       <span class="l l-Scalar l-Scalar-Plain">12</span>
+  <span class="l l-Scalar l-Scalar-Plain">^~~~~~~~~</span>
 </pre></div>
 </div>
 <p>Similar errors are produced for other input not conforming to the schema.</p>
@@ -436,8 +436,8 @@ bitset trait against the flags field, and each that matches will
 cause the corresponding string to be added to the flow sequence.  The opposite
 is done when reading and any unknown string values will result in a error. With
 the above schema, a same valid YAML document is:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>    <span class="l-Scalar-Plain">Tom</span>
-<span class="l-Scalar-Plain">flags</span><span class="p-Indicator">:</span>   <span class="p-Indicator">[</span> <span class="nv">pointy</span><span class="p-Indicator">,</span> <span class="nv">flat</span> <span class="p-Indicator">]</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>    <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+<span class="l l-Scalar l-Scalar-Plain">flags</span><span class="p p-Indicator">:</span>   <span class="p p-Indicator">[</span> <span class="nv">pointy</span><span class="p p-Indicator">,</span> <span class="nv">flat</span> <span class="p p-Indicator">]</span>
 </pre></div>
 </div>
 <p>Sometimes a &#8220;flags&#8221; field might contains an enumeration part
@@ -490,10 +490,11 @@ looks like:</p>
 
 <span class="k">template</span> <span class="o">&lt;&gt;</span>
 <span class="k">struct</span> <span class="n">ScalarTraits</span><span class="o">&lt;</span><span class="n">MyCustomType</span><span class="o">&gt;</span> <span class="p">{</span>
-  <span class="k">static</span> <span class="kt">void</span> <span class="n">output</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span><span class="p">,</span> <span class="n">llvm</span><span class="o">::</span><span class="n">raw_ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">static</span> <span class="kt">void</span> <span class="n">output</span><span class="p">(</span><span class="k">const</span> <span class="n">MyCustomType</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span><span class="p">,</span>
+                     <span class="n">llvm</span><span class="o">::</span><span class="n">raw_ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="n">value</span><span class="p">;</span>  <span class="c1">// do custom formatting here</span>
   <span class="p">}</span>
-  <span class="k">static</span> <span class="n">StringRef</span> <span class="n">input</span><span class="p">(</span><span class="n">StringRef</span> <span class="n">scalar</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span><span class="p">,</span> <span class="n">T</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">static</span> <span class="n">StringRef</span> <span class="n">input</span><span class="p">(</span><span class="n">StringRef</span> <span class="n">scalar</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span><span class="p">,</span> <span class="n">MyCustomType</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// do custom parsing here.  Return the empty string on success,</span>
     <span class="c1">// or an error message on failure.</span>
     <span class="k">return</span> <span class="n">StringRef</span><span class="p">();</span>
@@ -508,7 +509,7 @@ looks like:</p>
 <h3><a class="toc-backref" href="#id11">Block Scalars</a><a class="headerlink" href="#block-scalars" title="Permalink to this headline">¶</a></h3>
 <p>YAML block scalars are string literals that are represented in YAML using the
 literal block notation, just like the example shown below:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">text</span><span class="p-Indicator">:</span> <span class="p-Indicator">|</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">text</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
   <span class="no">First line</span>
   <span class="no">Second line</span>
 </pre></div>
@@ -613,8 +614,8 @@ Polar which specifies a position in polar coordinates (distance, angle):</p>
 </div>
 <p>but you&#8217;ve decided the normalized YAML for should be in x,y coordinates. That
 is, you want the yaml to look like:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">x</span><span class="p-Indicator">:</span>   <span class="l-Scalar-Plain">10.3</span>
-<span class="l-Scalar-Plain">y</span><span class="p-Indicator">:</span>   <span class="l-Scalar-Plain">-4.7</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">x</span><span class="p p-Indicator">:</span>   <span class="l l-Scalar l-Scalar-Plain">10.3</span>
+<span class="l l-Scalar l-Scalar-Plain">y</span><span class="p p-Indicator">:</span>   <span class="l l-Scalar l-Scalar-Plain">-4.7</span>
 </pre></div>
 </div>
 <p>You can support this by defining a MappingTraits that normalizes the polar
@@ -919,8 +920,8 @@ suppress the wrapping.</p>
 </div>
 <p>The above could produce output like:</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="nn">---</span>
-<span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Tom</span>
-<span class="l-Scalar-Plain">hat-size</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">7</span>
+<span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+<span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">7</span>
 <span class="nn">...</span>
 </pre></div>
 </div>
@@ -938,11 +939,11 @@ and ends with a &#8221;...&#8221;.</p>
 </div>
 <p>The above could produce output like:</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="nn">---</span>
-<span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Tom</span>
-<span class="l-Scalar-Plain">hat-size</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">7</span>
+<span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+<span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">7</span>
 <span class="nn">---</span>
-<span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>      <span class="l-Scalar-Plain">Tom</span>
-<span class="l-Scalar-Plain">shoe-size</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">11</span>
+<span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+<span class="l l-Scalar l-Scalar-Plain">shoe-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">11</span>
 <span class="nn">...</span>
 </pre></div>
 </div>
@@ -1021,9 +1022,9 @@ object.  For example:</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LLVM Extensions &mdash; LLVM 3.7 documentation</title>
+    <title>LLVM Extensions &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
-    <link rel="next" title="LibFuzzer – a library for coverage-guided fuzz testing." href="LibFuzzer.html" />
+    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="next" title="libFuzzer – a library for coverage-guided fuzz testing." href="LibFuzzer.html" />
     <link rel="prev" title="LLVM Programmer’s Manual" href="ProgrammersManual.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
@@ -47,7 +47,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="LibFuzzer.html" title="LibFuzzer – a library for coverage-guided fuzz testing."
+          <a href="LibFuzzer.html" title="libFuzzer – a library for coverage-guided fuzz testing."
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="ProgrammersManual.html" title="LLVM Programmer’s Manual"
@@ -124,7 +124,7 @@ hexadecimal format instead of decimal if desired.</p>
 <p><strong>&#64;IMGREL</strong> (AT&amp;T syntax only) generates an image-relative relocation that
 corresponds to the COFF relocation types <code class="docutils literal"><span class="pre">IMAGE_REL_I386_DIR32NB</span></code> (32-bit) or
 <code class="docutils literal"><span class="pre">IMAGE_REL_AMD64_ADDR32NB</span></code> (64-bit).</p>
-<div class="highlight-gas"><div class="highlight"><pre>.text
+<div class="highlight-text"><div class="highlight"><pre>.text
 fun:
   mov foo@IMGREL(%ebx, %ecx, 4), %eax
 
@@ -139,13 +139,13 @@ types <code class="docutils literal"><span class="pre">IMAGE_REL_I386_SECREL</sp
 <p><strong>.secidx</strong> relocation generates an index of the section that contains
 the target.  It corresponds to the COFF relocation types
 <code class="docutils literal"><span class="pre">IMAGE_REL_I386_SECTION</span></code> (32-bit) or <code class="docutils literal"><span class="pre">IMAGE_REL_AMD64_SECTION</span></code> (64-bit).</p>
-<div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span> <span class="no">.debug$S</span><span class="p">,</span><span class="s">&quot;rn&quot;</span>
-  <span class="na">.long</span> <span class="mi">4</span>
-  <span class="na">.long</span> <span class="mi">242</span>
-  <span class="na">.long</span> <span class="mi">40</span>
-  <span class="na">.secrel32</span> <span class="no">_function_name</span>
-  <span class="na">.secidx</span>   <span class="no">_function_name</span>
-  <span class="na">...</span>
+<div class="highlight-none"><div class="highlight"><pre>.section .debug$S,&quot;rn&quot;
+  .long 4
+  .long 242
+  .long 40
+  .secrel32 _function_name + 0
+  .secidx   _function_name
+  ...
 </pre></div>
 </div>
 </div>
@@ -227,6 +227,23 @@ and <code class="docutils literal"><span class="pre">.bar</span></code> is assoc
 <span class="na">.section</span>        <span class="no">.bar</span><span class="p">,</span><span class="s">&quot;rd&quot;</span><span class="p">,</span><span class="no">associative</span><span class="p">,</span> <span class="s">&quot;sym&quot;</span>
 </pre></div>
 </div>
+<p>MC supports these flags in the COFF <code class="docutils literal"><span class="pre">.section</span></code> directive:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">b</span></code>: BSS section (<code class="docutils literal"><span class="pre">IMAGE_SCN_CNT_INITIALIZED_DATA</span></code>)</li>
+<li><code class="docutils literal"><span class="pre">d</span></code>: Data section (<code class="docutils literal"><span class="pre">IMAGE_SCN_CNT_UNINITIALIZED_DATA</span></code>)</li>
+<li><code class="docutils literal"><span class="pre">n</span></code>: Section is not loaded (<code class="docutils literal"><span class="pre">IMAGE_SCN_LNK_REMOVE</span></code>)</li>
+<li><code class="docutils literal"><span class="pre">r</span></code>: Read-only</li>
+<li><code class="docutils literal"><span class="pre">s</span></code>: Shared section</li>
+<li><code class="docutils literal"><span class="pre">w</span></code>: Writable</li>
+<li><code class="docutils literal"><span class="pre">x</span></code>: Executable section</li>
+<li><code class="docutils literal"><span class="pre">y</span></code>: Not readable</li>
+<li><code class="docutils literal"><span class="pre">D</span></code>: Discardable (<code class="docutils literal"><span class="pre">IMAGE_SCN_MEM_DISCARDABLE</span></code>)</li>
+</ul>
+</div></blockquote>
+<p>These flags are all compatible with gas, with the exception of the <code class="docutils literal"><span class="pre">D</span></code> flag,
+which gnu as does not support. For gas compatibility, sections with a name
+starting with &#8221;.debug&#8221; are implicitly discardable.</p>
 </div>
 </div>
 <div class="section" id="elf-dependent">
@@ -299,7 +316,7 @@ standard stack probe emission.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="LibFuzzer.html" title="LibFuzzer – a library for coverage-guided fuzz testing."
+          <a href="LibFuzzer.html" title="libFuzzer – a library for coverage-guided fuzz testing."
              >next</a> |</li>
         <li class="right" >
           <a href="ProgrammersManual.html" title="LLVM Programmer’s Manual"
@@ -310,9 +327,9 @@ standard stack probe emission.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

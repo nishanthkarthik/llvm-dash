@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The Often Misunderstood GEP Instruction &mdash; LLVM 3.7 documentation</title>
+    <title>The Often Misunderstood GEP Instruction &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="index.html" />
     <link rel="next" title="Performance Tips for Frontend Authors" href="Frontend/PerformanceTips.html" />
     <link rel="prev" title="YAML I/O" href="YamlIO.html" />
 <style type="text/css">
@@ -184,7 +184,7 @@ looks like:</p>
 starts. The same is true whether the first operand is an argument, allocated
 memory, or a global variable.</p>
 <p>To make this clear, let&#8217;s consider a more obtuse example:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>%MyVar = uninitialized global i32
+<div class="highlight-text"><div class="highlight"><pre>%MyVar = uninitialized global i32
 ...
 %idx1 = getelementptr i32, i32* %MyVar, i64 0
 %idx2 = getelementptr i32, i32* %MyVar, i64 1
@@ -214,7 +214,7 @@ results.</p>
 <p>Quick answer: there are no superfluous indices.</p>
 <p>This question arises most often when the GEP instruction is applied to a global
 variable which is always a pointer type. For example, consider this:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>%MyStruct = uninitialized global { float*, i32 }
+<div class="highlight-text"><div class="highlight"><pre>%MyStruct = uninitialized global { float*, i32 }
 ...
 %idx = getelementptr { float*, i32 }, { float*, i32 }* %MyStruct, i64 0, i32 1
 </pre></div>
@@ -244,7 +244,7 @@ value of 0 means 0 elements offset from that pointer.</li>
 <p>The GetElementPtr instruction dereferences nothing. That is, it doesn&#8217;t access
 memory in any way. That&#8217;s what the Load and Store instructions are for.  GEP is
 only involved in the computation of addresses. For example, consider this:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>%MyVar = uninitialized global { [40 x i32 ]* }
+<div class="highlight-text"><div class="highlight"><pre>%MyVar = uninitialized global { [40 x i32 ]* }
 ...
 %idx = getelementptr { [40 x i32]* }, { [40 x i32]* }* %MyVar, i64 0, i32 0, i64 0, i64 17
 </pre></div>
@@ -258,14 +258,14 @@ array of 40 ints. Since the GEP instruction never accesses memory, it is
 illegal.</p>
 <p>In order to access the 18th integer in the array, you would need to do the
 following:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>%idx = getelementptr { [40 x i32]* }, { [40 x i32]* }* %, i64 0, i32 0
+<div class="highlight-text"><div class="highlight"><pre>%idx = getelementptr { [40 x i32]* }, { [40 x i32]* }* %, i64 0, i32 0
 %arr = load [40 x i32]** %idx
 %idx = getelementptr [40 x i32], [40 x i32]* %arr, i64 0, i64 17
 </pre></div>
 </div>
 <p>In this case, we have to load the pointer in the structure with a load
 instruction before we can index into the array. If the example was changed to:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>%MyVar = uninitialized global { [40 x i32 ] }
+<div class="highlight-text"><div class="highlight"><pre>%MyVar = uninitialized global { [40 x i32 ] }
 ...
 %idx = getelementptr { [40 x i32] }, { [40 x i32] }*, i64 0, i32 0, i64 17
 </pre></div>
@@ -561,9 +561,9 @@ of the pointers.</li>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

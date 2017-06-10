@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Extending LLVM: Adding instructions, intrinsics, types, etc. &mdash; LLVM 3.7 documentation</title>
+    <title>Extending LLVM: Adding instructions, intrinsics, types, etc. &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="index.html" />
     <link rel="next" title="How to set up LLVM-style RTTI for your class hierarchy" href="HowToSetUpLLVMStyleRTTI.html" />
     <link rel="prev" title="Architecture &amp; Platform Information for Compiler Writers" href="CompilerWriterInfo.html" />
 <style type="text/css">
@@ -101,9 +101,9 @@ sure it&#8217;s a good idea.</p>
 <li><p class="first"><code class="docutils literal"><span class="pre">llvm/include/llvm/IR/Intrinsics*.td</span></code>:</p>
 <p>Add an entry for your intrinsic.  Describe its memory access characteristics
 for optimization (this controls whether it will be DCE&#8217;d, CSE&#8217;d, etc). Note
-that any intrinsic using the <code class="docutils literal"><span class="pre">llvm_int_ty</span></code> type for an argument will
-be deemed by <code class="docutils literal"><span class="pre">tblgen</span></code> as overloaded and the corresponding suffix will
-be required on the intrinsic&#8217;s name.</p>
+that any intrinsic using one of the <code class="docutils literal"><span class="pre">llvm_any*_ty</span></code> types for an argument or
+return type will be deemed by <code class="docutils literal"><span class="pre">tblgen</span></code> as overloaded and the corresponding
+suffix will be required on the intrinsic&#8217;s name.</p>
 </li>
 <li><p class="first"><code class="docutils literal"><span class="pre">llvm/lib/Analysis/ConstantFolding.cpp</span></code>:</p>
 <p>If it is possible to constant fold your intrinsic, add support to it in the
@@ -372,9 +372,9 @@ to output the new derived type</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>llvm-symbolizer - convert addresses into source code locations &mdash; LLVM 3.7 documentation</title>
+    <title>llvm-symbolizer - convert addresses into source code locations &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="../index.html" />
     <link rel="up" title="LLVM Command Guide" href="index.html" />
     <link rel="next" title="llvm-dwarfdump - print contents of DWARF sections" href="llvm-dwarfdump.html" />
     <link rel="prev" title="llvm-stress - generate random .ll files" href="llvm-stress.html" />
@@ -75,9 +75,9 @@
 <h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
 <p><strong class="program">llvm-symbolizer</strong> reads object file names and addresses from standard
 input and prints corresponding source code locations to standard output.
-If object file is specified in command line, <strong class="program">llvm-symbolizer</strong> reads
-only addresses from standard input. This
-program uses debug info sections and symbol table in the object files.</p>
+If object file is specified in command line, <strong class="program">llvm-symbolizer</strong>
+processes only addresses from standard input, the rest is output verbatim.
+This program uses debug info sections and symbol table in the object files.</p>
 </div>
 <div class="section" id="example">
 <h2>EXAMPLE<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
@@ -117,6 +117,14 @@ program uses debug info sections and symbol table in the object files.</p>
 
 <span class="go">foo(int)</span>
 <span class="go">/tmp/a.cc:12</span>
+<span class="gp">$</span>cat addr.txt
+<span class="go">0x40054d</span>
+<span class="gp">$</span>llvm-symbolizer -inlining -print-address -pretty-print -obj<span class="o">=</span>addr.exe &lt; addr.txt
+<span class="go">0x40054d: inc at /tmp/x.c:3:3</span>
+<span class="go"> (inlined by) main at /tmp/x.c:9:0</span>
+<span class="gp">$</span>llvm-symbolizer -inlining -pretty-print -obj<span class="o">=</span>addr.exe &lt; addr.txt
+<span class="go">inc at /tmp/x.c:3:3</span>
+<span class="go"> (inlined by) main at /tmp/x.c:9:0</span>
 </pre></div>
 </div>
 </div>
@@ -174,6 +182,19 @@ location, look for the debug info at the .dSYM path provided via the
 <code class="docutils literal"><span class="pre">-dsym-hint</span></code> flag. This flag can be used multiple times.</p>
 </dd></dl>
 
+<dl class="option">
+<dt id="cmdoption-print-address">
+<code class="descname">-print-address</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-print-address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print address before the source code location. Defaults to false.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pretty-print">
+<code class="descname">-pretty-print</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-pretty-print" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print human readable output. If <code class="docutils literal"><span class="pre">-inlining</span></code> is specified, enclosing scope is
+prefixed by (inlined by). Refer to listed examples.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="exit-status">
 <h2>EXIT STATUS<a class="headerlink" href="#exit-status" title="Permalink to this headline">¶</a></h2>
@@ -205,9 +226,9 @@ location, look for the debug info at the .dSYM path provided via the
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

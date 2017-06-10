@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LLVM’s Optional Rich Disassembly Output &mdash; LLVM 3.7 documentation</title>
+    <title>LLVM’s Optional Rich Disassembly Output &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="index.html" />
     <link rel="next" title="System Library" href="SystemLibrary.html" />
     <link rel="prev" title="The LLVM gold plugin" href="GoldPlugin.html" />
 <style type="text/css">
@@ -108,7 +108,7 @@ specific knowledge.</p>
 <p>Annotated assembly goes through the normal instruction printer, but optionally
 includes contextual tags on portions of the instruction string. An annotation
 is any &#8216;&lt;&#8217; &#8216;&gt;&#8217; delimited section of text(1).</p>
-<div class="highlight-bat"><div class="highlight"><pre>annotation: <span class="s1">&#39;&lt;&#39;</span> tag-name tag-modifier-list <span class="s1">&#39;:&#39;</span> annotated-text <span class="s1">&#39;&gt;&#39;</span>
+<div class="highlight-bat"><div class="highlight"><pre>annotation: &#39;<span class="p">&lt;</span>&#39; tag-name tag-modifier-list &#39;:&#39; annotated-text &#39;<span class="p">&gt;</span>&#39;
 tag-name: identifier
 tag-modifier-list: comma delimited identifier list
 </pre></div>
@@ -123,7 +123,7 @@ understand, allowing the annotations to grow in richness without breaking older
 clients.</p>
 <p>For example, a possible annotation of an ARM load of a stack-relative location
 might be annotated as:</p>
-<div class="highlight-nasm"><div class="highlight"><pre>ldr &lt;reg gpr:r0&gt;, &lt;mem regoffset:[&lt;reg gpr:sp&gt;, &lt;imm:#4&gt;]&gt;
+<div class="highlight-text"><div class="highlight"><pre>ldr &lt;reg gpr:r0&gt;, &lt;mem regoffset:[&lt;reg gpr:sp&gt;, &lt;imm:#4&gt;]&gt;
 </pre></div>
 </div>
 <p>1: For assembly dialects in which &#8216;&lt;&#8217; and/or &#8216;&gt;&#8217; are legal tokens, a literal token is escaped by following immediately with a repeat of the character.  For example, a literal &#8216;&lt;&#8217; character is output as &#8216;&lt;&lt;&#8217; in an annotated assembly string.</p>
@@ -161,9 +161,9 @@ disassembled instructions with annotations, <code class="docutils literal"><span
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; LLVM 3.7 documentation</title>
+    <title>Index &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="index.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
@@ -77,6 +77,17 @@
       <dd><dl>
         
   <dt><a href="CommandGuide/FileCheck.html#cmdoption--check-prefix">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    --check-prefixes prefix1,prefix2,...
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/FileCheck.html#cmdoption--check-prefixes">command line option</a>
   </dt>
 
       </dl></dd>
@@ -258,6 +269,17 @@
       </dl></dd>
       
   <dt>
+    --match-full-lines
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/FileCheck.html#cmdoption--match-full-lines">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     --max-tests=N
   </dt>
 
@@ -352,6 +374,17 @@
       <dd><dl>
         
   <dt><a href="CommandGuide/llvm-nm.html#cmdoption-llvm-nm--print-size">llvm-nm command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    --radix=RADIX, -t
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-nm.html#cmdoption-llvm-nm--radix">llvm-nm command line option</a>
   </dt>
 
       </dl></dd>
@@ -555,6 +588,17 @@
       </dl></dd>
       
   <dt>
+    -a, --show-all
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lit.html#cmdoption-a">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -all-functions
   </dt>
 
@@ -570,6 +614,10 @@
   </dt>
 
       <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-export-arch">llvm-cov-export command line option</a>
+  </dt>
+
         
   <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-report-arch">llvm-cov-report command line option</a>
   </dt>
@@ -658,6 +706,17 @@
       </dl></dd>
       
   <dt>
+    -code-model=model
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-code-model">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -counts
   </dt>
 
@@ -735,6 +794,17 @@
       </dl></dd>
       
   <dt>
+    -disable-excess-fp-precision
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-disable-excess-fp-precision">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -disable-inlining
   </dt>
 
@@ -752,6 +822,28 @@
       <dd><dl>
         
   <dt><a href="CommandGuide/opt.html#cmdoption-disable-opt">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -disable-post-RA-scheduler
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-disable-post-RA-scheduler">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -disable-spill-fusing
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-disable-spill-fusing">command line option</a>
   </dt>
 
       </dl></dd>
@@ -801,6 +893,50 @@
       </dl></dd>
       
   <dt>
+    -elf-section-groups, -g
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-readobj.html#cmdoption-elf-section-groups">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -enable-no-infs-fp-math
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-enable-no-infs-fp-math">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -enable-no-nans-fp-math
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-enable-no-nans-fp-math">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -enable-unsafe-fp-math
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-enable-unsafe-fp-math">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -expand-relocs
   </dt>
 
@@ -834,6 +970,17 @@
       </dl></dd>
       
   <dt>
+    -fake-argv0=executable
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-fake-argv0">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -file-headers, -h
   </dt>
 
@@ -851,6 +998,28 @@
       <dd><dl>
         
   <dt><a href="CommandGuide/llc.html#cmdoption-filetype">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -force-interpreter={false,true}
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-force-interpreter">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -format=&lt;FORMAT&gt;
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-format">llvm-cov-show command line option</a>
   </dt>
 
       </dl></dd>
@@ -920,8 +1089,6 @@
   </dt>
 
       </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt>
     -gen-dfa-packetizer
@@ -966,6 +1133,8 @@
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt>
     -gen-fast-isel
@@ -1061,7 +1230,7 @@
 
       <dd><dl>
         
-  <dt><a href="CommandGuide/FileCheck.html#cmdoption-help">command line option</a>, <a href="CommandGuide/llc.html#cmdoption-help">[1]</a>, <a href="CommandGuide/llvm-link.html#cmdoption-help">[2]</a>, <a href="CommandGuide/llvm-readobj.html#cmdoption-help">[3]</a>, <a href="CommandGuide/opt.html#cmdoption-help">[4]</a>
+  <dt><a href="CommandGuide/FileCheck.html#cmdoption-help">command line option</a>, <a href="CommandGuide/llc.html#cmdoption-help">[1]</a>, <a href="CommandGuide/lli.html#cmdoption-help">[2]</a>, <a href="CommandGuide/llvm-link.html#cmdoption-help">[3]</a>, <a href="CommandGuide/llvm-readobj.html#cmdoption-help">[4]</a>, <a href="CommandGuide/opt.html#cmdoption-help">[5]</a>
   </dt>
 
         
@@ -1109,6 +1278,17 @@
       </dl></dd>
       
   <dt>
+    -input-files=path, -f=path
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-merge-input-files">llvm-profdata-merge command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -instr (default)
   </dt>
 
@@ -1130,6 +1310,28 @@
       <dd><dl>
         
   <dt><a href="CommandGuide/lit.html#cmdoption-j">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -jit-enable-eh
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-jit-enable-eh">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -join-liveintervals
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-join-liveintervals">command line option</a>
   </dt>
 
       </dl></dd>
@@ -1179,6 +1381,17 @@
       </dl></dd>
       
   <dt>
+    -load=pluginfilename
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-load">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -march=&lt;arch&gt;
   </dt>
 
@@ -1190,12 +1403,23 @@
       </dl></dd>
       
   <dt>
+    -march=arch
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-march">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -mattr=a1,+a2,-a3,...
   </dt>
 
       <dd><dl>
         
-  <dt><a href="CommandGuide/llc.html#cmdoption-mattr">command line option</a>
+  <dt><a href="CommandGuide/llc.html#cmdoption-mattr">command line option</a>, <a href="CommandGuide/lli.html#cmdoption-mattr">[1]</a>
   </dt>
 
       </dl></dd>
@@ -1212,12 +1436,45 @@
       </dl></dd>
       
   <dt>
+    -mcpu=cpuname
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-mcpu">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -meabi=[default|gnu|4|5]
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llc.html#cmdoption-meabi">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -mtriple=&lt;target triple&gt;
   </dt>
 
       <dd><dl>
         
   <dt><a href="CommandGuide/llc.html#cmdoption-mtriple">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -mtriple=target triple
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-mtriple">command line option</a>
   </dt>
 
       </dl></dd>
@@ -1273,6 +1530,28 @@
       <dd><dl>
         
   <dt><a href="CommandGuide/llvm-bcanalyzer.html#cmdoption-llvm-bcanalyzer-nodetails">llvm-bcanalyzer command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -nozero-initialized-in-bss
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-nozero-initialized-in-bss">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -num-threads=N, -j=N
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-merge-num-threads">llvm-profdata-merge command line option</a>
   </dt>
 
       </dl></dd>
@@ -1337,6 +1616,17 @@
       </dl></dd>
       
   <dt>
+    -output-dir=PATH
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-output-dir">llvm-cov-show command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -output=output, -o=output
   </dt>
 
@@ -1380,6 +1670,39 @@
       <dd><dl>
         
   <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-gcov-p">llvm-cov-gcov command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -pre-RA-sched=scheduler
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-pre-RA-sched">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -pretty-print
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-symbolizer.html#cmdoption-pretty-print">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -print-address
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-symbolizer.html#cmdoption-print-address">command line option</a>
   </dt>
 
       </dl></dd>
@@ -1440,6 +1763,17 @@
       </dl></dd>
       
   <dt>
+    -regalloc=allocator
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-regalloc">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -region-coverage-gt=&lt;N&gt;
   </dt>
 
@@ -1457,6 +1791,17 @@
       <dd><dl>
         
   <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-region-coverage-lt">llvm-cov-show command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -relocation-model=model
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-relocation-model">command line option</a>
   </dt>
 
       </dl></dd>
@@ -1631,12 +1976,45 @@
       </dl></dd>
       
   <dt>
+    -soft-float
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-soft-float">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -sparse[=true|false]
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-merge-sparse">llvm-profdata-merge command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -spiller
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-spiller">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -stats
   </dt>
 
       <dd><dl>
         
-  <dt><a href="CommandGuide/opt.html#cmdoption-stats">command line option</a>
+  <dt><a href="CommandGuide/lli.html#cmdoption-stats">command line option</a>, <a href="CommandGuide/opt.html#cmdoption-stats">[1]</a>
   </dt>
 
       </dl></dd>
@@ -1664,12 +2042,27 @@
       </dl></dd>
       
   <dt>
+    -tab-size=&lt;TABSIZE&gt;
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-tab-size">llvm-cov-show command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
     -text
   </dt>
 
       <dd><dl>
         
   <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-merge-text">llvm-profdata-merge command line option</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-show-text">llvm-profdata-show command line option</a>
   </dt>
 
       </dl></dd>
@@ -1680,7 +2073,7 @@
 
       <dd><dl>
         
-  <dt><a href="CommandGuide/opt.html#cmdoption-time-passes">command line option</a>
+  <dt><a href="CommandGuide/lli.html#cmdoption-time-passes">command line option</a>, <a href="CommandGuide/opt.html#cmdoption-time-passes">[1]</a>
   </dt>
 
       </dl></dd>
@@ -1783,7 +2176,7 @@
 
       <dd><dl>
         
-  <dt><a href="CommandGuide/FileCheck.html#cmdoption-version">command line option</a>, <a href="CommandGuide/llvm-readobj.html#cmdoption-version">[1]</a>
+  <dt><a href="CommandGuide/FileCheck.html#cmdoption-version">command line option</a>, <a href="CommandGuide/lli.html#cmdoption-version">[1]</a>, <a href="CommandGuide/llvm-readobj.html#cmdoption-version">[2]</a>
   </dt>
 
         
@@ -1792,6 +2185,39 @@
 
         
   <dt><a href="CommandGuide/tblgen.html#cmdoption-tblgen-version">tblgen command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -weighted-input=weight,filename
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-merge-weighted-input">llvm-profdata-merge command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -x86-asm-syntax=syntax
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-x86-asm-syntax">command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -Xdemangler=&lt;TOOL&gt;|&lt;TOOL-OPTION&gt;
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-Xdemangler">llvm-cov-show command line option</a>
   </dt>
 
       </dl></dd>
@@ -1820,6 +2246,10 @@
       <dd><dl>
         
   <dt><a href="CommandGuide/FileCheck.html#cmdoption--check-prefix">--check-prefix prefix</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/FileCheck.html#cmdoption--check-prefixes">--check-prefixes prefix1,prefix2,...</a>
   </dt>
 
         
@@ -1860,6 +2290,10 @@
 
         
   <dt><a href="CommandGuide/llc.html#cmdoption--load">--load=&lt;dso_path&gt;</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/FileCheck.html#cmdoption--match-full-lines">--match-full-lines</a>
   </dt>
 
         
@@ -1955,6 +2389,14 @@
   </dt>
 
         
+  <dt><a href="CommandGuide/lit.html#cmdoption-a">-a, --show-all</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-code-model">-code-model=model</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/llvm-link.html#cmdoption-d">-d</a>
   </dt>
 
@@ -1975,11 +2417,23 @@
   </dt>
 
         
+  <dt><a href="CommandGuide/lli.html#cmdoption-disable-excess-fp-precision">-disable-excess-fp-precision</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/opt.html#cmdoption-disable-inlining">-disable-inlining</a>
   </dt>
 
         
   <dt><a href="CommandGuide/opt.html#cmdoption-disable-opt">-disable-opt</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-disable-post-RA-scheduler">-disable-post-RA-scheduler</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-disable-spill-fusing">-disable-spill-fusing</a>
   </dt>
 
         
@@ -1995,11 +2449,31 @@
   </dt>
 
         
+  <dt><a href="CommandGuide/llvm-readobj.html#cmdoption-elf-section-groups">-elf-section-groups, -g</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-enable-no-infs-fp-math">-enable-no-infs-fp-math</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-enable-no-nans-fp-math">-enable-no-nans-fp-math</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-enable-unsafe-fp-math">-enable-unsafe-fp-math</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/llvm-readobj.html#cmdoption-expand-relocs">-expand-relocs</a>
   </dt>
 
         
   <dt><a href="CommandGuide/llvm-link.html#cmdoption-f">-f</a>, <a href="CommandGuide/opt.html#cmdoption-f">[1]</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-fake-argv0">-fake-argv0=executable</a>
   </dt>
 
         
@@ -2011,6 +2485,10 @@
   </dt>
 
         
+  <dt><a href="CommandGuide/lli.html#cmdoption-force-interpreter">-force-interpreter={false,true}</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/llvm-symbolizer.html#cmdoption-functions">-functions=[none|short|linkage]</a>
   </dt>
 
@@ -2019,7 +2497,7 @@
   </dt>
 
         
-  <dt><a href="CommandGuide/FileCheck.html#cmdoption-help">-help</a>, <a href="CommandGuide/llc.html#cmdoption-help">[1]</a>, <a href="CommandGuide/llvm-link.html#cmdoption-help">[2]</a>, <a href="CommandGuide/llvm-readobj.html#cmdoption-help">[3]</a>, <a href="CommandGuide/opt.html#cmdoption-help">[4]</a>
+  <dt><a href="CommandGuide/FileCheck.html#cmdoption-help">-help</a>, <a href="CommandGuide/llc.html#cmdoption-help">[1]</a>, <a href="CommandGuide/lli.html#cmdoption-help">[2]</a>, <a href="CommandGuide/llvm-link.html#cmdoption-help">[3]</a>, <a href="CommandGuide/llvm-readobj.html#cmdoption-help">[4]</a>, <a href="CommandGuide/opt.html#cmdoption-help">[5]</a>
   </dt>
 
         
@@ -2031,7 +2509,19 @@
   </dt>
 
         
+  <dt><a href="CommandGuide/lli.html#cmdoption-jit-enable-eh">-jit-enable-eh</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-join-liveintervals">-join-liveintervals</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/opt.html#cmdoption-load">-load=&lt;plugin&gt;</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-load">-load=pluginfilename</a>
   </dt>
 
         
@@ -2039,7 +2529,11 @@
   </dt>
 
         
-  <dt><a href="CommandGuide/llc.html#cmdoption-mattr">-mattr=a1,+a2,-a3,...</a>
+  <dt><a href="CommandGuide/lli.html#cmdoption-march">-march=arch</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/llc.html#cmdoption-mattr">-mattr=a1,+a2,-a3,...</a>, <a href="CommandGuide/lli.html#cmdoption-mattr">[1]</a>
   </dt>
 
         
@@ -2047,11 +2541,27 @@
   </dt>
 
         
+  <dt><a href="CommandGuide/lli.html#cmdoption-mcpu">-mcpu=cpuname</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/llc.html#cmdoption-meabi">-meabi=[default|gnu|4|5]</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/llc.html#cmdoption-mtriple">-mtriple=&lt;target triple&gt;</a>
   </dt>
 
         
+  <dt><a href="CommandGuide/lli.html#cmdoption-mtriple">-mtriple=target triple</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/llvm-readobj.html#cmdoption-needed-libs">-needed-libs</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-nozero-initialized-in-bss">-nozero-initialized-in-bss</a>
   </dt>
 
         
@@ -2071,11 +2581,31 @@
   </dt>
 
         
+  <dt><a href="CommandGuide/lli.html#cmdoption-pre-RA-sched">-pre-RA-sched=scheduler</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/llvm-symbolizer.html#cmdoption-pretty-print">-pretty-print</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/llvm-symbolizer.html#cmdoption-print-address">-print-address</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/llvm-readobj.html#cmdoption-program-headers">-program-headers</a>
   </dt>
 
         
   <dt><a href="CommandGuide/lit.html#cmdoption-q">-q, --quiet</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-regalloc">-regalloc=allocator</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-relocation-model">-relocation-model=model</a>
   </dt>
 
         
@@ -2111,7 +2641,15 @@
   </dt>
 
         
-  <dt><a href="CommandGuide/opt.html#cmdoption-stats">-stats</a>
+  <dt><a href="CommandGuide/lli.html#cmdoption-soft-float">-soft-float</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-spiller">-spiller</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-stats">-stats</a>, <a href="CommandGuide/opt.html#cmdoption-stats">[1]</a>
   </dt>
 
         
@@ -2123,7 +2661,7 @@
   </dt>
 
         
-  <dt><a href="CommandGuide/opt.html#cmdoption-time-passes">-time-passes</a>
+  <dt><a href="CommandGuide/lli.html#cmdoption-time-passes">-time-passes</a>, <a href="CommandGuide/opt.html#cmdoption-time-passes">[1]</a>
   </dt>
 
         
@@ -2147,7 +2685,11 @@
   </dt>
 
         
-  <dt><a href="CommandGuide/FileCheck.html#cmdoption-version">-version</a>, <a href="CommandGuide/llvm-readobj.html#cmdoption-version">[1]</a>
+  <dt><a href="CommandGuide/FileCheck.html#cmdoption-version">-version</a>, <a href="CommandGuide/lli.html#cmdoption-version">[1]</a>, <a href="CommandGuide/llvm-readobj.html#cmdoption-version">[2]</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/lli.html#cmdoption-x86-asm-syntax">-x86-asm-syntax=syntax</a>
   </dt>
 
         
@@ -2181,6 +2723,17 @@
 
         
   <dt><a href="CommandGuide/llvm-bcanalyzer.html#cmdoption-llvm-bcanalyzer-verify">-verify</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    llvm-cov-export command line option
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-export-arch">-arch=&lt;name&gt;</a>
   </dt>
 
       </dl></dd>
@@ -2250,6 +2803,8 @@
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt>
     llvm-cov-show command line option
@@ -2257,7 +2812,15 @@
 
       <dd><dl>
         
+  <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-Xdemangler">-Xdemangler=&lt;TOOL&gt;|&lt;TOOL-OPTION&gt;</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-arch">-arch=&lt;name&gt;</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-format">-format=&lt;FORMAT&gt;</a>
   </dt>
 
         
@@ -2274,6 +2837,10 @@
 
         
   <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-name">-name=&lt;NAME&gt;</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-output-dir">-output-dir=PATH</a>
   </dt>
 
         
@@ -2305,12 +2872,14 @@
   </dt>
 
         
+  <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-tab-size">-tab-size=&lt;TABSIZE&gt;</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/llvm-cov.html#cmdoption-llvm-cov-show-use-color">-use-color[=VALUE]</a>
   </dt>
 
       </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt>
     llvm-nm command line option
@@ -2354,6 +2923,10 @@
   </dt>
 
         
+  <dt><a href="CommandGuide/llvm-nm.html#cmdoption-llvm-nm--radix">--radix=RADIX, -t</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/llvm-nm.html#cmdoption-llvm-nm--size-sort">--size-sort</a>
   </dt>
 
@@ -2393,7 +2966,15 @@
   </dt>
 
         
+  <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-merge-input-files">-input-files=path, -f=path</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-merge-instr">-instr (default)</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-merge-num-threads">-num-threads=N, -j=N</a>
   </dt>
 
         
@@ -2405,7 +2986,15 @@
   </dt>
 
         
+  <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-merge-sparse">-sparse[=true|false]</a>
+  </dt>
+
+        
   <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-merge-text">-text</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-merge-weighted-input">-weighted-input=weight,filename</a>
   </dt>
 
       </dl></dd>
@@ -2441,6 +3030,10 @@
 
         
   <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-show-sample">-sample</a>
+  </dt>
+
+        
+  <dt><a href="CommandGuide/llvm-profdata.html#cmdoption-llvm-profdata-show-text">-text</a>
   </dt>
 
       </dl></dd>
@@ -2574,9 +3167,9 @@
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>How To Use Instruction Mappings &mdash; LLVM 3.7 documentation</title>
+    <title>How To Use Instruction Mappings &mdash; LLVM 4 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <link rel="top" title="LLVM 4 documentation" href="index.html" />
     <link rel="up" title="Writing an LLVM Backend" href="WritingAnLLVMBackend.html" />
     <link rel="next" title="Garbage Collection with LLVM" href="GarbageCollection.html" />
     <link rel="prev" title="Writing an LLVM Backend" href="WritingAnLLVMBackend.html" />
@@ -98,7 +98,7 @@ models and uses the information to construct relation tables which relate
 instructions with each other. These tables are emitted in the
 <code class="docutils literal"><span class="pre">XXXInstrInfo.inc</span></code> file along with the functions to query them. Following
 is the definition of <code class="docutils literal"><span class="pre">InstrMapping</span></code> class definied in Target.td file:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>class InstrMapping {
+<div class="highlight-text"><div class="highlight"><pre>class InstrMapping {
   // Used to reduce search space only to the instructions using this
   // relation model.
   string FilterClass;
@@ -134,7 +134,7 @@ to define a relationship model that relates predicated instructions to their
 non-predicated form by assigning appropriate values to the <code class="docutils literal"><span class="pre">InstrMapping</span></code>
 fields. For this relationship, non-predicated instructions are treated as key
 instruction since they are the one used to query the interface function.</p>
-<div class="highlight-llvm"><div class="highlight"><pre>def getPredOpcode : InstrMapping {
+<div class="highlight-text"><div class="highlight"><pre>def getPredOpcode : InstrMapping {
   // Choose a FilterClass that is used as a base class for all the
   // instructions modeling this relationship. This is done to reduce the
   // search space only to these set of instructions.
@@ -179,7 +179,7 @@ In order for an instruction to be added into the relation table, it needs
 to include relevant information in its definition. For example, consider
 following to be the current definitions of ADD, ADD_pt (true) and ADD_pf (false)
 instructions:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>def ADD : ALU32_rr&lt;(outs IntRegs:$dst), (ins IntRegs:$a, IntRegs:$b),
+<div class="highlight-text"><div class="highlight"><pre>def ADD : ALU32_rr&lt;(outs IntRegs:$dst), (ins IntRegs:$a, IntRegs:$b),
             &quot;$dst = add($a, $b)&quot;,
             [(set (i32 IntRegs:$dst), (add (i32 IntRegs:$a),
                                            (i32 IntRegs:$b)))]&gt;;
@@ -198,7 +198,7 @@ def ADD_Pf : ALU32_rr&lt;(outs IntRegs:$dst),
 <p>In this step, we modify these instructions to include the information
 required by the relationship model, &lt;tt&gt;getPredOpcode&lt;/tt&gt;, so that they can
 be related.</p>
-<div class="highlight-llvm"><div class="highlight"><pre>def ADD : PredRel, ALU32_rr&lt;(outs IntRegs:$dst), (ins IntRegs:$a, IntRegs:$b),
+<div class="highlight-text"><div class="highlight"><pre>def ADD : PredRel, ALU32_rr&lt;(outs IntRegs:$dst), (ins IntRegs:$a, IntRegs:$b),
             &quot;$dst = add($a, $b)&quot;,
             [(set (i32 IntRegs:$dst), (add (i32 IntRegs:$a),
                                            (i32 IntRegs:$b)))]&gt; {
@@ -261,9 +261,9 @@ a column in the relation table.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &copy; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-06-10.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
     </div>
   </body>
 </html>
