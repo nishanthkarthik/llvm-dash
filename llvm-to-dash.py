@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup as bs
 from shutil import rmtree
 
 # CONFIGURATION
-llvm_version = '4.0.0'
-llvm_tarball_md5sum = 'ea9139a604be702454f6acf160b4f3a2'
+llvm_version = '4.0.1'
+llvm_tarball_md5sum = 'a818e70321b91e2bb2d47e60edd5408f'
 tarball_name = 'llvm-%s.src.tar.xz' % llvm_version
 docset_name = 'LLVM.docset'
 online_docpath = 'releases.llvm.org/%s/docs' % llvm_version
