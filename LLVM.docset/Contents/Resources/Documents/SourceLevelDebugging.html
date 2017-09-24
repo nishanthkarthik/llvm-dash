@@ -1,30 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Source Level Debugging with LLVM &mdash; LLVM 4 documentation</title>
-    
+    <title>Source Level Debugging with LLVM &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Auto-Vectorization in LLVM" href="Vectorizers.html" />
     <link rel="prev" title="System Library" href="SystemLibrary.html" />
 <style type="text/css">
@@ -33,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -129,21 +128,21 @@
 <div class="section" id="introduction">
 <h2><a class="toc-backref" href="#id7">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>This document is the central repository for all information pertaining to debug
-information in LLVM.  It describes the <a class="reference internal" href="#format"><span>actual format that the LLVM debug
+information in LLVM.  It describes the <a class="reference internal" href="#format"><span class="std std-ref">actual format that the LLVM debug
 information takes</span></a>, which is useful for those interested in creating
 front-ends or dealing directly with the information.  Further, this document
 provides specific examples of what debug information for C/C++ looks like.</p>
 <div class="section" id="philosophy-behind-llvm-debugging-information">
 <h3><a class="toc-backref" href="#id8">Philosophy behind LLVM debugging information</a><a class="headerlink" href="#philosophy-behind-llvm-debugging-information" title="Permalink to this headline">¶</a></h3>
 <p>The idea of the LLVM debugging information is to capture how the important
-pieces of the source-language&#8217;s Abstract Syntax Tree map onto LLVM code.
+pieces of the source-language’s Abstract Syntax Tree map onto LLVM code.
 Several design aspects have shaped the solution that appears here.  The
 important ones are:</p>
 <ul class="simple">
 <li>Debugging information should have very little impact on the rest of the
 compiler.  No transformations, analyses, or code generators should need to
 be modified because of debugging information.</li>
-<li>LLVM optimizations should interact in <a class="reference internal" href="#intro-debugopt"><span>well-defined and easily described
+<li>LLVM optimizations should interact in <a class="reference internal" href="#intro-debugopt"><span class="std std-ref">well-defined and easily described
 ways</span></a> with the debugging information.</li>
 <li>Because LLVM is designed to support arbitrary programming languages,
 LLVM-to-LLVM tools should not need to know anything about the semantics of
@@ -157,10 +156,10 @@ formats.  This allows compatibility with traditional machine-code level
 debuggers, like GDB or DBX.</li>
 </ul>
 <p>The approach used by the LLVM implementation is to use a small set of
-<a class="reference internal" href="#format-common-intrinsics"><span>intrinsic functions</span></a> to define a mapping
+<a class="reference internal" href="#format-common-intrinsics"><span class="std std-ref">intrinsic functions</span></a> to define a mapping
 between LLVM program objects and the source-level objects.  The description of
 the source-level program is maintained in LLVM metadata in an
-<a class="reference internal" href="#ccxx-frontend"><span>implementation-defined format</span></a> (the C/C++ front-end
+<a class="reference internal" href="#ccxx-frontend"><span class="std std-ref">implementation-defined format</span></a> (the C/C++ front-end
 currently uses working draft 7 of the <a class="reference external" href="http://www.eagercon.com/dwarf/dwarf3std.htm">DWARF 3 standard</a>).</p>
 <p>When a program is being debugged, a debugger interacts with the user and turns
 the stored debug information into source-language specific information.  As
@@ -175,9 +174,9 @@ user a relationship between generated code and the original program source
 code.</p>
 <p>Currently, there are two backend consumers of debug info: DwarfDebug and
 CodeViewDebug. DwarfDebug produces DWARF suitable for use with GDB, LLDB, and
-other DWARF-based debuggers. <a class="reference internal" href="#codeview"><span>CodeViewDebug</span></a> produces CodeView,
+other DWARF-based debuggers. <a class="reference internal" href="#codeview"><span class="std std-ref">CodeViewDebug</span></a> produces CodeView,
 the Microsoft debug info format, which is usable with Microsoft debuggers such
-as Visual Studio and WinDBG. LLVM&#8217;s debug information format is mostly derived
+as Visual Studio and WinDBG. LLVM’s debug information format is mostly derived
 from and inspired by DWARF, but it is feasible to translate into other target
 debug info formats such as STABS.</p>
 <p>It would also be reasonable to use debug information to feed profiling tools
@@ -210,22 +209,22 @@ information is automatically merged by the linker, and unused information
 is automatically removed.</li>
 </ul>
 <p>Basically, the debug information allows you to compile a program with
-&#8220;<code class="docutils literal"><span class="pre">-O0</span> <span class="pre">-g</span></code>&#8221; and get full debug information, allowing you to arbitrarily modify
+“<code class="docutils literal"><span class="pre">-O0</span> <span class="pre">-g</span></code>” and get full debug information, allowing you to arbitrarily modify
 the program as it executes from a debugger.  Compiling a program with
-&#8220;<code class="docutils literal"><span class="pre">-O3</span> <span class="pre">-g</span></code>&#8221; gives you full debug information that is always available and
+“<code class="docutils literal"><span class="pre">-O3</span> <span class="pre">-g</span></code>” gives you full debug information that is always available and
 accurate for reading (e.g., you get accurate stack traces despite tail call
 elimination and inlining), but you might lose the ability to modify the program
 and call functions which were optimized out of the program, or inlined away
 completely.</p>
-<p>The <a class="reference internal" href="TestingGuide.html#test-suite-quickstart"><span>LLVM test suite</span></a> provides a framework to test
-optimizer&#8217;s handling of debugging information.  It can be run like this:</p>
-<div class="highlight-bash"><div class="highlight"><pre>% <span class="nb">cd</span> llvm/projects/test-suite/MultiSource/Benchmarks  <span class="c1"># or some other level</span>
+<p>The <a class="reference internal" href="TestingGuide.html#test-suite-quickstart"><span class="std std-ref">LLVM test suite</span></a> provides a framework to test
+optimizer’s handling of debugging information.  It can be run like this:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>% <span class="nb">cd</span> llvm/projects/test-suite/MultiSource/Benchmarks  <span class="c1"># or some other level</span>
 % make <span class="nv">TEST</span><span class="o">=</span>dbgopt
 </pre></div>
 </div>
 <p>This will test impact of debugging information on optimization passes.  If
 debugging information influences optimization passes then it will be reported
-as a failure.  See <a class="reference internal" href="TestingGuide.html"><em>LLVM Testing Infrastructure Guide</em></a> for more information on LLVM test
+as a failure.  See <a class="reference internal" href="TestingGuide.html"><span class="doc">LLVM Testing Infrastructure Guide</span></a> for more information on LLVM test
 infrastructure and how to run various tests.</p>
 </div>
 </div>
@@ -252,26 +251,40 @@ these to a minimum.  The only common features that the LLVM debugger assumes
 exist are <a class="reference external" href="LangRef.html#difile">source files</a>, and <a class="reference external" href="LangRef.html#diglobalvariable">program objects</a>.  These abstract objects are used by a
 debugger to form stack traces, show information about local variables, etc.</p>
 <p>This section of the documentation first describes the representation aspects
-common to any source-language.  <a class="reference internal" href="#ccxx-frontend"><span>C/C++ front-end specific debug information</span></a> describes the data layout
+common to any source-language.  <a class="reference internal" href="#ccxx-frontend"><span class="std std-ref">C/C++ front-end specific debug information</span></a> describes the data layout
 conventions used by the C and C++ front-ends.</p>
 <p>Debug information descriptors are <a class="reference external" href="LangRef.html#specialized-metadata">specialized metadata nodes</a>, first-class subclasses of <code class="docutils literal"><span class="pre">Metadata</span></code>.</p>
 <div class="section" id="debugger-intrinsic-functions">
 <span id="format-common-intrinsics"></span><h3><a class="toc-backref" href="#id12">Debugger intrinsic functions</a><a class="headerlink" href="#debugger-intrinsic-functions" title="Permalink to this headline">¶</a></h3>
-<p>LLVM uses several intrinsic functions (name prefixed with &#8220;<code class="docutils literal"><span class="pre">llvm.dbg</span></code>&#8221;) to
+<p>LLVM uses several intrinsic functions (name prefixed with “<code class="docutils literal"><span class="pre">llvm.dbg</span></code>”) to
 provide debug information at various points in generated code.</p>
 <div class="section" id="llvm-dbg-declare">
 <h4><a class="toc-backref" href="#id13"><code class="docutils literal"><span class="pre">llvm.dbg.declare</span></code></a><a class="headerlink" href="#llvm-dbg-declare" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="kt">void</span> <span class="vg">@llvm.dbg.declare</span><span class="p">(</span><span class="kt">metadata</span><span class="p">,</span> <span class="kt">metadata</span><span class="p">,</span> <span class="kt">metadata</span><span class="p">)</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="vg">@llvm.dbg.declare</span><span class="p">(</span><span class="kt">metadata</span><span class="p">,</span> <span class="kt">metadata</span><span class="p">,</span> <span class="kt">metadata</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This intrinsic provides information about a local element (e.g., variable).
-The first argument is metadata holding the alloca for the variable.  The second
+<p>This intrinsic provides information about a local element (e.g., variable).  The
+first argument is metadata holding the alloca for the variable.  The second
 argument is a <a class="reference external" href="LangRef.html#dilocalvariable">local variable</a> containing a
-description of the variable.  The third argument is a <a class="reference external" href="LangRef.html#diexpression">complex expression</a>.</p>
+description of the variable.  The third argument is a <a class="reference external" href="LangRef.html#diexpression">complex expression</a>.  An <cite>llvm.dbg.declare</cite> instrinsic describes the
+<em>location</em> of a source variable.</p>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span>%i.addr = alloca i32, align 4
+call void @llvm.dbg.declare(metadata i32* %i.addr, metadata !1, metadata !2), !dbg !3
+!1 = !DILocalVariable(name: &quot;i&quot;, ...) ; int i
+!2 = !DIExpression()
+!3 = !DILocation(...)
+...
+%buffer = alloca [256 x i8], align 8
+; The address of i is buffer+64.
+call void @llvm.dbg.declare(metadata [256 x i8]* %buffer, metadata !1, metadata !2)
+!1 = !DILocalVariable(name: &quot;i&quot;, ...) ; int i
+!2 = !DIExpression(DW_OP_plus, 64)
+</pre></div>
+</div>
 </div>
 <div class="section" id="llvm-dbg-value">
 <h4><a class="toc-backref" href="#id14"><code class="docutils literal"><span class="pre">llvm.dbg.value</span></code></a><a class="headerlink" href="#llvm-dbg-value" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="kt">void</span> <span class="vg">@llvm.dbg.value</span><span class="p">(</span><span class="kt">metadata</span><span class="p">,</span> <span class="k">i64</span><span class="p">,</span> <span class="kt">metadata</span><span class="p">,</span> <span class="kt">metadata</span><span class="p">)</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="vg">@llvm.dbg.value</span><span class="p">(</span><span class="kt">metadata</span><span class="p">,</span> <span class="k">i64</span><span class="p">,</span> <span class="kt">metadata</span><span class="p">,</span> <span class="kt">metadata</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This intrinsic provides information when a user source variable is set to a new
@@ -290,11 +303,11 @@ example, variables are only live (readable and writable) within the source
 block that they are defined in.  In functional languages, values are only
 readable after they have been defined.  Though this is a very obvious concept,
 it is non-trivial to model in LLVM, because it has no notion of scoping in this
-sense, and does not want to be tied to a language&#8217;s scoping rules.</p>
+sense, and does not want to be tied to a language’s scoping rules.</p>
 <p>In order to handle this, the LLVM debug format uses the metadata attached to
 llvm instructions to encode line number and scoping information.  Consider the
 following C fragment, for example:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="mf">1.</span>  <span class="kt">void</span> <span class="n">foo</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="mf">1.</span>  <span class="kt">void</span> <span class="n">foo</span><span class="p">()</span> <span class="p">{</span>
 <span class="mf">2.</span>    <span class="kt">int</span> <span class="n">X</span> <span class="o">=</span> <span class="mi">21</span><span class="p">;</span>
 <span class="mf">3.</span>    <span class="kt">int</span> <span class="n">Y</span> <span class="o">=</span> <span class="mi">22</span><span class="p">;</span>
 <span class="mf">4.</span>    <span class="p">{</span>
@@ -306,7 +319,7 @@ following C fragment, for example:</p>
 </pre></div>
 </div>
 <p>Compiled to LLVM, this function would be represented like this:</p>
-<div class="highlight-text"><div class="highlight"><pre>; Function Attrs: nounwind ssp uwtable
+<div class="highlight-text"><div class="highlight"><pre><span></span>; Function Attrs: nounwind ssp uwtable
 define void @foo() #0 !dbg !4 {
 entry:
   %X = alloca i32, align 4
@@ -367,14 +380,14 @@ information.  In particular, it shows how the <code class="docutils literal"><sp
 location information, which are attached to an instruction, are applied
 together to allow a debugger to analyze the relationship between statements,
 variable definitions, and the code used to implement the function.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.dbg.declare</span><span class="p">(</span><span class="kt">metadata</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%X</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!11</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!13</span><span class="p">),</span> <span class="nv">!dbg</span> <span class="nv nv-Anonymous">!14</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.dbg.declare</span><span class="p">(</span><span class="kt">metadata</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%X</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!11</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!13</span><span class="p">),</span> <span class="nv">!dbg</span> <span class="nv nv-Anonymous">!14</span>
   <span class="c">; [debug line = 2:7] [debug variable = X]</span>
 </pre></div>
 </div>
 <p>The first intrinsic <code class="docutils literal"><span class="pre">%llvm.dbg.declare</span></code> encodes debugging information for the
 variable <code class="docutils literal"><span class="pre">X</span></code>.  The metadata <code class="docutils literal"><span class="pre">!dbg</span> <span class="pre">!14</span></code> attached to the intrinsic provides
 scope information for the variable <code class="docutils literal"><span class="pre">X</span></code>.</p>
-<div class="highlight-text"><div class="highlight"><pre>!14 = !DILocation(line: 2, column: 9, scope: !4)
+<div class="highlight-text"><div class="highlight"><pre><span></span>!14 = !DILocation(line: 2, column: 9, scope: !4)
 !4 = distinct !DISubprogram(name: &quot;foo&quot;, scope: !1, file: !1, line: 1, type: !5,
                             isLocal: false, isDefinition: true, scopeLine: 1,
                             isOptimized: false, variables: !2)
@@ -385,14 +398,14 @@ scope information for the variable <code class="docutils literal"><span class="p
 information attached to the intrinsics indicates that the variable <code class="docutils literal"><span class="pre">X</span></code> is
 declared at line number 2 at a function level scope in function <code class="docutils literal"><span class="pre">foo</span></code>.</p>
 <p>Now lets take another example.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.dbg.declare</span><span class="p">(</span><span class="kt">metadata</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%Z</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!17</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!13</span><span class="p">),</span> <span class="nv">!dbg</span> <span class="nv nv-Anonymous">!19</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.dbg.declare</span><span class="p">(</span><span class="kt">metadata</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%Z</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!17</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv nv-Anonymous">!13</span><span class="p">),</span> <span class="nv">!dbg</span> <span class="nv nv-Anonymous">!19</span>
   <span class="c">; [debug line = 5:9] [debug variable = Z]</span>
 </pre></div>
 </div>
 <p>The third intrinsic <code class="docutils literal"><span class="pre">%llvm.dbg.declare</span></code> encodes debugging information for
 variable <code class="docutils literal"><span class="pre">Z</span></code>.  The metadata <code class="docutils literal"><span class="pre">!dbg</span> <span class="pre">!19</span></code> attached to the intrinsic provides
 scope information for the variable <code class="docutils literal"><span class="pre">Z</span></code>.</p>
-<div class="highlight-text"><div class="highlight"><pre>!18 = distinct !DILexicalBlock(scope: !4, file: !1, line: 4, column: 5)
+<div class="highlight-text"><div class="highlight"><pre><span></span>!18 = distinct !DILexicalBlock(scope: !4, file: !1, line: 4, column: 5)
 !19 = !DILocation(line: 5, column: 11, scope: !18)
 </pre></div>
 </div>
@@ -412,7 +425,7 @@ non-dwarf targets to translate it as needed.</p>
 <p>This section describes the forms used to represent C and C++ programs.  Other
 languages could pattern themselves after this (which itself is tuned to
 representing programs in the same way that DWARF 3 does), or they could choose
-to provide completely different forms if they don&#8217;t fit into the DWARF model.
+to provide completely different forms if they don’t fit into the DWARF model.
 As support for debugging information gets added to the various LLVM
 source-language front-ends, the information used should be documented here.</p>
 <p>The following sections provide examples of a few C/C++ constructs and the debug
@@ -425,7 +438,7 @@ in <code class="docutils literal"><span class="pre">lib/IR/DIBuilder.cpp</span><
 <p><code class="docutils literal"><span class="pre">llvm::Instruction</span></code> provides easy access to metadata attached with an
 instruction.  One can extract line number information encoded in LLVM IR using
 <code class="docutils literal"><span class="pre">Instruction::getDebugLoc()</span></code> and <code class="docutils literal"><span class="pre">DILocation::getLine()</span></code>.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">DILocation</span> <span class="o">*</span><span class="n">Loc</span> <span class="o">=</span> <span class="n">I</span><span class="o">-&gt;</span><span class="n">getDebugLoc</span><span class="p">())</span> <span class="p">{</span> <span class="c1">// Here I is an LLVM instruction</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">DILocation</span> <span class="o">*</span><span class="n">Loc</span> <span class="o">=</span> <span class="n">I</span><span class="o">-&gt;</span><span class="n">getDebugLoc</span><span class="p">())</span> <span class="p">{</span> <span class="c1">// Here I is an LLVM instruction</span>
   <span class="kt">unsigned</span> <span class="n">Line</span> <span class="o">=</span> <span class="n">Loc</span><span class="o">-&gt;</span><span class="n">getLine</span><span class="p">();</span>
   <span class="n">StringRef</span> <span class="n">File</span> <span class="o">=</span> <span class="n">Loc</span><span class="o">-&gt;</span><span class="n">getFilename</span><span class="p">();</span>
   <span class="n">StringRef</span> <span class="n">Dir</span> <span class="o">=</span> <span class="n">Loc</span><span class="o">-&gt;</span><span class="n">getDirectory</span><span class="p">();</span>
@@ -436,11 +449,11 @@ instruction.  One can extract line number information encoded in LLVM IR using
 <div class="section" id="c-c-global-variable-information">
 <h3><a class="toc-backref" href="#id18">C/C++ global variable information</a><a class="headerlink" href="#c-c-global-variable-information" title="Permalink to this headline">¶</a></h3>
 <p>Given an integer global variable declared as follows:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="n">_Alignas</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="kt">int</span> <span class="n">MyGlobal</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="n">_Alignas</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="kt">int</span> <span class="n">MyGlobal</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>a C/C++ front-end would generate the following descriptors:</p>
-<div class="highlight-text"><div class="highlight"><pre>;;
+<div class="highlight-text"><div class="highlight"><pre><span></span>;;
 ;; Define the global itself.
 ;;
 @MyGlobal = global i32 100, align 8, !dbg !0
@@ -499,13 +512,13 @@ for DW_AT_alignment value.</p>
 <div class="section" id="c-c-function-information">
 <h3><a class="toc-backref" href="#id19">C/C++ function information</a><a class="headerlink" href="#c-c-function-information" title="Permalink to this headline">¶</a></h3>
 <p>Given a function declared as follows:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>a C/C++ front-end would generate the following descriptors:</p>
-<div class="highlight-text"><div class="highlight"><pre>;;
+<div class="highlight-text"><div class="highlight"><pre><span></span>;;
 ;; Define the anchor for subprograms.
 ;;
 !4 = !DISubprogram(name: &quot;main&quot;, scope: !1, file: !1, line: 1, type: !5,
@@ -543,11 +556,11 @@ inspect Objective C properties.</p>
 <div class="section" id="proposal">
 <h4><a class="toc-backref" href="#id23">Proposal</a><a class="headerlink" href="#proposal" title="Permalink to this headline">¶</a></h4>
 <p>Objective C properties exist separately from class members.  A property can be
-defined only by &#8220;setter&#8221; and &#8220;getter&#8221; selectors, and be calculated anew on each
+defined only by “setter” and “getter” selectors, and be calculated anew on each
 access.  Or a property can just be a direct access to some declared ivar.
-Finally it can have an ivar &#8220;automatically synthesized&#8221; for it by the compiler,
+Finally it can have an ivar “automatically synthesized” for it by the compiler,
 in which case the property can be referred to in user code directly using the
-standard C dereference syntax as well as through the property &#8220;dot&#8221; syntax, but
+standard C dereference syntax as well as through the property “dot” syntax, but
 there is no entry in the <code class="docutils literal"><span class="pre">&#64;interface</span></code> declaration corresponding to this ivar.</p>
 <p>To facilitate debugging, these properties we will add a new DWARF TAG into the
 <code class="docutils literal"><span class="pre">DW_TAG_structure_type</span></code> definition for the class to hold the description of a
@@ -561,7 +574,7 @@ ivar (with the <code class="docutils literal"><span class="pre">DW_AT_artificial
 to access this ivar directly in code, and with the property attribute pointing
 back to the property it is backing.</p>
 <p>The following examples will serve as illustration for our discussion:</p>
-<div class="highlight-objc"><div class="highlight"><pre><span class="k">@interface</span> <span class="nc">I1</span> <span class="p">{</span>
+<div class="highlight-objc"><div class="highlight"><pre><span></span><span class="k">@interface</span> <span class="nc">I1</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">n2</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -575,8 +588,8 @@ back to the property it is backing.</p>
 <span class="k">@end</span>
 </pre></div>
 </div>
-<p>This produces the following DWARF (this is a &#8220;pseudo dwarfdump&#8221; output):</p>
-<div class="highlight-none"><div class="highlight"><pre>0x00000100:  TAG_structure_type [7] *
+<p>This produces the following DWARF (this is a “pseudo dwarfdump” output):</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>0x00000100:  TAG_structure_type [7] *
                AT_APPLE_runtime_class( 0x10 )
                AT_name( &quot;I1&quot; )
                AT_decl_file( &quot;Objc_Property.m&quot; )
@@ -607,7 +620,7 @@ back to the property it is backing.</p>
 <p>Note, the current convention is that the name of the ivar for an
 auto-synthesized property is the name of the property from which it derives
 with an underscore prepended, as is shown in the example.  But we actually
-don&#8217;t need to know this convention, since we are given the name of the ivar
+don’t need to know this convention, since we are given the name of the ivar
 directly.</p>
 <p>Also, it is common practice in ObjC to have different property declarations in
 the &#64;interface and &#64;implementation - e.g. to provide a read-only property in
@@ -616,10 +629,10 @@ the compiler should emit whichever property declaration will be in force in the
 current translation unit.</p>
 <p>Developers can decorate a property with attributes which are encoded using
 <code class="docutils literal"><span class="pre">DW_AT_APPLE_property_attribute</span></code>.</p>
-<div class="highlight-objc"><div class="highlight"><pre><span class="k">@property</span> <span class="p">(</span><span class="k">readonly</span><span class="p">,</span> <span class="k">nonatomic</span><span class="p">)</span> <span class="kt">int</span> <span class="n">pr</span><span class="p">;</span>
+<div class="highlight-objc"><div class="highlight"><pre><span></span><span class="k">@property</span> <span class="p">(</span><span class="k">readonly</span><span class="p">,</span> <span class="k">nonatomic</span><span class="p">)</span> <span class="kt">int</span> <span class="n">pr</span><span class="p">;</span>
 </pre></div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre>TAG_APPLE_property [8]
+<div class="highlight-none"><div class="highlight"><pre><span></span>TAG_APPLE_property [8]
   AT_name( &quot;pr&quot; )
   AT_type ( {0x00000147} (int) )
   AT_APPLE_property_attribute (DW_APPLE_PROPERTY_readonly, DW_APPLE_PROPERTY_nonatomic)
@@ -627,7 +640,7 @@ current translation unit.</p>
 </div>
 <p>The setter and getter method names are attached to the property using
 <code class="docutils literal"><span class="pre">DW_AT_APPLE_property_setter</span></code> and <code class="docutils literal"><span class="pre">DW_AT_APPLE_property_getter</span></code> attributes.</p>
-<div class="highlight-objc"><div class="highlight"><pre><span class="k">@interface</span> <span class="nc">I1</span>
+<div class="highlight-objc"><div class="highlight"><pre><span></span><span class="k">@interface</span> <span class="nc">I1</span>
 <span class="k">@property</span> <span class="p">(</span><span class="k">setter</span><span class="o">=</span><span class="nl">myOwnP3Setter</span><span class="p">:)</span> <span class="kt">int</span> <span class="n">p3</span><span class="p">;</span>
 <span class="p">-(</span><span class="kt">void</span><span class="p">)</span><span class="nf">myOwnP3Setter:</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="nv">a</span><span class="p">;</span>
 <span class="k">@end</span>
@@ -639,7 +652,7 @@ current translation unit.</p>
 </pre></div>
 </div>
 <p>The DWARF for this would be:</p>
-<div class="highlight-none"><div class="highlight"><pre>0x000003bd: TAG_structure_type [7] *
+<div class="highlight-none"><div class="highlight"><pre><span></span>0x000003bd: TAG_structure_type [7] *
               AT_APPLE_runtime_class( 0x10 )
               AT_name( &quot;I1&quot; )
               AT_decl_file( &quot;Objc_Property.m&quot; )
@@ -777,42 +790,42 @@ current translation unit.</p>
 <h3><a class="toc-backref" href="#id27">Name Accelerator Tables</a><a class="headerlink" href="#name-accelerator-tables" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="id5">
 <h4><a class="toc-backref" href="#id28">Introduction</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
-<p>The &#8220;<code class="docutils literal"><span class="pre">.debug_pubnames</span></code>&#8221; and &#8220;<code class="docutils literal"><span class="pre">.debug_pubtypes</span></code>&#8221; formats are not what a
-debugger needs.  The &#8220;<code class="docutils literal"><span class="pre">pub</span></code>&#8221; in the section name indicates that the entries
+<p>The “<code class="docutils literal"><span class="pre">.debug_pubnames</span></code>” and “<code class="docutils literal"><span class="pre">.debug_pubtypes</span></code>” formats are not what a
+debugger needs.  The “<code class="docutils literal"><span class="pre">pub</span></code>” in the section name indicates that the entries
 in the table are publicly visible names only.  This means no static or hidden
-functions show up in the &#8220;<code class="docutils literal"><span class="pre">.debug_pubnames</span></code>&#8221;.  No static variables or private
-class variables are in the &#8220;<code class="docutils literal"><span class="pre">.debug_pubtypes</span></code>&#8221;.  Many compilers add different
-things to these tables, so we can&#8217;t rely upon the contents between gcc, icc, or
+functions show up in the “<code class="docutils literal"><span class="pre">.debug_pubnames</span></code>”.  No static variables or private
+class variables are in the “<code class="docutils literal"><span class="pre">.debug_pubtypes</span></code>”.  Many compilers add different
+things to these tables, so we can’t rely upon the contents between gcc, icc, or
 clang.</p>
 <p>The typical query given by users tends not to match up with the contents of
-these tables.  For example, the DWARF spec states that &#8220;In the case of the name
+these tables.  For example, the DWARF spec states that “In the case of the name
 of a function member or static data member of a C++ structure, class or union,
-the name presented in the &#8220;<code class="docutils literal"><span class="pre">.debug_pubnames</span></code>&#8221; section is not the simple name
+the name presented in the “<code class="docutils literal"><span class="pre">.debug_pubnames</span></code>” section is not the simple name
 given by the <code class="docutils literal"><span class="pre">DW_AT_name</span> <span class="pre">attribute</span></code> of the referenced debugging information
-entry, but rather the fully qualified name of the data or function member.&#8221;
+entry, but rather the fully qualified name of the data or function member.”
 So the only names in these tables for complex C++ entries is a fully
 qualified name.  Debugger users tend not to enter their search strings as
-&#8220;<code class="docutils literal"><span class="pre">a::b::c(int,const</span> <span class="pre">Foo&amp;)</span> <span class="pre">const</span></code>&#8221;, but rather as &#8220;<code class="docutils literal"><span class="pre">c</span></code>&#8221;, &#8220;<code class="docutils literal"><span class="pre">b::c</span></code>&#8221; , or
-&#8220;<code class="docutils literal"><span class="pre">a::b::c</span></code>&#8221;.  So the name entered in the name table must be demangled in
+“<code class="docutils literal"><span class="pre">a::b::c(int,const</span> <span class="pre">Foo&amp;)</span> <span class="pre">const</span></code>”, but rather as “<code class="docutils literal"><span class="pre">c</span></code>”, “<code class="docutils literal"><span class="pre">b::c</span></code>” , or
+“<code class="docutils literal"><span class="pre">a::b::c</span></code>”.  So the name entered in the name table must be demangled in
 order to chop it up appropriately and additional names must be manually entered
 into the table to make it effective as a name lookup table for debuggers to
 use.</p>
-<p>All debuggers currently ignore the &#8220;<code class="docutils literal"><span class="pre">.debug_pubnames</span></code>&#8221; table as a result of
+<p>All debuggers currently ignore the “<code class="docutils literal"><span class="pre">.debug_pubnames</span></code>” table as a result of
 its inconsistent and useless public-only name content making it a waste of
 space in the object file.  These tables, when they are written to disk, are not
 sorted in any way, leaving every debugger to do its own parsing and sorting.
 These tables also include an inlined copy of the string values in the table
 itself making the tables much larger than they need to be on disk, especially
 for large C++ programs.</p>
-<p>Can&#8217;t we just fix the sections by adding all of the names we need to this
+<p>Can’t we just fix the sections by adding all of the names we need to this
 table? No, because that is not what the tables are defined to contain and we
-won&#8217;t know the difference between the old bad tables and the new good tables.
+won’t know the difference between the old bad tables and the new good tables.
 At best we could make our own renamed sections that contain all of the data we
 need.</p>
 <p>These tables are also insufficient for what a debugger like LLDB needs.  LLDB
 uses clang for its expression parsing where LLDB acts as a PCH.  LLDB is then
-often asked to look for type &#8220;<code class="docutils literal"><span class="pre">foo</span></code>&#8221; or namespace &#8220;<code class="docutils literal"><span class="pre">bar</span></code>&#8221;, or list items in
-namespace &#8220;<code class="docutils literal"><span class="pre">baz</span></code>&#8221;.  Namespaces are not included in the pubnames or pubtypes
+often asked to look for type “<code class="docutils literal"><span class="pre">foo</span></code>” or namespace “<code class="docutils literal"><span class="pre">bar</span></code>”, or list items in
+namespace “<code class="docutils literal"><span class="pre">baz</span></code>”.  Namespaces are not included in the pubnames or pubtypes
 tables.  Since clang asks a lot of questions when it is parsing an expression,
 we need to be very fast when looking up names, as it happens a lot.  Having new
 accelerator tables that are optimized for very quick lookups will benefit this
@@ -847,7 +860,7 @@ accelerator tables and documented so clients can rely on the content.</p>
 <h5><a class="toc-backref" href="#id30">Standard Hash Tables</a><a class="headerlink" href="#standard-hash-tables" title="Permalink to this headline">¶</a></h5>
 <p>Typical hash tables have a header, buckets, and each bucket points to the
 bucket contents:</p>
-<div class="highlight-none"><div class="highlight"><pre>.------------.
+<div class="highlight-none"><div class="highlight"><pre><span></span>.------------.
 |  HEADER    |
 |------------|
 |  BUCKETS   |
@@ -857,7 +870,7 @@ bucket contents:</p>
 </pre></div>
 </div>
 <p>The BUCKETS are an array of offsets to DATA for each hash:</p>
-<div class="highlight-none"><div class="highlight"><pre>.------------.
+<div class="highlight-none"><div class="highlight"><pre><span></span>.------------.
 | 0x00001000 | BUCKETS[0]
 | 0x00002000 | BUCKETS[1]
 | 0x00002200 | BUCKETS[2]
@@ -871,7 +884,7 @@ bucket contents:</p>
 0x000034f0 which points to a chain of entries for the bucket.  Each bucket must
 contain a next pointer, full 32 bit hash value, the string itself, and the data
 for the current string value.</p>
-<div class="highlight-none"><div class="highlight"><pre>            .------------.
+<div class="highlight-none"><div class="highlight"><pre><span></span>            .------------.
 0x000034f0: | 0x00003500 | next pointer
             | 0x12345678 | 32 bit hash
             | &quot;erase&quot;    | string value
@@ -890,14 +903,14 @@ for the current string value.</p>
 </pre></div>
 </div>
 <p>The problem with this layout for debuggers is that we need to optimize for the
-negative lookup case where the symbol we&#8217;re searching for is not present.  So
-if we were to lookup &#8220;<code class="docutils literal"><span class="pre">printf</span></code>&#8221; in the table above, we would make a 32-bit
-hash for &#8220;<code class="docutils literal"><span class="pre">printf</span></code>&#8221;, it might match <code class="docutils literal"><span class="pre">bucket[3]</span></code>.  We would need to go to
+negative lookup case where the symbol we’re searching for is not present.  So
+if we were to lookup “<code class="docutils literal"><span class="pre">printf</span></code>” in the table above, we would make a 32-bit
+hash for “<code class="docutils literal"><span class="pre">printf</span></code>”, it might match <code class="docutils literal"><span class="pre">bucket[3]</span></code>.  We would need to go to
 the offset 0x000034f0 and start looking to see if our 32 bit hash matches.  To
 do so, we need to read the next pointer, then read the hash, compare it, and
 skip to the next bucket.  Each time we are skipping many bytes in memory and
 touching new pages just to do the compare on the full 32 bit hash.  All of
-these accesses then tell us that we didn&#8217;t have a match.</p>
+these accesses then tell us that we didn’t have a match.</p>
 </div>
 <div class="section" id="name-hash-tables">
 <h5><a class="toc-backref" href="#id31">Name Hash Tables</a><a class="headerlink" href="#name-hash-tables" title="Permalink to this headline">¶</a></h5>
@@ -905,7 +918,7 @@ these accesses then tell us that we didn&#8217;t have a match.</p>
 differently: a header, buckets, an array of all unique 32 bit hash values,
 followed by an array of hash value data offsets, one for each hash value, then
 the data for all hash values:</p>
-<div class="highlight-none"><div class="highlight"><pre>.-------------.
+<div class="highlight-none"><div class="highlight"><pre><span></span>.-------------.
 |  HEADER     |
 |-------------|
 |  BUCKETS    |
@@ -923,10 +936,10 @@ making all of the full 32 bit hash values contiguous in memory, we allow
 ourselves to efficiently check for a match while touching as little memory as
 possible.  Most often checking the 32 bit hash values is as far as the lookup
 goes.  If it does match, it usually is a match with no collisions.  So for a
-table with &#8220;<code class="docutils literal"><span class="pre">n_buckets</span></code>&#8221; buckets, and &#8220;<code class="docutils literal"><span class="pre">n_hashes</span></code>&#8221; unique 32 bit hash
+table with “<code class="docutils literal"><span class="pre">n_buckets</span></code>” buckets, and “<code class="docutils literal"><span class="pre">n_hashes</span></code>” unique 32 bit hash
 values, we can clarify the contents of the <code class="docutils literal"><span class="pre">BUCKETS</span></code>, <code class="docutils literal"><span class="pre">HASHES</span></code> and
 <code class="docutils literal"><span class="pre">OFFSETS</span></code> as:</p>
-<div class="highlight-none"><div class="highlight"><pre>.-------------------------.
+<div class="highlight-none"><div class="highlight"><pre><span></span>.-------------------------.
 |  HEADER.magic           | uint32_t
 |  HEADER.version         | uint16_t
 |  HEADER.hash_function   | uint16_t
@@ -947,7 +960,7 @@ values, we can clarify the contents of the <code class="docutils literal"><span 
 </div>
 <p>So taking the exact same data from the standard hash example above we end up
 with:</p>
-<div class="highlight-none"><div class="highlight"><pre>            .------------.
+<div class="highlight-none"><div class="highlight"><pre><span></span>            .------------.
             | HEADER     |
             |------------|
             |          0 | BUCKETS[0]
@@ -1030,15 +1043,15 @@ with:</p>
 </pre></div>
 </div>
 <p>So we still have all of the same data, we just organize it more efficiently for
-debugger lookup.  If we repeat the same &#8220;<code class="docutils literal"><span class="pre">printf</span></code>&#8221; lookup from above, we
-would hash &#8220;<code class="docutils literal"><span class="pre">printf</span></code>&#8221; and find it matches <code class="docutils literal"><span class="pre">BUCKETS[3]</span></code> by taking the 32 bit
-hash value and modulo it by <code class="docutils literal"><span class="pre">n_buckets</span></code>.  <code class="docutils literal"><span class="pre">BUCKETS[3]</span></code> contains &#8220;6&#8221; which
+debugger lookup.  If we repeat the same “<code class="docutils literal"><span class="pre">printf</span></code>” lookup from above, we
+would hash “<code class="docutils literal"><span class="pre">printf</span></code>” and find it matches <code class="docutils literal"><span class="pre">BUCKETS[3]</span></code> by taking the 32 bit
+hash value and modulo it by <code class="docutils literal"><span class="pre">n_buckets</span></code>.  <code class="docutils literal"><span class="pre">BUCKETS[3]</span></code> contains “6” which
 is the index into the <code class="docutils literal"><span class="pre">HASHES</span></code> table.  We would then compare any consecutive
 32 bit hashes values in the <code class="docutils literal"><span class="pre">HASHES</span></code> array as long as the hashes would be in
 <code class="docutils literal"><span class="pre">BUCKETS[3]</span></code>.  We do this by verifying that each subsequent hash value modulo
 <code class="docutils literal"><span class="pre">n_buckets</span></code> is still 3.  In the case of a failed lookup we would access the
 memory for <code class="docutils literal"><span class="pre">BUCKETS[3]</span></code>, and then compare a few consecutive 32 bit hashes
-before we know that we have no match.  We don&#8217;t end up marching through
+before we know that we have no match.  We don’t end up marching through
 multiple words of memory and we really keep the number of processor data cache
 lines being accessed as small as possible.</p>
 <p>The string hash that is used for these lookup tables is the Daniel J.
@@ -1051,14 +1064,14 @@ collisions.</p>
 <div class="section" id="details">
 <h4><a class="toc-backref" href="#id32">Details</a><a class="headerlink" href="#details" title="Permalink to this headline">¶</a></h4>
 <p>These name hash tables are designed to be generic where specializations of the
-table get to define additional data that goes into the header (&#8220;<code class="docutils literal"><span class="pre">HeaderData</span></code>&#8221;),
-how the string value is stored (&#8220;<code class="docutils literal"><span class="pre">KeyType</span></code>&#8221;) and the content of the data for each
+table get to define additional data that goes into the header (“<code class="docutils literal"><span class="pre">HeaderData</span></code>”),
+how the string value is stored (“<code class="docutils literal"><span class="pre">KeyType</span></code>”) and the content of the data for each
 hash value.</p>
 <div class="section" id="header-layout">
 <h5><a class="toc-backref" href="#id33">Header Layout</a><a class="headerlink" href="#header-layout" title="Permalink to this headline">¶</a></h5>
 <p>The header has a fixed part, and the specialized part.  The exact format of the
 header is:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="k">struct</span> <span class="n">Header</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Header</span>
 <span class="p">{</span>
   <span class="kt">uint32_t</span>   <span class="n">magic</span><span class="p">;</span>           <span class="c1">// &#39;HASH&#39; magic value to allow endian detection</span>
   <span class="kt">uint16_t</span>   <span class="n">version</span><span class="p">;</span>         <span class="c1">// Version number</span>
@@ -1072,15 +1085,15 @@ header is:</p>
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>The header starts with a 32 bit &#8220;<code class="docutils literal"><span class="pre">magic</span></code>&#8221; value which must be <code class="docutils literal"><span class="pre">'HASH'</span></code>
+<p>The header starts with a 32 bit “<code class="docutils literal"><span class="pre">magic</span></code>” value which must be <code class="docutils literal"><span class="pre">'HASH'</span></code>
 encoded as an ASCII integer.  This allows the detection of the start of the
-hash table and also allows the table&#8217;s byte order to be determined so the table
-can be correctly extracted.  The &#8220;<code class="docutils literal"><span class="pre">magic</span></code>&#8221; value is followed by a 16 bit
+hash table and also allows the table’s byte order to be determined so the table
+can be correctly extracted.  The “<code class="docutils literal"><span class="pre">magic</span></code>” value is followed by a 16 bit
 <code class="docutils literal"><span class="pre">version</span></code> number which allows the table to be revised and modified in the
 future.  The current version number is 1. <code class="docutils literal"><span class="pre">hash_function</span></code> is a <code class="docutils literal"><span class="pre">uint16_t</span></code>
 enumeration that specifies which hash function was used to produce this table.
 The current values for the hash function enumerations include:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="k">enum</span> <span class="n">HashFunctionType</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">HashFunctionType</span>
 <span class="p">{</span>
   <span class="n">eHashFunctionDJB</span> <span class="o">=</span> <span class="mi">0u</span><span class="p">,</span> <span class="c1">// Daniel J Bernstein hash function</span>
 <span class="p">};</span>
@@ -1096,7 +1109,7 @@ this table.</p>
 <div class="section" id="fixed-lookup">
 <h5><a class="toc-backref" href="#id34">Fixed Lookup</a><a class="headerlink" href="#fixed-lookup" title="Permalink to this headline">¶</a></h5>
 <p>The header is followed by the buckets, hashes, offsets, and hash value data.</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="k">struct</span> <span class="n">FixedTable</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">FixedTable</span>
 <span class="p">{</span>
   <span class="kt">uint32_t</span> <span class="n">buckets</span><span class="p">[</span><span class="n">Header</span><span class="p">.</span><span class="n">bucket_count</span><span class="p">];</span>  <span class="c1">// An array of hash indexes into the &quot;hashes[]&quot; array below</span>
   <span class="kt">uint32_t</span> <span class="n">hashes</span> <span class="p">[</span><span class="n">Header</span><span class="p">.</span><span class="n">hashes_count</span><span class="p">];</span>  <span class="c1">// Every unique 32 bit hash for the entire table is in this table</span>
@@ -1122,7 +1135,7 @@ We might want to store an offset to all of the debug information entries (DIEs)
 for each name.  To keep things extensible, we create a list of items, or
 Atoms, that are contained in the data for each name.  First comes the type of
 the data in each atom:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="k">enum</span> <span class="n">AtomType</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">AtomType</span>
 <span class="p">{</span>
   <span class="n">eAtomTypeNULL</span>       <span class="o">=</span> <span class="mi">0u</span><span class="p">,</span>
   <span class="n">eAtomTypeDIEOffset</span>  <span class="o">=</span> <span class="mi">1u</span><span class="p">,</span>   <span class="c1">// DIE offset, check form for encoding</span>
@@ -1134,7 +1147,7 @@ the data in each atom:</p>
 </pre></div>
 </div>
 <p>The enumeration values and their meanings are:</p>
-<div class="highlight-none"><div class="highlight"><pre>eAtomTypeNULL       - a termination atom that specifies the end of the atom list
+<div class="highlight-none"><div class="highlight"><pre><span></span>eAtomTypeNULL       - a termination atom that specifies the end of the atom list
 eAtomTypeDIEOffset  - an offset into the .debug_info section for the DWARF DIE for this name
 eAtomTypeCUOffset   - an offset into the .debug_info section for the CU that contains the DIE
 eAtomTypeDIETag     - The DW_TAG_XXX enumeration value so you don&#39;t have to parse the DWARF to see what it is
@@ -1144,7 +1157,7 @@ eAtomTypeTypeFlags  - Flags for types (isCXXClass, isObjCClass, ...)
 </div>
 <p>Then we allow each atom type to define the atom type and how the data for each
 atom type data is encoded:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="k">struct</span> <span class="n">Atom</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Atom</span>
 <span class="p">{</span>
   <span class="kt">uint16_t</span> <span class="n">type</span><span class="p">;</span>  <span class="c1">// AtomType enum value</span>
   <span class="kt">uint16_t</span> <span class="n">form</span><span class="p">;</span>  <span class="c1">// DWARF DW_FORM_XXX defines</span>
@@ -1154,7 +1167,7 @@ atom type data is encoded:</p>
 <p>The <code class="docutils literal"><span class="pre">form</span></code> type above is from the DWARF specification and defines the exact
 encoding of the data for the Atom type.  See the DWARF specification for the
 <code class="docutils literal"><span class="pre">DW_FORM_</span></code> definitions.</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="k">struct</span> <span class="n">HeaderData</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">HeaderData</span>
 <span class="p">{</span>
   <span class="kt">uint32_t</span> <span class="n">die_offset_base</span><span class="p">;</span>
   <span class="kt">uint32_t</span> <span class="n">atom_count</span><span class="p">;</span>
@@ -1165,14 +1178,14 @@ encoding of the data for the Atom type.  See the DWARF specification for the
 <p><code class="docutils literal"><span class="pre">HeaderData</span></code> defines the base DIE offset that should be added to any atoms
 that are encoded using the <code class="docutils literal"><span class="pre">DW_FORM_ref1</span></code>, <code class="docutils literal"><span class="pre">DW_FORM_ref2</span></code>,
 <code class="docutils literal"><span class="pre">DW_FORM_ref4</span></code>, <code class="docutils literal"><span class="pre">DW_FORM_ref8</span></code> or <code class="docutils literal"><span class="pre">DW_FORM_ref_udata</span></code>.  It also defines
-what is contained in each <code class="docutils literal"><span class="pre">HashData</span></code> object &#8211; <code class="docutils literal"><span class="pre">Atom.form</span></code> tells us how large
+what is contained in each <code class="docutils literal"><span class="pre">HashData</span></code> object – <code class="docutils literal"><span class="pre">Atom.form</span></code> tells us how large
 each field will be in the <code class="docutils literal"><span class="pre">HashData</span></code> and the <code class="docutils literal"><span class="pre">Atom.type</span></code> tells us how this data
 should be interpreted.</p>
-<p>For the current implementations of the &#8220;<code class="docutils literal"><span class="pre">.apple_names</span></code>&#8221; (all functions +
-globals), the &#8220;<code class="docutils literal"><span class="pre">.apple_types</span></code>&#8221; (names of all types that are defined), and
-the &#8220;<code class="docutils literal"><span class="pre">.apple_namespaces</span></code>&#8221; (all namespaces), we currently set the <code class="docutils literal"><span class="pre">Atom</span></code>
+<p>For the current implementations of the “<code class="docutils literal"><span class="pre">.apple_names</span></code>” (all functions +
+globals), the “<code class="docutils literal"><span class="pre">.apple_types</span></code>” (names of all types that are defined), and
+the “<code class="docutils literal"><span class="pre">.apple_namespaces</span></code>” (all namespaces), we currently set the <code class="docutils literal"><span class="pre">Atom</span></code>
 array to be:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="n">HeaderData</span><span class="p">.</span><span class="n">atom_count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="n">HeaderData</span><span class="p">.</span><span class="n">atom_count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 <span class="n">HeaderData</span><span class="p">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">type</span> <span class="o">=</span> <span class="n">eAtomTypeDIEOffset</span><span class="p">;</span>
 <span class="n">HeaderData</span><span class="p">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">form</span> <span class="o">=</span> <span class="n">DW_FORM_data4</span><span class="p">;</span>
 </pre></div>
@@ -1184,7 +1197,7 @@ function for instance.  Future tables could include more information about the
 DIE such as flags indicating if the DIE is a function, method, block,
 or inlined.</p>
 <p>The KeyType for the DWARF table is a 32 bit string table offset into the
-&#8221;.debug_str&#8221; table.  The &#8221;.debug_str&#8221; is the string table for the DWARF which
+“.debug_str” table.  The “.debug_str” is the string table for the DWARF which
 may already contain copies of all of the strings.  This helps make sure, with
 help from the compiler, that we reuse the strings between all of the DWARF
 sections and keeps the hash table size down.  Another benefit to having the
@@ -1193,14 +1206,14 @@ DWARF parsing can be made much faster.</p>
 <p>After a lookup is made, we get an offset into the hash data.  The hash data
 needs to be able to deal with 32 bit hash collisions, so the chunk of data
 at the offset in the hash data consists of a triple:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="kt">uint32_t</span> <span class="n">str_offset</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="kt">uint32_t</span> <span class="n">str_offset</span>
 <span class="kt">uint32_t</span> <span class="n">hash_data_count</span>
 <span class="n">HashData</span><span class="p">[</span><span class="n">hash_data_count</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>If &#8220;str_offset&#8221; is zero, then the bucket contents are done. 99.9% of the
+<p>If “str_offset” is zero, then the bucket contents are done. 99.9% of the
 hash data chunks contain a single item (no 32 bit hash collision):</p>
-<div class="highlight-none"><div class="highlight"><pre>.------------.
+<div class="highlight-none"><div class="highlight"><pre><span></span>.------------.
 | 0x00001023 | uint32_t KeyType (.debug_str[0x0001023] =&gt; &quot;main&quot;)
 | 0x00000004 | uint32_t HashData count
 | 0x........ | uint32_t HashData[0] DIE offset
@@ -1212,7 +1225,7 @@ hash data chunks contain a single item (no 32 bit hash collision):</p>
 </pre></div>
 </div>
 <p>If there are collisions, you will have multiple valid string offsets:</p>
-<div class="highlight-none"><div class="highlight"><pre>.------------.
+<div class="highlight-none"><div class="highlight"><pre><span></span>.------------.
 | 0x00001023 | uint32_t KeyType (.debug_str[0x0001023] =&gt; &quot;main&quot;)
 | 0x00000004 | uint32_t HashData count
 | 0x........ | uint32_t HashData[0] DIE offset
@@ -1234,9 +1247,9 @@ hash data chunks contain a single item (no 32 bit hash collision):</p>
 <div class="section" id="id6">
 <h4><a class="toc-backref" href="#id35">Contents</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
 <p>As we said, we want to strictly define exactly what is included in the
-different tables.  For DWARF, we have 3 tables: &#8220;<code class="docutils literal"><span class="pre">.apple_names</span></code>&#8221;,
-&#8220;<code class="docutils literal"><span class="pre">.apple_types</span></code>&#8221;, and &#8220;<code class="docutils literal"><span class="pre">.apple_namespaces</span></code>&#8221;.</p>
-<p>&#8220;<code class="docutils literal"><span class="pre">.apple_names</span></code>&#8221; sections should contain an entry for each DWARF DIE whose
+different tables.  For DWARF, we have 3 tables: “<code class="docutils literal"><span class="pre">.apple_names</span></code>”,
+“<code class="docutils literal"><span class="pre">.apple_types</span></code>”, and “<code class="docutils literal"><span class="pre">.apple_namespaces</span></code>”.</p>
+<p>“<code class="docutils literal"><span class="pre">.apple_names</span></code>” sections should contain an entry for each DWARF DIE whose
 <code class="docutils literal"><span class="pre">DW_TAG</span></code> is a <code class="docutils literal"><span class="pre">DW_TAG_label</span></code>, <code class="docutils literal"><span class="pre">DW_TAG_inlined_subroutine</span></code>, or
 <code class="docutils literal"><span class="pre">DW_TAG_subprogram</span></code> that has address attributes: <code class="docutils literal"><span class="pre">DW_AT_low_pc</span></code>,
 <code class="docutils literal"><span class="pre">DW_AT_high_pc</span></code>, <code class="docutils literal"><span class="pre">DW_AT_ranges</span></code> or <code class="docutils literal"><span class="pre">DW_AT_entry_pc</span></code>.  It also contains
@@ -1244,7 +1257,7 @@ different tables.  For DWARF, we have 3 tables: &#8220;<code class="docutils lit
 static variables).  All global and static variables should be included,
 including those scoped within functions and classes.  For example using the
 following code:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="k">static</span> <span class="kt">int</span> <span class="n">var</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="kt">int</span> <span class="n">var</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
 <span class="kt">void</span> <span class="nf">f</span> <span class="p">()</span>
 <span class="p">{</span>
@@ -1259,7 +1272,7 @@ the full name is the mangled name (if available) which is usually in the
 function basename.  If global or static variables have a mangled name in a
 <code class="docutils literal"><span class="pre">DW_AT_MIPS_linkage_name</span></code> attribute, this should be emitted along with the
 simple name found in the <code class="docutils literal"><span class="pre">DW_AT_name</span></code> attribute.</p>
-<p>&#8220;<code class="docutils literal"><span class="pre">.apple_types</span></code>&#8221; sections should contain an entry for each DWARF DIE whose
+<p>“<code class="docutils literal"><span class="pre">.apple_types</span></code>” sections should contain an entry for each DWARF DIE whose
 tag is one of:</p>
 <ul class="simple">
 <li>DW_TAG_array_type</li>
@@ -1290,7 +1303,7 @@ tag is one of:</p>
 <p>Only entries with a <code class="docutils literal"><span class="pre">DW_AT_name</span></code> attribute are included, and the entry must
 not be a forward declaration (<code class="docutils literal"><span class="pre">DW_AT_declaration</span></code> attribute with a non-zero
 value).  For example, using the following code:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">main</span> <span class="p">()</span>
 <span class="p">{</span>
   <span class="kt">int</span> <span class="o">*</span><span class="n">b</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="k">return</span> <span class="o">*</span><span class="n">b</span><span class="p">;</span>
@@ -1298,7 +1311,7 @@ value).  For example, using the following code:</p>
 </pre></div>
 </div>
 <p>We get a few type DIEs:</p>
-<div class="highlight-none"><div class="highlight"><pre>0x00000067:     TAG_base_type [5]
+<div class="highlight-none"><div class="highlight"><pre><span></span>0x00000067:     TAG_base_type [5]
                 AT_encoding( DW_ATE_signed )
                 AT_name( &quot;int&quot; )
                 AT_byte_size( 0x04 )
@@ -1309,9 +1322,9 @@ value).  For example, using the following code:</p>
 </pre></div>
 </div>
 <p>The DW_TAG_pointer_type is not included because it does not have a <code class="docutils literal"><span class="pre">DW_AT_name</span></code>.</p>
-<p>&#8220;<code class="docutils literal"><span class="pre">.apple_namespaces</span></code>&#8221; section should contain all <code class="docutils literal"><span class="pre">DW_TAG_namespace</span></code> DIEs.
+<p>“<code class="docutils literal"><span class="pre">.apple_namespaces</span></code>” section should contain all <code class="docutils literal"><span class="pre">DW_TAG_namespace</span></code> DIEs.
 If we run into a namespace that has no name this is an anonymous namespace, and
-the name should be output as &#8220;<code class="docutils literal"><span class="pre">(anonymous</span> <span class="pre">namespace)</span></code>&#8221; (without the quotes).
+the name should be output as “<code class="docutils literal"><span class="pre">(anonymous</span> <span class="pre">namespace)</span></code>” (without the quotes).
 Why?  This matches the output of the <code class="docutils literal"><span class="pre">abi::cxa_demangle()</span></code> that is in the
 standard C++ library that demangles mangled names.</p>
 </div>
@@ -1319,14 +1332,14 @@ standard C++ library that demangles mangled names.</p>
 <h4><a class="toc-backref" href="#id36">Language Extensions and File Format Changes</a><a class="headerlink" href="#language-extensions-and-file-format-changes" title="Permalink to this headline">¶</a></h4>
 <div class="section" id="objective-c-extensions">
 <h5><a class="toc-backref" href="#id37">Objective-C Extensions</a><a class="headerlink" href="#objective-c-extensions" title="Permalink to this headline">¶</a></h5>
-<p>&#8220;<code class="docutils literal"><span class="pre">.apple_objc</span></code>&#8221; section should contain all <code class="docutils literal"><span class="pre">DW_TAG_subprogram</span></code> DIEs for an
+<p>“<code class="docutils literal"><span class="pre">.apple_objc</span></code>” section should contain all <code class="docutils literal"><span class="pre">DW_TAG_subprogram</span></code> DIEs for an
 Objective-C class.  The name used in the hash table is the name of the
 Objective-C class itself.  If the Objective-C class has a category, then an
 entry is made for both the class name without the category, and for the class
 name with the category.  So if we have a DIE at offset 0x1234 with a name of
-method &#8220;<code class="docutils literal"><span class="pre">-[NSString(my_additions)</span> <span class="pre">stringWithSpecialString:]</span></code>&#8221;, we would add
-an entry for &#8220;<code class="docutils literal"><span class="pre">NSString</span></code>&#8221; that points to DIE 0x1234, and an entry for
-&#8220;<code class="docutils literal"><span class="pre">NSString(my_additions)</span></code>&#8221; that points to 0x1234.  This allows us to quickly
+method “<code class="docutils literal"><span class="pre">-[NSString(my_additions)</span> <span class="pre">stringWithSpecialString:]</span></code>”, we would add
+an entry for “<code class="docutils literal"><span class="pre">NSString</span></code>” that points to DIE 0x1234, and an entry for
+“<code class="docutils literal"><span class="pre">NSString(my_additions)</span></code>” that points to 0x1234.  This allows us to quickly
 track down all Objective-C methods for an Objective-C class when doing
 expressions.  It is needed because of the dynamic nature of Objective-C where
 anyone can add methods to a class.  The DWARF for Objective-C methods is also
@@ -1338,11 +1351,11 @@ given the Objective-C class name, or quickly find all methods and class
 functions for a class + category name.  This table does not contain any
 selector names, it just maps Objective-C class names (or class names +
 category) to all of the methods and class functions.  The selectors are added
-as function basenames in the &#8220;<code class="docutils literal"><span class="pre">.debug_names</span></code>&#8221; section.</p>
-<p>In the &#8220;<code class="docutils literal"><span class="pre">.apple_names</span></code>&#8221; section for Objective-C functions, the full name is
-the entire function name with the brackets (&#8220;<code class="docutils literal"><span class="pre">-[NSString</span>
-<span class="pre">stringWithCString:]</span></code>&#8221;) and the basename is the selector only
-(&#8220;<code class="docutils literal"><span class="pre">stringWithCString:</span></code>&#8221;).</p>
+as function basenames in the “<code class="docutils literal"><span class="pre">.debug_names</span></code>” section.</p>
+<p>In the “<code class="docutils literal"><span class="pre">.apple_names</span></code>” section for Objective-C functions, the full name is
+the entire function name with the brackets (“<code class="docutils literal"><span class="pre">-[NSString</span>
+<span class="pre">stringWithCString:]</span></code>”) and the basename is the selector only
+(“<code class="docutils literal"><span class="pre">stringWithCString:</span></code>”).</p>
 </div>
 <div class="section" id="mach-o-changes">
 <h5><a class="toc-backref" href="#id38">Mach-O Changes</a><a class="headerlink" href="#mach-o-changes" title="Permalink to this headline">¶</a></h5>
@@ -1350,10 +1363,10 @@ the entire function name with the brackets (&#8220;<code class="docutils literal
 mach-o files, the sections should be contained in the <code class="docutils literal"><span class="pre">__DWARF</span></code> segment with
 names as follows:</p>
 <ul class="simple">
-<li>&#8220;<code class="docutils literal"><span class="pre">.apple_names</span></code>&#8221; -&gt; &#8220;<code class="docutils literal"><span class="pre">__apple_names</span></code>&#8220;</li>
-<li>&#8220;<code class="docutils literal"><span class="pre">.apple_types</span></code>&#8221; -&gt; &#8220;<code class="docutils literal"><span class="pre">__apple_types</span></code>&#8220;</li>
-<li>&#8220;<code class="docutils literal"><span class="pre">.apple_namespaces</span></code>&#8221; -&gt; &#8220;<code class="docutils literal"><span class="pre">__apple_namespac</span></code>&#8221; (16 character limit)</li>
-<li>&#8220;<code class="docutils literal"><span class="pre">.apple_objc</span></code>&#8221; -&gt; &#8220;<code class="docutils literal"><span class="pre">__apple_objc</span></code>&#8220;</li>
+<li>“<code class="docutils literal"><span class="pre">.apple_names</span></code>” -&gt; “<code class="docutils literal"><span class="pre">__apple_names</span></code>”</li>
+<li>“<code class="docutils literal"><span class="pre">.apple_types</span></code>” -&gt; “<code class="docutils literal"><span class="pre">__apple_types</span></code>”</li>
+<li>“<code class="docutils literal"><span class="pre">.apple_namespaces</span></code>” -&gt; “<code class="docutils literal"><span class="pre">__apple_namespac</span></code>” (16 character limit)</li>
+<li>“<code class="docutils literal"><span class="pre">.apple_objc</span></code>” -&gt; “<code class="docutils literal"><span class="pre">__apple_objc</span></code>”</li>
 </ul>
 </div>
 </div>
@@ -1368,7 +1381,7 @@ section describes the design and implementation of that support.</p>
 <p>CodeView as a format is clearly oriented around C++ debugging, and in C++, the
 majority of debug information tends to be type information. Therefore, the
 overriding design constraint of CodeView is the separation of type information
-from other &#8220;symbol&#8221; information so that type information can be efficiently
+from other “symbol” information so that type information can be efficiently
 merged across translation units. Both type information and symbol information is
 generally stored as a sequence of records, where each record begins with a
 16-bit record size and a 16-bit record kind.</p>
@@ -1390,39 +1403,39 @@ index. This ensures that the graph of type stream references is acyclic. While
 the source-level type graph may contain cycles through pointer types (consider a
 linked list struct), these cycles are removed from the type stream by always
 referring to the forward declaration record of user-defined record types. Only
-&#8220;symbol&#8221; records in the <code class="docutils literal"><span class="pre">.debug$S</span></code> streams may refer to complete,
+“symbol” records in the <code class="docutils literal"><span class="pre">.debug$S</span></code> streams may refer to complete,
 non-forward-declaration type records.</p>
 </div>
 <div class="section" id="working-with-codeview">
 <h3><a class="toc-backref" href="#id41">Working with CodeView</a><a class="headerlink" href="#working-with-codeview" title="Permalink to this headline">¶</a></h3>
 <p>These are instructions for some common tasks for developers working to improve
-LLVM&#8217;s CodeView support. Most of them revolve around using the CodeView dumper
+LLVM’s CodeView support. Most of them revolve around using the CodeView dumper
 embedded in <code class="docutils literal"><span class="pre">llvm-readobj</span></code>.</p>
 <ul>
-<li><p class="first">Testing MSVC&#8217;s output:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ cl -c -Z7 foo.cpp # Use /Z7 to keep types in the object file
+<li><p class="first">Testing MSVC’s output:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cl -c -Z7 foo.cpp # Use /Z7 to keep types in the object file
 $ llvm-readobj -codeview foo.obj
 </pre></div>
 </div>
 </li>
 <li><p class="first">Getting LLVM IR debug info out of Clang:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ clang -g -gcodeview --target=x86_64-windows-msvc foo.cpp -S -emit-llvm
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ clang -g -gcodeview --target=x86_64-windows-msvc foo.cpp -S -emit-llvm
 </pre></div>
 </div>
 <p>Use this to generate LLVM IR for LLVM test cases.</p>
 </li>
 <li><p class="first">Generate and dump CodeView from LLVM IR metadata:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ llc foo.ll -filetype=obj -o foo.obj
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ llc foo.ll -filetype=obj -o foo.obj
 $ llvm-readobj -codeview foo.obj &gt; foo.txt
 </pre></div>
 </div>
 <p>Use this pattern in lit test cases and FileCheck the output of llvm-readobj</p>
 </li>
 </ul>
-<p>Improving LLVM&#8217;s CodeView support is a process of finding interesting type
+<p>Improving LLVM’s CodeView support is a process of finding interesting type
 records, constructing a C++ test case that makes MSVC emit those records,
 dumping the records, understanding them, and then generating equivalent records
-in LLVM&#8217;s backend.</p>
+in LLVM’s backend.</p>
 </div>
 </div>
 </div>
@@ -1450,9 +1463,9 @@ in LLVM&#8217;s backend.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

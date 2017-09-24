@@ -1,39 +1,38 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>The PDB File Format &mdash; LLVM 4 documentation</title>
-    
+    <title>The PDB File Format &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The MSF File Format" href="MsfFile.html" />
-    <link rel="prev" title="XRay Instrumentation" href="../XRay.html" />
+    <link rel="prev" title="Debugging with XRay" href="../XRayExample.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -50,7 +49,7 @@
           <a href="MsfFile.html" title="The MSF File Format"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../XRay.html" title="XRay Instrumentation"
+          <a href="../XRayExample.html" title="Debugging with XRay"
              accesskey="P">previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
@@ -110,14 +109,14 @@ assume it is little endian!</p>
 <div class="section" id="the-msf-container">
 <span id="msf"></span><h3><a class="toc-backref" href="#id4">The MSF Container</a><a class="headerlink" href="#the-msf-container" title="Permalink to this headline">¶</a></h3>
 <p>A PDB file is really just a special case of an MSF (Multi-Stream Format) file.
-An MSF file is actually a miniature &#8220;file system within a file&#8221;.  It contains
+An MSF file is actually a miniature “file system within a file”.  It contains
 multiple streams (aka files) which can represent arbitrary data, and these
 streams are divided into blocks which may not necessarily be contiguously
 laid out within the file (aka fragmented).  Additionally, the MSF contains a
 stream directory (aka MFT) which describes how the streams (files) are laid
 out within the MSF.</p>
 <p>For more information about the MSF container format, stream directory, and
-block layout, see <a class="reference internal" href="MsfFile.html"><em>The MSF File Format</em></a>.</p>
+block layout, see <a class="reference internal" href="MsfFile.html"><span class="doc">The MSF File Format</span></a>.</p>
 </div>
 <div class="section" id="streams">
 <span id="id1"></span><h3><a class="toc-backref" href="#id5">Streams</a><a class="headerlink" href="#streams" title="Permalink to this headline">¶</a></h3>
@@ -295,21 +294,21 @@ by name</li>
 <p>More information about the structure of each of these can be found on the
 following pages:</p>
 <dl class="docutils">
-<dt><a class="reference internal" href="PdbStream.html"><em>The PDB Info Stream (aka the PDB Stream)</em></a></dt>
+<dt><a class="reference internal" href="PdbStream.html"><span class="doc">The PDB Info Stream (aka the PDB Stream)</span></a></dt>
 <dd>Information about the PDB Info Stream and how it is used to match PDBs to EXEs.</dd>
-<dt><a class="reference internal" href="TpiStream.html"><em>The PDB TPI Stream</em></a></dt>
+<dt><a class="reference internal" href="TpiStream.html"><span class="doc">The PDB TPI Stream</span></a></dt>
 <dd>Information about the TPI stream and the CodeView records contained within.</dd>
-<dt><a class="reference internal" href="DbiStream.html"><em>The PDB DBI (Debug Info) Stream</em></a></dt>
+<dt><a class="reference internal" href="DbiStream.html"><span class="doc">The PDB DBI (Debug Info) Stream</span></a></dt>
 <dd>Information about the DBI stream and relevant substreams including the Module Substreams,
 source file information, and CodeView symbol records contained within.</dd>
-<dt><a class="reference internal" href="ModiStream.html"><em>The Module Information Stream</em></a></dt>
+<dt><a class="reference internal" href="ModiStream.html"><span class="doc">The Module Information Stream</span></a></dt>
 <dd>Information about the Module Information Stream, of which there is one for each compilation
 unit and the format of symbols contained within.</dd>
-<dt><a class="reference internal" href="PublicStream.html"><em>The PDB Public Symbol Stream</em></a></dt>
+<dt><a class="reference internal" href="PublicStream.html"><span class="doc">The PDB Public Symbol Stream</span></a></dt>
 <dd>Information about the Public Symbol Stream.</dd>
-<dt><a class="reference internal" href="GlobalStream.html"><em>The PDB Global Symbol Stream</em></a></dt>
+<dt><a class="reference internal" href="GlobalStream.html"><span class="doc">The PDB Global Symbol Stream</span></a></dt>
 <dd>Information about the Global Symbol Stream.</dd>
-<dt><a class="reference internal" href="HashStream.html"><em>The TPI &amp; IPI Hash Streams</em></a></dt>
+<dt><a class="reference internal" href="HashStream.html"><span class="doc">The TPI &amp; IPI Hash Streams</span></a></dt>
 <dd>Information about the Hash Table stream, and how it can be used to quickly look up records
 by name.</dd>
 </dl>
@@ -321,7 +320,7 @@ by name.</dd>
 the structure of the overall file, and PDB defines the set of streams that
 appear within the MSF file and the format of those streams, CodeView defines
 the format of <strong>symbol and type records</strong> that appear within specific streams.
-Refer to the pages on <a class="reference internal" href="CodeViewSymbols.html"><em>CodeView Symbol Records</em></a> and <a class="reference internal" href="CodeViewTypes.html"><em>CodeView Type Records</em></a> for
+Refer to the pages on <a class="reference internal" href="CodeViewSymbols.html"><span class="doc">CodeView Symbol Records</span></a> and <a class="reference internal" href="CodeViewTypes.html"><span class="doc">CodeView Type Records</span></a> for
 more information about the CodeView format.</p>
 </div>
 </div>
@@ -341,7 +340,7 @@ more information about the CodeView format.</p>
           <a href="MsfFile.html" title="The MSF File Format"
              >next</a> |</li>
         <li class="right" >
-          <a href="../XRay.html" title="XRay Instrumentation"
+          <a href="../XRayExample.html" title="Debugging with XRay"
              >previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
@@ -349,9 +348,9 @@ more information about the CodeView format.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

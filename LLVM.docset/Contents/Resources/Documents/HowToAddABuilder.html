@@ -1,30 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>How To Add Your Build Configuration To LLVM Buildbot Infrastructure &mdash; LLVM 4 documentation</title>
-    
+    <title>How To Add Your Build Configuration To LLVM Buildbot Infrastructure &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="yaml2obj" href="yaml2obj.html" />
     <link rel="prev" title="The LLVM Lexicon" href="Lexicon.html" />
 <style type="text/css">
@@ -33,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -68,8 +67,19 @@
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>This document contains information about adding a build configuration and
-buildslave to private slave builder to LLVM Buildbot Infrastructure
-<a class="reference external" href="http://lab.llvm.org:8011">http://lab.llvm.org:8011</a>.</p>
+buildslave to private slave builder to LLVM Buildbot Infrastructure.</p>
+</div>
+<div class="section" id="buildmasters">
+<h2>Buildmasters<a class="headerlink" href="#buildmasters" title="Permalink to this headline">¶</a></h2>
+<p>There are two buildmasters running.</p>
+<ul class="simple">
+<li>The main buildmaster at <a class="reference external" href="http://lab.llvm.org:8011">http://lab.llvm.org:8011</a>. All builders attached
+to this machine will notify commit authors every time they break the build.</li>
+<li>The staging buildbot at <a class="reference external" href="http://lab.llvm.org:8014">http://lab.llvm.org:8014</a>. All builders attached
+to this machine will be completely silent by default when the build is broken.
+Builders for experimental backends should generally be attached to this
+buildmaster.</li>
+</ul>
 </div>
 <div class="section" id="steps-to-add-builder-to-llvm-buildbot">
 <h2>Steps To Add Builder To LLVM Buildbot<a class="headerlink" href="#steps-to-add-builder-to-llvm-buildbot" title="Permalink to this headline">¶</a></h2>
@@ -105,22 +115,24 @@ the <strong>lab.llvm.org</strong> port <strong>9990</strong> (see <a class="refe
 Creating a slave</a>
 for more details) by running the following command:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre>$ buildslave create-slave &lt;buildslave-root-directory&gt; <span class="se">\</span>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ buildslave create-slave &lt;buildslave-root-directory&gt; <span class="se">\</span>
              lab.llvm.org:9990 <span class="se">\</span>
              &lt;buildslave-access-name&gt; &lt;buildslave-access-password&gt;
 </pre></div>
 </div>
 </div></blockquote>
+<p>To point a slave to silent master please use lab.llvm.org:9994 instead
+of lab.llvm.org:9990.</p>
 </li>
 <li><p class="first">Fill the buildslave description and admin name/e-mail.  Here is an
 example of the buildslave description:</p>
-<div class="highlight-python"><div class="highlight"><pre>Windows 7 x64
-Core i7 (2.66GHz), 16GB of RAM
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Windows</span> <span class="mi">7</span> <span class="n">x64</span>
+<span class="n">Core</span> <span class="n">i7</span> <span class="p">(</span><span class="mf">2.66</span><span class="n">GHz</span><span class="p">),</span> <span class="mi">16</span><span class="n">GB</span> <span class="n">of</span> <span class="n">RAM</span>
 
-g++.exe (TDM-1 mingw32) 4.4.0
-GNU Binutils 2.19.1
-cmake version 2.8.4
-Microsoft(R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+<span class="n">g</span><span class="o">++.</span><span class="n">exe</span> <span class="p">(</span><span class="n">TDM</span><span class="o">-</span><span class="mi">1</span> <span class="n">mingw32</span><span class="p">)</span> <span class="mf">4.4</span><span class="o">.</span><span class="mi">0</span>
+<span class="n">GNU</span> <span class="n">Binutils</span> <span class="mf">2.19</span><span class="o">.</span><span class="mi">1</span>
+<span class="n">cmake</span> <span class="n">version</span> <span class="mf">2.8</span><span class="o">.</span><span class="mi">4</span>
+<span class="n">Microsoft</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="mi">32</span><span class="o">-</span><span class="n">bit</span> <span class="n">C</span><span class="o">/</span><span class="n">C</span><span class="o">++</span> <span class="n">Optimizing</span> <span class="n">Compiler</span> <span class="n">Version</span> <span class="mf">16.00</span><span class="o">.</span><span class="mf">40219.01</span> <span class="k">for</span> <span class="mi">80</span><span class="n">x86</span>
 </pre></div>
 </div>
 </li>
@@ -134,6 +146,11 @@ to see if it works.</p>
 <li>slaves are added to <code class="docutils literal"><span class="pre">buildbot/osuosl/master/config/slaves.py</span></code></li>
 <li>builders are added to <code class="docutils literal"><span class="pre">buildbot/osuosl/master/config/builders.py</span></code></li>
 </ul>
+<p>Please make sure your builder name and its builddir are unique through the file.</p>
+<p>It is possible to whitelist email addresses to unconditionally receive notifications
+on build failure; for this you’ll need to add an <code class="docutils literal"><span class="pre">InformativeMailNotifier</span></code> to
+<code class="docutils literal"><span class="pre">buildbot/osuosl/master/config/status.py</span></code>. This is particularly useful for the
+staging buildmaster which is silent otherwise.</p>
 </li>
 <li><p class="first">Send the buildslave access name and the access password directly to
 <a class="reference external" href="mailto:gkistanova&#37;&#52;&#48;gmail&#46;com">Galina Kistanova</a>, and wait till she
@@ -173,9 +190,9 @@ if administrator contact and slave information are correct.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

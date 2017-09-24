@@ -1,31 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>lli - directly execute programs from LLVM bitcode &mdash; LLVM 4 documentation</title>
-    
+    <title>lli - directly execute programs from LLVM bitcode &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="../index.html" />
-    <link rel="up" title="LLVM Command Guide" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="llvm-link - LLVM bitcode linker" href="llvm-link.html" />
     <link rel="prev" title="llc - LLVM static compiler" href="llc.html" />
 <style type="text/css">
@@ -34,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -56,7 +54,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
 
@@ -79,7 +77,7 @@ interpreter.</p>
 <p><strong class="program">lli</strong> is <em>not</em> an emulator. It will not execute IR of different architectures
 and it can only interpret (or JIT-compile) for the host architecture.</p>
 <p>The JIT compiler takes the same arguments as other tools, like <strong class="program">llc</strong>,
-but they don&#8217;t necessarily work for the interpreter.</p>
+but they don’t necessarily work for the interpreter.</p>
 <p>If <cite>filename</cite> is not specified, then <strong class="program">lli</strong> reads the LLVM bitcode for the
 program from standard input.</p>
 <p>The optional <em>args</em> specified on the command line are passed to the program as
@@ -213,7 +211,7 @@ equivalent hardware instructions.</p>
 <dt id="cmdoption-code-model">
 <code class="descname">-code-model</code><code class="descclassname">=model</code><a class="headerlink" href="#cmdoption-code-model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Choose the code model from:</p>
-<div class="highlight-perl"><div class="highlight"><pre><span class="n">default:</span> <span class="n">Target</span> <span class="n">default</span> <span class="n">code</span> <span class="n">model</span>
+<div class="highlight-perl"><div class="highlight"><pre><span></span><span class="n">default:</span> <span class="n">Target</span> <span class="n">default</span> <span class="n">code</span> <span class="n">model</span>
 <span class="n">small:</span> <span class="n">Small</span> <span class="n">code</span> <span class="n">model</span>
 <span class="n">kernel:</span> <span class="n">Kernel</span> <span class="n">code</span> <span class="n">model</span>
 <span class="n">medium:</span> <span class="n">Medium</span> <span class="n">code</span> <span class="n">model</span>
@@ -223,8 +221,8 @@ equivalent hardware instructions.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-disable-post-RA-scheduler">
-<code class="descname">-disable-post-RA-scheduler</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-disable-post-RA-scheduler" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-disable-post-ra-scheduler">
+<code class="descname">-disable-post-RA-scheduler</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-disable-post-ra-scheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Disable scheduling after register allocation.</p>
 </dd></dl>
 
@@ -249,14 +247,14 @@ equivalent hardware instructions.</p>
 <dl class="option">
 <dt id="cmdoption-nozero-initialized-in-bss">
 <code class="descname">-nozero-initialized-in-bss</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-nozero-initialized-in-bss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Don&#8217;t place zero-initialized symbols into the BSS section.</p>
+<dd><p>Don’t place zero-initialized symbols into the BSS section.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-pre-RA-sched">
-<code class="descname">-pre-RA-sched</code><code class="descclassname">=scheduler</code><a class="headerlink" href="#cmdoption-pre-RA-sched" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-pre-ra-sched">
+<code class="descname">-pre-RA-sched</code><code class="descclassname">=scheduler</code><a class="headerlink" href="#cmdoption-pre-ra-sched" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instruction schedulers available (before register allocation):</p>
-<div class="highlight-perl"><div class="highlight"><pre><span class="o">=</span><span class="n">default:</span> <span class="n">Best</span> <span class="n">scheduler</span> <span class="k">for</span> <span class="n">the</span> <span class="n">target</span>
+<div class="highlight-perl"><div class="highlight"><pre><span></span><span class="o">=</span><span class="n">default:</span> <span class="n">Best</span> <span class="n">scheduler</span> <span class="k">for</span> <span class="n">the</span> <span class="n">target</span>
 <span class="o">=</span><span class="n">none:</span> <span class="n">No</span> <span class="n">scheduling:</span> <span class="n">breadth</span> <span class="n">first</span> <span class="n">sequencing</span>
 <span class="o">=</span><span class="n">simple:</span> <span class="n">Simple</span> <span class="n">two</span> <span class="n">pass</span> <span class="n">scheduling:</span> <span class="n">minimize</span> <span class="n">critical</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">maximize</span> <span class="n">processor</span> <span class="n">utilization</span>
 <span class="o">=</span><span class="n">simple</span><span class="o">-</span><span class="n">noitin:</span> <span class="n">Simple</span> <span class="n">two</span> <span class="n">pass</span> <span class="n">scheduling:</span> <span class="n">Same</span> <span class="n">as</span> <span class="n">simple</span> <span class="n">except</span> <span class="n">using</span> <span class="n">generic</span> <span class="n">latency</span>
@@ -271,7 +269,7 @@ equivalent hardware instructions.</p>
 <dt id="cmdoption-regalloc">
 <code class="descname">-regalloc</code><code class="descclassname">=allocator</code><a class="headerlink" href="#cmdoption-regalloc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register allocator to use (default=linearscan)</p>
-<div class="highlight-perl"><div class="highlight"><pre><span class="o">=</span><span class="n">bigblock:</span> <span class="n">Big</span><span class="o">-</span><span class="n">block</span> <span class="n">register</span> <span class="n">allocator</span>
+<div class="highlight-perl"><div class="highlight"><pre><span></span><span class="o">=</span><span class="n">bigblock:</span> <span class="n">Big</span><span class="o">-</span><span class="n">block</span> <span class="n">register</span> <span class="n">allocator</span>
 <span class="o">=</span><span class="n">linearscan:</span> <span class="n">linear</span> <span class="n">scan</span> <span class="n">register</span> <span class="n">allocator</span> <span class="o">=</span><span class="nb">local</span> <span class="o">-</span>   <span class="nb">local</span> <span class="n">register</span> <span class="n">allocator</span>
 <span class="o">=</span><span class="n">simple:</span> <span class="n">simple</span> <span class="n">register</span> <span class="n">allocator</span>
 </pre></div>
@@ -282,9 +280,9 @@ equivalent hardware instructions.</p>
 <dt id="cmdoption-relocation-model">
 <code class="descname">-relocation-model</code><code class="descclassname">=model</code><a class="headerlink" href="#cmdoption-relocation-model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Choose relocation model from:</p>
-<div class="highlight-perl"><div class="highlight"><pre><span class="o">=</span><span class="n">default:</span> <span class="n">Target</span> <span class="n">default</span> <span class="n">relocation</span> <span class="n">model</span>
+<div class="highlight-perl"><div class="highlight"><pre><span></span><span class="o">=</span><span class="n">default:</span> <span class="n">Target</span> <span class="n">default</span> <span class="n">relocation</span> <span class="n">model</span>
 <span class="o">=</span><span class="n">static:</span> <span class="n">Non</span><span class="o">-</span><span class="n">relocatable</span> <span class="n">code</span> <span class="o">=</span><span class="n">pic</span> <span class="o">-</span>   <span class="n">Fully</span> <span class="n">relocatable</span><span class="p">,</span> <span class="n">position</span> <span class="n">independent</span> <span class="n">code</span>
-<span class="o">=</span><span class="n">dynamic</span><span class="o">-</span><span class="nb">no</span><span class="o">-</span><span class="n">pic:</span> <span class="n">Relocatable</span> <span class="n">external</span> <span class="n">references</span><span class="p">,</span> <span class="n">non</span><span class="o">-</span><span class="n">relocatable</span> <span class="n">code</span>
+<span class="o">=</span><span class="n">dynamic</span><span class="o">-</span><span class="k">no</span><span class="o">-</span><span class="n">pic:</span> <span class="n">Relocatable</span> <span class="n">external</span> <span class="n">references</span><span class="p">,</span> <span class="n">non</span><span class="o">-</span><span class="n">relocatable</span> <span class="n">code</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -293,7 +291,7 @@ equivalent hardware instructions.</p>
 <dt id="cmdoption-spiller">
 <code class="descname">-spiller</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-spiller" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spiller to use (default=local)</p>
-<div class="highlight-perl"><div class="highlight"><pre><span class="o">=</span><span class="n">simple:</span> <span class="n">simple</span> <span class="n">spiller</span>
+<div class="highlight-perl"><div class="highlight"><pre><span></span><span class="o">=</span><span class="n">simple:</span> <span class="n">simple</span> <span class="n">spiller</span>
 <span class="o">=</span><span class="nb">local</span><span class="p">:</span> <span class="nb">local</span> <span class="n">spiller</span>
 </pre></div>
 </div>
@@ -303,7 +301,7 @@ equivalent hardware instructions.</p>
 <dt id="cmdoption-x86-asm-syntax">
 <code class="descname">-x86-asm-syntax</code><code class="descclassname">=syntax</code><a class="headerlink" href="#cmdoption-x86-asm-syntax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Choose style of code to emit from X86 backend:</p>
-<div class="highlight-perl"><div class="highlight"><pre><span class="o">=</span><span class="n">att:</span> <span class="n">Emit</span> <span class="n">AT</span><span class="o">&amp;</span><span class="n">T</span><span class="o">-</span><span class="n">style</span> <span class="n">assembly</span>
+<div class="highlight-perl"><div class="highlight"><pre><span></span><span class="o">=</span><span class="n">att:</span> <span class="n">Emit</span> <span class="n">AT</span><span class="o">&amp;</span><span class="n">T</span><span class="o">-</span><span class="n">style</span> <span class="n">assembly</span>
 <span class="o">=</span><span class="n">intel:</span> <span class="n">Emit</span> <span class="n">Intel</span><span class="o">-</span><span class="n">style</span> <span class="n">assembly</span>
 </pre></div>
 </div>
@@ -341,13 +339,13 @@ Otherwise, it will return the exit code of the program it executes.</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

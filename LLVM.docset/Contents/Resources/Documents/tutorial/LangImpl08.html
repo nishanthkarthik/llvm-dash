@@ -1,31 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>8. Kaleidoscope: Compiling to Object Code &mdash; LLVM 4 documentation</title>
-    
+    <title>8. Kaleidoscope: Compiling to Object Code &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="../index.html" />
-    <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="9. Kaleidoscope: Adding Debug Information" href="LangImpl09.html" />
     <link rel="prev" title="7. Kaleidoscope: Extending the Language: Mutable Variables" href="LangImpl07.html" />
 <style type="text/css">
@@ -34,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -56,7 +54,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
 
@@ -80,40 +78,40 @@
 </div>
 <div class="section" id="chapter-8-introduction">
 <h2><a class="toc-backref" href="#id1">8.1. Chapter 8 Introduction</a><a class="headerlink" href="#chapter-8-introduction" title="Permalink to this headline">¶</a></h2>
-<p>Welcome to Chapter 8 of the &#8220;<a class="reference external" href="index.html">Implementing a language with LLVM</a>&#8221; tutorial. This chapter describes how to compile our
+<p>Welcome to Chapter 8 of the “<a class="reference external" href="index.html">Implementing a language with LLVM</a>” tutorial. This chapter describes how to compile our
 language down to object files.</p>
 </div>
 <div class="section" id="choosing-a-target">
 <h2><a class="toc-backref" href="#id2">8.2. Choosing a target</a><a class="headerlink" href="#choosing-a-target" title="Permalink to this headline">¶</a></h2>
 <p>LLVM has native support for cross-compilation. You can compile to the
 architecture of your current machine, or just as easily compile for
-other architectures. In this tutorial, we&#8217;ll target the current
+other architectures. In this tutorial, we’ll target the current
 machine.</p>
 <p>To specify the architecture that you want to target, we use a string
-called a &#8220;target triple&#8221;. This takes the form
+called a “target triple”. This takes the form
 <code class="docutils literal"><span class="pre">&lt;arch&gt;&lt;sub&gt;-&lt;vendor&gt;-&lt;sys&gt;-&lt;abi&gt;</span></code> (see the <a class="reference external" href="http://clang.llvm.org/docs/CrossCompilation.html#target-triple">cross compilation docs</a>).</p>
 <p>As an example, we can see what clang thinks is our current target
 triple:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ clang --version | grep Target
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ clang --version | grep Target
 Target: x86_64-unknown-linux-gnu
 </pre></div>
 </div>
 <p>Running this command may show something different on your machine as
 you might be using a different architecture or operating system to me.</p>
-<p>Fortunately, we don&#8217;t need to hard-code a target triple to target the
+<p>Fortunately, we don’t need to hard-code a target triple to target the
 current machine. LLVM provides <code class="docutils literal"><span class="pre">sys::getDefaultTargetTriple</span></code>, which
 returns the target triple of the current machine.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">auto</span> <span class="n">TargetTriple</span> <span class="o">=</span> <span class="n">sys</span><span class="o">::</span><span class="n">getDefaultTargetTriple</span><span class="p">();</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">TargetTriple</span> <span class="o">=</span> <span class="n">sys</span><span class="o">::</span><span class="n">getDefaultTargetTriple</span><span class="p">();</span>
 </pre></div>
 </div>
-<p>LLVM doesn&#8217;t require us to to link in all the target
-functionality. For example, if we&#8217;re just using the JIT, we don&#8217;t need
-the assembly printers. Similarly, if we&#8217;re only targeting certain
+<p>LLVM doesn’t require us to to link in all the target
+functionality. For example, if we’re just using the JIT, we don’t need
+the assembly printers. Similarly, if we’re only targeting certain
 architectures, we can only link in the functionality for those
 architectures.</p>
-<p>For this example, we&#8217;ll initialize all the targets for emitting object
+<p>For this example, we’ll initialize all the targets for emitting object
 code.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">InitializeAllTargetInfos</span><span class="p">();</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">InitializeAllTargetInfos</span><span class="p">();</span>
 <span class="n">InitializeAllTargets</span><span class="p">();</span>
 <span class="n">InitializeAllTargetMCs</span><span class="p">();</span>
 <span class="n">InitializeAllAsmParsers</span><span class="p">();</span>
@@ -121,7 +119,7 @@ code.</p>
 </pre></div>
 </div>
 <p>We can now use our target triple to get a <code class="docutils literal"><span class="pre">Target</span></code>:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Error</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Error</span><span class="p">;</span>
 <span class="k">auto</span> <span class="n">Target</span> <span class="o">=</span> <span class="n">TargetRegistry</span><span class="o">::</span><span class="n">lookupTarget</span><span class="p">(</span><span class="n">TargetTriple</span><span class="p">,</span> <span class="n">Error</span><span class="p">);</span>
 
 <span class="c1">// Print an error and exit if we couldn&#39;t find the requested target.</span>
@@ -137,12 +135,12 @@ code.</p>
 <div class="section" id="target-machine">
 <h2><a class="toc-backref" href="#id3">8.3. Target Machine</a><a class="headerlink" href="#target-machine" title="Permalink to this headline">¶</a></h2>
 <p>We will also need a <code class="docutils literal"><span class="pre">TargetMachine</span></code>. This class provides a complete
-machine description of the machine we&#8217;re targeting. If we want to
+machine description of the machine we’re targeting. If we want to
 target a specific feature (such as SSE) or a specific CPU (such as
-Intel&#8217;s Sandylake), we do so now.</p>
+Intel’s Sandylake), we do so now.</p>
 <p>To see which features and CPUs that LLVM knows about, we can use
-<code class="docutils literal"><span class="pre">llc</span></code>. For example, let&#8217;s look at x86:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ llvm-as &lt; /dev/null | llc -march=x86 -mattr=help
+<code class="docutils literal"><span class="pre">llc</span></code>. For example, let’s look at x86:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ llvm-as &lt; /dev/null | llc -march=x86 -mattr=help
 Available CPUs for this target:
 
   amdfam10      - Select the amdfam10 processor.
@@ -159,9 +157,9 @@ Available features for this target:
   ...
 </pre></div>
 </div>
-<p>For our example, we&#8217;ll use the generic CPU without any additional
+<p>For our example, we’ll use the generic CPU without any additional
 features, options or relocation model.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">auto</span> <span class="n">CPU</span> <span class="o">=</span> <span class="s">&quot;generic&quot;</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">CPU</span> <span class="o">=</span> <span class="s">&quot;generic&quot;</span><span class="p">;</span>
 <span class="k">auto</span> <span class="n">Features</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
 
 <span class="n">TargetOptions</span> <span class="n">opt</span><span class="p">;</span>
@@ -172,21 +170,21 @@ features, options or relocation model.</p>
 </div>
 <div class="section" id="configuring-the-module">
 <h2><a class="toc-backref" href="#id4">8.4. Configuring the Module</a><a class="headerlink" href="#configuring-the-module" title="Permalink to this headline">¶</a></h2>
-<p>We&#8217;re now ready to configure our module, to specify the target and
-data layout. This isn&#8217;t strictly necessary, but the <a class="reference external" href="../Frontend/PerformanceTips.html">frontend
+<p>We’re now ready to configure our module, to specify the target and
+data layout. This isn’t strictly necessary, but the <a class="reference external" href="../Frontend/PerformanceTips.html">frontend
 performance guide</a> recommends
 this. Optimizations benefit from knowing about the target and data
 layout.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">TheModule</span><span class="o">-&gt;</span><span class="n">setDataLayout</span><span class="p">(</span><span class="n">TargetMachine</span><span class="o">-&gt;</span><span class="n">createDataLayout</span><span class="p">());</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">TheModule</span><span class="o">-&gt;</span><span class="n">setDataLayout</span><span class="p">(</span><span class="n">TargetMachine</span><span class="o">-&gt;</span><span class="n">createDataLayout</span><span class="p">());</span>
 <span class="n">TheModule</span><span class="o">-&gt;</span><span class="n">setTargetTriple</span><span class="p">(</span><span class="n">TargetTriple</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="emit-object-code">
 <h2><a class="toc-backref" href="#id5">8.5. Emit Object Code</a><a class="headerlink" href="#emit-object-code" title="Permalink to this headline">¶</a></h2>
-<p>We&#8217;re ready to emit object code! Let&#8217;s define where we want to write
+<p>We’re ready to emit object code! Let’s define where we want to write
 our file to:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">auto</span> <span class="n">Filename</span> <span class="o">=</span> <span class="s">&quot;output.o&quot;</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">auto</span> <span class="n">Filename</span> <span class="o">=</span> <span class="s">&quot;output.o&quot;</span><span class="p">;</span>
 <span class="n">std</span><span class="o">::</span><span class="n">error_code</span> <span class="n">EC</span><span class="p">;</span>
 <span class="n">raw_fd_ostream</span> <span class="nf">dest</span><span class="p">(</span><span class="n">Filename</span><span class="p">,</span> <span class="n">EC</span><span class="p">,</span> <span class="n">sys</span><span class="o">::</span><span class="n">fs</span><span class="o">::</span><span class="n">F_None</span><span class="p">);</span>
 
@@ -198,7 +196,7 @@ our file to:</p>
 </div>
 <p>Finally, we define a pass that emits object code, then we run that
 pass:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">legacy</span><span class="o">::</span><span class="n">PassManager</span> <span class="n">pass</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">legacy</span><span class="o">::</span><span class="n">PassManager</span> <span class="n">pass</span><span class="p">;</span>
 <span class="k">auto</span> <span class="n">FileType</span> <span class="o">=</span> <span class="n">TargetMachine</span><span class="o">::</span><span class="n">CGFT_ObjectFile</span><span class="p">;</span>
 
 <span class="k">if</span> <span class="p">(</span><span class="n">TargetMachine</span><span class="o">-&gt;</span><span class="n">addPassesToEmitFile</span><span class="p">(</span><span class="n">pass</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">FileType</span><span class="p">))</span> <span class="p">{</span>
@@ -213,22 +211,22 @@ pass:</p>
 </div>
 <div class="section" id="putting-it-all-together">
 <h2><a class="toc-backref" href="#id6">8.6. Putting It All Together</a><a class="headerlink" href="#putting-it-all-together" title="Permalink to this headline">¶</a></h2>
-<p>Does it work? Let&#8217;s give it a try. We need to compile our code, but
+<p>Does it work? Let’s give it a try. We need to compile our code, but
 note that the arguments to <code class="docutils literal"><span class="pre">llvm-config</span></code> are different to the previous chapters.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ clang++ -g -O3 toy.cpp `llvm-config --cxxflags --ldflags --system-libs --libs all` -o toy
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ clang++ -g -O3 toy.cpp `llvm-config --cxxflags --ldflags --system-libs --libs all` -o toy
 </pre></div>
 </div>
-<p>Let&#8217;s run it, and define a simple <code class="docutils literal"><span class="pre">average</span></code> function. Press Ctrl-D
-when you&#8217;re done.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./toy
+<p>Let’s run it, and define a simple <code class="docutils literal"><span class="pre">average</span></code> function. Press Ctrl-D
+when you’re done.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ./toy
 ready&gt; def average(x y) (x + y) * 0.5;
 ^D
 Wrote output.o
 </pre></div>
 </div>
-<p>We have an object file! To test it, let&#8217;s write a simple program and
-link it with our output. Here&#8217;s the source code:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<p>We have an object file! To test it, let’s write a simple program and
+link it with our output. Here’s the source code:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
 
 <span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
     <span class="kt">double</span> <span class="n">average</span><span class="p">(</span><span class="kt">double</span><span class="p">,</span> <span class="kt">double</span><span class="p">);</span>
@@ -241,7 +239,7 @@ link it with our output. Here&#8217;s the source code:</p>
 </div>
 <p>We link our program to output.o and check the result is what we
 expected:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ clang++ main.cpp output.o -o main
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ clang++ main.cpp output.o -o main
 $ ./main
 average of 3.0 and 4.0: 3.5
 </pre></div>
@@ -249,7 +247,7 @@ average of 3.0 and 4.0: 3.5
 </div>
 <div class="section" id="full-code-listing">
 <h2><a class="toc-backref" href="#id7">8.7. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&quot;llvm/ADT/APFloat.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;llvm/ADT/APFloat.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/ADT/Optional.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/ADT/STLExtras.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/BasicBlock.h&quot;</span><span class="cp"></span>
@@ -893,7 +891,7 @@ average of 3.0 and 4.0: 3.5
     <span class="c1">// Read the precedence if present.</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">CurTok</span> <span class="o">==</span> <span class="n">tok_number</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">if</span> <span class="p">(</span><span class="n">NumVal</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="n">NumVal</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">LogErrorP</span><span class="p">(</span><span class="s">&quot;Invalid precedecnce: must be 1..100&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">LogErrorP</span><span class="p">(</span><span class="s">&quot;Invalid precedence: must be 1..100&quot;</span><span class="p">);</span>
       <span class="n">BinaryPrecedence</span> <span class="o">=</span> <span class="p">(</span><span class="kt">unsigned</span><span class="p">)</span><span class="n">NumVal</span><span class="p">;</span>
       <span class="n">getNextToken</span><span class="p">();</span>
     <span class="p">}</span>
@@ -1092,7 +1090,7 @@ average of 3.0 and 4.0: 3.5
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">CondV</span><span class="p">)</span>
     <span class="k">return</span> <span class="k">nullptr</span><span class="p">;</span>
 
-  <span class="c1">// Convert condition to a bool by comparing equal to 0.0.</span>
+  <span class="c1">// Convert condition to a bool by comparing non-equal to 0.0.</span>
   <span class="n">CondV</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">.</span><span class="n">CreateFCmpONE</span><span class="p">(</span>
       <span class="n">CondV</span><span class="p">,</span> <span class="n">ConstantFP</span><span class="o">::</span><span class="n">get</span><span class="p">(</span><span class="n">TheContext</span><span class="p">,</span> <span class="n">APFloat</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span> <span class="s">&quot;ifcond&quot;</span><span class="p">);</span>
 
@@ -1215,7 +1213,7 @@ average of 3.0 and 4.0: 3.5
   <span class="n">Value</span> <span class="o">*</span><span class="n">NextVar</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">.</span><span class="n">CreateFAdd</span><span class="p">(</span><span class="n">CurVar</span><span class="p">,</span> <span class="n">StepVal</span><span class="p">,</span> <span class="s">&quot;nextvar&quot;</span><span class="p">);</span>
   <span class="n">Builder</span><span class="p">.</span><span class="n">CreateStore</span><span class="p">(</span><span class="n">NextVar</span><span class="p">,</span> <span class="n">Alloca</span><span class="p">);</span>
 
-  <span class="c1">// Convert condition to a bool by comparing equal to 0.0.</span>
+  <span class="c1">// Convert condition to a bool by comparing non-equal to 0.0.</span>
   <span class="n">EndCond</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">.</span><span class="n">CreateFCmpONE</span><span class="p">(</span>
       <span class="n">EndCond</span><span class="p">,</span> <span class="n">ConstantFP</span><span class="o">::</span><span class="n">get</span><span class="p">(</span><span class="n">TheContext</span><span class="p">,</span> <span class="n">APFloat</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span> <span class="s">&quot;loopcond&quot;</span><span class="p">);</span>
 
@@ -1348,7 +1346,7 @@ average of 3.0 and 4.0: 3.5
   <span class="n">TheFunction</span><span class="o">-&gt;</span><span class="n">eraseFromParent</span><span class="p">();</span>
 
   <span class="k">if</span> <span class="p">(</span><span class="n">P</span><span class="p">.</span><span class="n">isBinaryOp</span><span class="p">())</span>
-    <span class="n">BinopPrecedence</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">Proto</span><span class="o">-&gt;</span><span class="n">getOperatorName</span><span class="p">());</span>
+    <span class="n">BinopPrecedence</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">P</span><span class="p">.</span><span class="n">getOperatorName</span><span class="p">());</span>
   <span class="k">return</span> <span class="k">nullptr</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -1365,7 +1363,8 @@ average of 3.0 and 4.0: 3.5
   <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">FnAST</span> <span class="o">=</span> <span class="n">ParseDefinition</span><span class="p">())</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="o">*</span><span class="n">FnIR</span> <span class="o">=</span> <span class="n">FnAST</span><span class="o">-&gt;</span><span class="n">codegen</span><span class="p">())</span> <span class="p">{</span>
       <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Read function definition:&quot;</span><span class="p">);</span>
-      <span class="n">FnIR</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">();</span>
+      <span class="n">FnIR</span><span class="o">-&gt;</span><span class="n">print</span><span class="p">(</span><span class="n">errs</span><span class="p">());</span>
+      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
     <span class="p">}</span>
   <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
     <span class="c1">// Skip token for error recovery.</span>
@@ -1377,7 +1376,8 @@ average of 3.0 and 4.0: 3.5
   <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">ProtoAST</span> <span class="o">=</span> <span class="n">ParseExtern</span><span class="p">())</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="o">*</span><span class="n">FnIR</span> <span class="o">=</span> <span class="n">ProtoAST</span><span class="o">-&gt;</span><span class="n">codegen</span><span class="p">())</span> <span class="p">{</span>
       <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Read extern: &quot;</span><span class="p">);</span>
-      <span class="n">FnIR</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">();</span>
+      <span class="n">FnIR</span><span class="o">-&gt;</span><span class="n">print</span><span class="p">(</span><span class="n">errs</span><span class="p">());</span>
+      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
       <span class="n">FunctionProtos</span><span class="p">[</span><span class="n">ProtoAST</span><span class="o">-&gt;</span><span class="n">getName</span><span class="p">()]</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">ProtoAST</span><span class="p">);</span>
     <span class="p">}</span>
   <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -1422,14 +1422,20 @@ average of 3.0 and 4.0: 3.5
 <span class="c1">// &quot;Library&quot; functions that can be &quot;extern&#39;d&quot; from user code.</span>
 <span class="c1">//===----------------------------------------------------------------------===//</span>
 
+<span class="cp">#ifdef LLVM_ON_WIN32</span>
+<span class="cp">#define DLLEXPORT __declspec(dllexport)</span>
+<span class="cp">#else</span>
+<span class="cp">#define DLLEXPORT</span>
+<span class="cp">#endif</span>
+
 <span class="c1">/// putchard - putchar that takes a double and returns 0.</span>
-<span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="kt">double</span> <span class="n">putchard</span><span class="p">(</span><span class="kt">double</span> <span class="n">X</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="n">DLLEXPORT</span> <span class="kt">double</span> <span class="n">putchard</span><span class="p">(</span><span class="kt">double</span> <span class="n">X</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">fputc</span><span class="p">((</span><span class="kt">char</span><span class="p">)</span><span class="n">X</span><span class="p">,</span> <span class="n">stderr</span><span class="p">);</span>
   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="c1">/// printd - printf that takes a double prints it as &quot;%f\n&quot;, returning 0.</span>
-<span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="kt">double</span> <span class="n">printd</span><span class="p">(</span><span class="kt">double</span> <span class="n">X</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="n">DLLEXPORT</span> <span class="kt">double</span> <span class="n">printd</span><span class="p">(</span><span class="kt">double</span> <span class="n">X</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;%f</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">X</span><span class="p">);</span>
   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
@@ -1536,13 +1542,13 @@ average of 3.0 and 4.0: 3.5
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

@@ -1,30 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Coroutines in LLVM &mdash; LLVM 4 documentation</title>
-    
+    <title>Coroutines in LLVM &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Global Instruction Selection" href="GlobalISel.html" />
     <link rel="prev" title="Machine IR (MIR) Format Reference Manual" href="MIRLangRef.html" />
 <style type="text/css">
@@ -33,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -80,23 +79,23 @@
 </li>
 <li><a class="reference internal" href="#intrinsics" id="id54">Intrinsics</a><ul>
 <li><a class="reference internal" href="#coroutine-manipulation-intrinsics" id="id55">Coroutine Manipulation Intrinsics</a><ul>
-<li><a class="reference internal" href="#llvm-coro-destroy-intrinsic" id="id56">&#8216;llvm.coro.destroy&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-resume-intrinsic" id="id57">&#8216;llvm.coro.resume&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-done-intrinsic" id="id58">&#8216;llvm.coro.done&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-promise-intrinsic" id="id59">&#8216;llvm.coro.promise&#8217; Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-destroy-intrinsic" id="id56">‘llvm.coro.destroy’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-resume-intrinsic" id="id57">‘llvm.coro.resume’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-done-intrinsic" id="id58">‘llvm.coro.done’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-promise-intrinsic" id="id59">‘llvm.coro.promise’ Intrinsic</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#coroutine-structure-intrinsics" id="id60">Coroutine Structure Intrinsics</a><ul>
-<li><a class="reference internal" href="#llvm-coro-size-intrinsic" id="id61">&#8216;llvm.coro.size&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-begin-intrinsic" id="id62">&#8216;llvm.coro.begin&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-free-intrinsic" id="id63">&#8216;llvm.coro.free&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-alloc-intrinsic" id="id64">&#8216;llvm.coro.alloc&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-frame-intrinsic" id="id65">&#8216;llvm.coro.frame&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-id-intrinsic" id="id66">&#8216;llvm.coro.id&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-end-intrinsic" id="id67">&#8216;llvm.coro.end&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-suspend-intrinsic" id="id68">&#8216;llvm.coro.suspend&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-save-intrinsic" id="id69">&#8216;llvm.coro.save&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-coro-param-intrinsic" id="id70">&#8216;llvm.coro.param&#8217; Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-size-intrinsic" id="id61">‘llvm.coro.size’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-begin-intrinsic" id="id62">‘llvm.coro.begin’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-free-intrinsic" id="id63">‘llvm.coro.free’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-alloc-intrinsic" id="id64">‘llvm.coro.alloc’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-frame-intrinsic" id="id65">‘llvm.coro.frame’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-id-intrinsic" id="id66">‘llvm.coro.id’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-end-intrinsic" id="id67">‘llvm.coro.end’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-suspend-intrinsic" id="id68">‘llvm.coro.suspend’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-save-intrinsic" id="id69">‘llvm.coro.save’ Intrinsic</a></li>
+<li><a class="reference internal" href="#llvm-coro-param-intrinsic" id="id70">‘llvm.coro.param’ Intrinsic</a></li>
 </ul>
 </li>
 </ul>
@@ -126,7 +125,7 @@ to continue execution from the last suspend point or it can be destroyed.</p>
 coroutine itself) that returns a handle to a suspended coroutine
 (<strong>coroutine handle</strong>) that is used by <cite>main</cite> to resume the coroutine twice and
 then destroy it:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i32</span> <span class="vg">@main</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i32</span> <span class="vg">@main</span><span class="p">()</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="nv">%hdl</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@f</span><span class="p">(</span><span class="k">i32</span> <span class="m">4</span><span class="p">)</span>
   <span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.coro.resume</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">)</span>
@@ -166,9 +165,9 @@ reasonably nice code.</p>
 <h2><a class="toc-backref" href="#id46">Coroutines by Example</a><a class="headerlink" href="#coroutines-by-example" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="coroutine-representation">
 <h3><a class="toc-backref" href="#id47">Coroutine Representation</a><a class="headerlink" href="#coroutine-representation" title="Permalink to this headline">¶</a></h3>
-<p>Let&#8217;s look at an example of an LLVM coroutine with the behavior sketched
+<p>Let’s look at an example of an LLVM coroutine with the behavior sketched
 by the following pseudo-code.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="o">*</span><span class="nf">f</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="o">*</span><span class="nf">f</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
    <span class="k">for</span><span class="p">(;;)</span> <span class="p">{</span>
      <span class="n">print</span><span class="p">(</span><span class="n">n</span><span class="o">++</span><span class="p">);</span>
      <span class="o">&lt;</span><span class="n">suspend</span><span class="o">&gt;</span> <span class="c1">// returns a coroutine handle on first suspend</span>
@@ -181,28 +180,28 @@ suspends execution. Every time this coroutine resumes, it calls <cite>print</cit
 a <cite>main</cite> shown in the previous section. It will call <cite>print</cite> with values 4, 5
 and 6 after which the coroutine will be destroyed.</p>
 <p>The LLVM IR for this coroutine looks like this:</p>
-<div class="highlight-none"><div class="highlight"><pre>define i8* @f(i32 %n) {
-entry:
-  %id = call token @llvm.coro.id(i32 0, i8* null, i8* null, i8* null)
-  %size = call i32 @llvm.coro.size.i32()
-  %alloc = call i8* @malloc(i32 %size)
-  %hdl = call noalias i8* @llvm.coro.begin(token %id, i8* %alloc)
-  br label %loop
-loop:
-  %n.val = phi i32 [ %n, %entry ], [ %inc, %loop ]
-  %inc = add nsw i32 %n.val, 1
-  call void @print(i32 %n.val)
-  %0 = call i8 @llvm.coro.suspend(token none, i1 false)
-  switch i8 %0, label %suspend [i8 0, label %loop
-                                i8 1, label %cleanup]
-cleanup:
-  %mem = call i8* @llvm.coro.free(token %id, i8* %hdl)
-  call void @free(i8* %mem)
-  br label %suspend
-suspend:
-  call void @llvm.coro.end(i8* %hdl, i1 false)
-  ret i8* %hdl
-}
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@f</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%n</span><span class="p">)</span> <span class="p">{</span>
+<span class="nl">entry:</span>
+  <span class="nv">%id</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">token</span> <span class="vg">@llvm.coro.id</span><span class="p">(</span><span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">)</span>
+  <span class="nv">%size</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i32</span> <span class="vg">@llvm.coro.size.i32</span><span class="p">()</span>
+  <span class="nv">%alloc</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@malloc</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%size</span><span class="p">)</span>
+  <span class="nv">%hdl</span> <span class="p">=</span> <span class="k">call</span> <span class="k">noalias</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.begin</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%alloc</span><span class="p">)</span>
+  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%loop</span>
+<span class="nl">loop:</span>
+  <span class="nv">%n.val</span> <span class="p">=</span> <span class="k">phi</span> <span class="k">i32</span> <span class="p">[</span> <span class="nv">%n</span><span class="p">,</span> <span class="nv">%entry</span> <span class="p">],</span> <span class="p">[</span> <span class="nv">%inc</span><span class="p">,</span> <span class="nv">%loop</span> <span class="p">]</span>
+  <span class="nv">%inc</span> <span class="p">=</span> <span class="k">add</span> <span class="k">nsw</span> <span class="k">i32</span> <span class="nv">%n.val</span><span class="p">,</span> <span class="m">1</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@print</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%n.val</span><span class="p">)</span>
+  <span class="nv nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span> <span class="vg">@llvm.coro.suspend</span><span class="p">(</span><span class="kt">token</span> <span class="k">none</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
+  <span class="k">switch</span> <span class="k">i8</span> <span class="nv nv-Anonymous">%0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%suspend</span> <span class="p">[</span><span class="k">i8</span> <span class="m">0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%loop</span>
+                                <span class="k">i8</span> <span class="m">1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cleanup</span><span class="p">]</span>
+<span class="nl">cleanup:</span>
+  <span class="nv">%mem</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.free</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">)</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@free</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%mem</span><span class="p">)</span>
+  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%suspend</span>
+<span class="nl">suspend:</span>
+  <span class="nv">%unused</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i1</span> <span class="vg">@llvm.coro.end</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
+  <span class="k">ret</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>The <cite>entry</cite> block establishes the coroutine frame. The <a class="reference internal" href="#coro-size">coro.size</a> intrinsic is
@@ -241,34 +240,34 @@ slot as needed.</p>
 <cite>coro.resume</cite> and <cite>coro.destroy</cite> intrinsics can resume and destroy the coroutine
 when its identity cannot be determined statically at compile time. For our
 example, the coroutine frame will be:</p>
-<div class="highlight-text"><div class="highlight"><pre>%f.frame = type { void (%f.frame*)*, void (%f.frame*)*, i32 }
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nv">%f.frame</span> <span class="p">=</span> <span class="k">type</span> <span class="p">{</span> <span class="kt">void</span> <span class="p">(</span><span class="nv">%f.frame</span><span class="p">*)*,</span> <span class="kt">void</span> <span class="p">(</span><span class="nv">%f.frame</span><span class="p">*)*,</span> <span class="k">i32</span> <span class="p">}</span>
 </pre></div>
 </div>
 <p>After resume and destroy parts are outlined, function <cite>f</cite> will contain only the
 code responsible for creation and initialization of the coroutine frame and
 execution of the coroutine until a suspend point is reached:</p>
-<div class="highlight-none"><div class="highlight"><pre>define i8* @f(i32 %n) {
-entry:
-  %id = call token @llvm.coro.id(i32 0, i8* null, i8* null, i8* null)
-  %alloc = call noalias i8* @malloc(i32 24)
-  %0 = call noalias i8* @llvm.coro.begin(token %id, i8* %alloc)
-  %frame = bitcast i8* %0 to %f.frame*
-  %1 = getelementptr %f.frame, %f.frame* %frame, i32 0, i32 0
-  store void (%f.frame*)* @f.resume, void (%f.frame*)** %1
-  %2 = getelementptr %f.frame, %f.frame* %frame, i32 0, i32 1
-  store void (%f.frame*)* @f.destroy, void (%f.frame*)** %2
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@f</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%n</span><span class="p">)</span> <span class="p">{</span>
+<span class="nl">entry:</span>
+  <span class="nv">%id</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">token</span> <span class="vg">@llvm.coro.id</span><span class="p">(</span><span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">)</span>
+  <span class="nv">%alloc</span> <span class="p">=</span> <span class="k">call</span> <span class="k">noalias</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@malloc</span><span class="p">(</span><span class="k">i32</span> <span class="m">24</span><span class="p">)</span>
+  <span class="nv nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">call</span> <span class="k">noalias</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.begin</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%alloc</span><span class="p">)</span>
+  <span class="nv">%frame</span> <span class="p">=</span> <span class="k">bitcast</span> <span class="k">i8</span><span class="p">*</span> <span class="nv nv-Anonymous">%0</span> <span class="k">to</span> <span class="nv">%f.frame</span><span class="p">*</span>
+  <span class="nv nv-Anonymous">%1</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="nv">%f.frame</span><span class="p">,</span> <span class="nv">%f.frame</span><span class="p">*</span> <span class="nv">%frame</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span>
+  <span class="k">store</span> <span class="kt">void</span> <span class="p">(</span><span class="nv">%f.frame</span><span class="p">*)*</span> <span class="vg">@f.resume</span><span class="p">,</span> <span class="kt">void</span> <span class="p">(</span><span class="nv">%f.frame</span><span class="p">*)**</span> <span class="nv nv-Anonymous">%1</span>
+  <span class="nv nv-Anonymous">%2</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="nv">%f.frame</span><span class="p">,</span> <span class="nv">%f.frame</span><span class="p">*</span> <span class="nv">%frame</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span>
+  <span class="k">store</span> <span class="kt">void</span> <span class="p">(</span><span class="nv">%f.frame</span><span class="p">*)*</span> <span class="vg">@f.destroy</span><span class="p">,</span> <span class="kt">void</span> <span class="p">(</span><span class="nv">%f.frame</span><span class="p">*)**</span> <span class="nv nv-Anonymous">%2</span>
 
-  %inc = add nsw i32 %n, 1
-  %inc.spill.addr = getelementptr inbounds %f.Frame, %f.Frame* %FramePtr, i32 0, i32 2
-  store i32 %inc, i32* %inc.spill.addr
-  call void @print(i32 %n)
+  <span class="nv">%inc</span> <span class="p">=</span> <span class="k">add</span> <span class="k">nsw</span> <span class="k">i32</span> <span class="nv">%n</span><span class="p">,</span> <span class="m">1</span>
+  <span class="nv">%inc.spill.addr</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="k">inbounds</span> <span class="nv">%f.Frame</span><span class="p">,</span> <span class="nv">%f.Frame</span><span class="p">*</span> <span class="nv">%FramePtr</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">2</span>
+  <span class="k">store</span> <span class="k">i32</span> <span class="nv">%inc</span><span class="p">,</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%inc.spill.addr</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@print</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%n</span><span class="p">)</span>
 
-  ret i8* %frame
-}
+  <span class="k">ret</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%frame</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Outlined resume part of the coroutine will reside in function <cite>f.resume</cite>:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">internal</span> <span class="k">fastcc</span> <span class="kt">void</span> <span class="vg">@f.resume</span><span class="p">(</span><span class="nv">%f.frame</span><span class="p">*</span> <span class="nv">%frame.ptr.resume</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">internal</span> <span class="k">fastcc</span> <span class="kt">void</span> <span class="vg">@f.resume</span><span class="p">(</span><span class="nv">%f.frame</span><span class="p">*</span> <span class="nv">%frame.ptr.resume</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="nv">%inc.spill.addr</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="nv">%f.frame</span><span class="p">,</span> <span class="nv">%f.frame</span><span class="p">*</span> <span class="nv">%frame.ptr.resume</span><span class="p">,</span> <span class="k">i64</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">2</span>
   <span class="nv">%inc.spill</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%inc.spill.addr</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
@@ -280,7 +279,7 @@ entry:
 </pre></div>
 </div>
 <p>Whereas function <cite>f.destroy</cite> will contain the cleanup code for the coroutine:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">internal</span> <span class="k">fastcc</span> <span class="kt">void</span> <span class="vg">@f.destroy</span><span class="p">(</span><span class="nv">%f.frame</span><span class="p">*</span> <span class="nv">%frame.ptr.destroy</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">internal</span> <span class="k">fastcc</span> <span class="kt">void</span> <span class="vg">@f.destroy</span><span class="p">(</span><span class="nv">%f.frame</span><span class="p">*</span> <span class="nv">%frame.ptr.destroy</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="nv nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">bitcast</span> <span class="nv">%f.frame</span><span class="p">*</span> <span class="nv">%frame.ptr.destroy</span> <span class="k">to</span> <span class="k">i8</span><span class="p">*</span>
   <span class="k">tail</span> <span class="k">call</span> <span class="kt">void</span> <span class="vg">@free</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv nv-Anonymous">%0</span><span class="p">)</span>
@@ -300,36 +299,36 @@ caller.</p>
 <p>In the entry block, we will call <a class="reference internal" href="#coro-alloc">coro.alloc</a> intrinsic that will return <cite>true</cite>
 when dynamic allocation is required, and <cite>false</cite> if dynamic allocation is
 elided.</p>
-<div class="highlight-none"><div class="highlight"><pre>entry:
-  %id = call token @llvm.coro.id(i32 0, i8* null, i8* null, i8* null)
-  %need.dyn.alloc = call i1 @llvm.coro.alloc(token %id)
-  br i1 %need.dyn.alloc, label %dyn.alloc, label %coro.begin
-dyn.alloc:
-  %size = call i32 @llvm.coro.size.i32()
-  %alloc = call i8* @CustomAlloc(i32 %size)
-  br label %coro.begin
-coro.begin:
-  %phi = phi i8* [ null, %entry ], [ %alloc, %dyn.alloc ]
-  %hdl = call noalias i8* @llvm.coro.begin(token %id, i8* %phi)
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nl">entry:</span>
+  <span class="nv">%id</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">token</span> <span class="vg">@llvm.coro.id</span><span class="p">(</span><span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">)</span>
+  <span class="nv">%need.dyn.alloc</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i1</span> <span class="vg">@llvm.coro.alloc</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">)</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%need.dyn.alloc</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%dyn.alloc</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%coro.begin</span>
+<span class="nl">dyn.alloc:</span>
+  <span class="nv">%size</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i32</span> <span class="vg">@llvm.coro.size.i32</span><span class="p">()</span>
+  <span class="nv">%alloc</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@CustomAlloc</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%size</span><span class="p">)</span>
+  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%coro.begin</span>
+<span class="nl">coro.begin:</span>
+  <span class="nv">%phi</span> <span class="p">=</span> <span class="k">phi</span> <span class="k">i8</span><span class="p">*</span> <span class="p">[</span> <span class="k">null</span><span class="p">,</span> <span class="nv">%entry</span> <span class="p">],</span> <span class="p">[</span> <span class="nv">%alloc</span><span class="p">,</span> <span class="nv">%dyn.alloc</span> <span class="p">]</span>
+  <span class="nv">%hdl</span> <span class="p">=</span> <span class="k">call</span> <span class="k">noalias</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.begin</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%phi</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In the cleanup block, we will make freeing the coroutine frame conditional on
 <a class="reference internal" href="#coro-free">coro.free</a> intrinsic. If allocation is elided, <a class="reference internal" href="#coro-free">coro.free</a> returns <cite>null</cite>
 thus skipping the deallocation code:</p>
-<div class="highlight-text"><div class="highlight"><pre>cleanup:
-  %mem = call i8* @llvm.coro.free(token %id, i8* %hdl)
-  %need.dyn.free = icmp ne i8* %mem, null
-  br i1 %need.dyn.free, label %dyn.free, label %if.end
-dyn.free:
-  call void @CustomFree(i8* %mem)
-  br label %if.end
-if.end:
-  ...
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nl">cleanup:</span>
+  <span class="nv">%mem</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.free</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">)</span>
+  <span class="nv">%need.dyn.free</span> <span class="p">=</span> <span class="k">icmp</span> <span class="k">ne</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%mem</span><span class="p">,</span> <span class="k">null</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%need.dyn.free</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%dyn.free</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%if.end</span>
+<span class="nl">dyn.free:</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@CustomFree</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%mem</span><span class="p">)</span>
+  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%if.end</span>
+<span class="nl">if.end:</span>
+  <span class="p">...</span>
 </pre></div>
 </div>
 <p>With allocations and deallocations represented as described as above, after
 coroutine heap allocation elision optimization, the resulting main will be:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i32</span> <span class="vg">@main</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i32</span> <span class="vg">@main</span><span class="p">()</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="k">call</span> <span class="kt">void</span> <span class="vg">@print</span><span class="p">(</span><span class="k">i32</span> <span class="m">4</span><span class="p">)</span>
   <span class="k">call</span> <span class="kt">void</span> <span class="vg">@print</span><span class="p">(</span><span class="k">i32</span> <span class="m">5</span><span class="p">)</span>
@@ -341,8 +340,8 @@ coroutine heap allocation elision optimization, the resulting main will be:</p>
 </div>
 <div class="section" id="multiple-suspend-points">
 <h3><a class="toc-backref" href="#id50">Multiple Suspend Points</a><a class="headerlink" href="#multiple-suspend-points" title="Permalink to this headline">¶</a></h3>
-<p>Let&#8217;s consider the coroutine that has more than one suspend point:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="o">*</span><span class="nf">f</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+<p>Let’s consider the coroutine that has more than one suspend point:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="o">*</span><span class="nf">f</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
    <span class="k">for</span><span class="p">(;;)</span> <span class="p">{</span>
      <span class="n">print</span><span class="p">(</span><span class="n">n</span><span class="o">++</span><span class="p">);</span>
      <span class="o">&lt;</span><span class="n">suspend</span><span class="o">&gt;</span>
@@ -354,26 +353,26 @@ coroutine heap allocation elision optimization, the resulting main will be:</p>
 </div>
 <p>Matching LLVM code would look like (with the rest of the code remaining the same
 as the code in the previous section):</p>
-<div class="highlight-text"><div class="highlight"><pre>loop:
-  %n.addr = phi i32 [ %n, %entry ], [ %inc, %loop.resume ]
-  call void @print(i32 %n.addr) #4
-  %2 = call i8 @llvm.coro.suspend(token none, i1 false)
-  switch i8 %2, label %suspend [i8 0, label %loop.resume
-                                i8 1, label %cleanup]
-loop.resume:
-  %inc = add nsw i32 %n.addr, 1
-  %sub = xor i32 %n.addr, -1
-  call void @print(i32 %sub)
-  %3 = call i8 @llvm.coro.suspend(token none, i1 false)
-  switch i8 %3, label %suspend [i8 0, label %loop
-                                i8 1, label %cleanup]
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nl">loop:</span>
+  <span class="nv">%n.addr</span> <span class="p">=</span> <span class="k">phi</span> <span class="k">i32</span> <span class="p">[</span> <span class="nv">%n</span><span class="p">,</span> <span class="nv">%entry</span> <span class="p">],</span> <span class="p">[</span> <span class="nv">%inc</span><span class="p">,</span> <span class="nv">%loop.resume</span> <span class="p">]</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@print</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%n.addr</span><span class="p">)</span> <span class="vg">#4</span>
+  <span class="nv nv-Anonymous">%2</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span> <span class="vg">@llvm.coro.suspend</span><span class="p">(</span><span class="kt">token</span> <span class="k">none</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
+  <span class="k">switch</span> <span class="k">i8</span> <span class="nv nv-Anonymous">%2</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%suspend</span> <span class="p">[</span><span class="k">i8</span> <span class="m">0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%loop.resume</span>
+                                <span class="k">i8</span> <span class="m">1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cleanup</span><span class="p">]</span>
+<span class="nl">loop.resume:</span>
+  <span class="nv">%inc</span> <span class="p">=</span> <span class="k">add</span> <span class="k">nsw</span> <span class="k">i32</span> <span class="nv">%n.addr</span><span class="p">,</span> <span class="m">1</span>
+  <span class="nv">%sub</span> <span class="p">=</span> <span class="k">xor</span> <span class="k">i32</span> <span class="nv">%n.addr</span><span class="p">,</span> <span class="m">-1</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@print</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%sub</span><span class="p">)</span>
+  <span class="nv nv-Anonymous">%3</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span> <span class="vg">@llvm.coro.suspend</span><span class="p">(</span><span class="kt">token</span> <span class="k">none</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
+  <span class="k">switch</span> <span class="k">i8</span> <span class="nv nv-Anonymous">%3</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%suspend</span> <span class="p">[</span><span class="k">i8</span> <span class="m">0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%loop</span>
+                                <span class="k">i8</span> <span class="m">1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cleanup</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>In this case, the coroutine frame would include a suspend index that will
 indicate at which suspend point the coroutine needs to resume. The resume
 function will use an index to jump to an appropriate basic block and will look
 as follows:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">internal</span> <span class="k">fastcc</span> <span class="kt">void</span> <span class="vg">@f.Resume</span><span class="p">(</span><span class="nv">%f.Frame</span><span class="p">*</span> <span class="nv">%FramePtr</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">internal</span> <span class="k">fastcc</span> <span class="kt">void</span> <span class="vg">@f.Resume</span><span class="p">(</span><span class="nv">%f.Frame</span><span class="p">*</span> <span class="nv">%FramePtr</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry.Resume:</span>
   <span class="nv">%index.addr</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="k">inbounds</span> <span class="nv">%f.Frame</span><span class="p">,</span> <span class="nv">%f.Frame</span><span class="p">*</span> <span class="nv">%FramePtr</span><span class="p">,</span> <span class="k">i64</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">2</span>
   <span class="nv">%index</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i8</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%index.addr</span><span class="p">,</span> <span class="k">align</span> <span class="m">1</span>
@@ -422,7 +421,7 @@ when coroutine is prepared for resumption and when it is suspended.</p>
 by completions of asynchronous operations <cite>async_op1</cite> and <cite>async_op2</cite> which get
 a coroutine handle as a parameter and resume the coroutine once async
 operation is finished.</p>
-<div class="highlight-text"><div class="highlight"><pre>void g() {
+<div class="highlight-text"><div class="highlight"><pre><span></span>void g() {
    for (;;)
      if (cond()) {
         async_op1(&lt;coroutine-handle&gt;); // will resume once async_op1 completes
@@ -443,18 +442,18 @@ operation is finished.</p>
 point when coroutine should be ready for resumption (namely, when a resume index
 should be stored in the coroutine frame, so that it can be resumed at the
 correct resume point):</p>
-<div class="highlight-text"><div class="highlight"><pre>if.true:
-  %save1 = call token @llvm.coro.save(i8* %hdl)
-  call void async_op1(i8* %hdl)
-  %suspend1 = call i1 @llvm.coro.suspend(token %save1, i1 false)
-  switch i8 %suspend1, label %suspend [i8 0, label %resume1
-                                       i8 1, label %cleanup]
-if.false:
-  %save2 = call token @llvm.coro.save(i8* %hdl)
-  call void async_op2(i8* %hdl)
-  %suspend2 = call i1 @llvm.coro.suspend(token %save2, i1 false)
-  switch i8 %suspend1, label %suspend [i8 0, label %resume2
-                                       i8 1, label %cleanup]
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nl">if.true:</span>
+  <span class="nv">%save1</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">token</span> <span class="vg">@llvm.coro.save</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">)</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@async_op1</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">)</span>
+  <span class="nv">%suspend1</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i1</span> <span class="vg">@llvm.coro.suspend</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%save1</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
+  <span class="k">switch</span> <span class="k">i8</span> <span class="nv">%suspend1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%suspend</span> <span class="p">[</span><span class="k">i8</span> <span class="m">0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%resume1</span>
+                                       <span class="k">i8</span> <span class="m">1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cleanup</span><span class="p">]</span>
+<span class="nl">if.false:</span>
+  <span class="nv">%save2</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">token</span> <span class="vg">@llvm.coro.save</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">)</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@async_op2</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">)</span>
+  <span class="nv">%suspend2</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i1</span> <span class="vg">@llvm.coro.suspend</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%save2</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
+  <span class="k">switch</span> <span class="k">i8</span> <span class="nv">%suspend1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%suspend</span> <span class="p">[</span><span class="k">i8</span> <span class="m">0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%resume2</span>
+                                       <span class="k">i8</span> <span class="m">1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cleanup</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -466,41 +465,41 @@ be used to communicate with the coroutine. This distinguished alloca is called
 <a class="reference internal" href="#coro-id">coro.id</a> intrinsic.</p>
 <p>The following coroutine designates a 32 bit integer <cite>promise</cite> and uses it to
 store the current value produced by a coroutine.</p>
-<div class="highlight-text"><div class="highlight"><pre>define i8* @f(i32 %n) {
-entry:
-  %promise = alloca i32
-  %pv = bitcast i32* %promise to i8*
-  %id = call token @llvm.coro.id(i32 0, i8* %pv, i8* null, i8* null)
-  %need.dyn.alloc = call i1 @llvm.coro.alloc(token %id)
-  br i1 %need.dyn.alloc, label %dyn.alloc, label %coro.begin
-dyn.alloc:
-  %size = call i32 @llvm.coro.size.i32()
-  %alloc = call i8* @malloc(i32 %size)
-  br label %coro.begin
-coro.begin:
-  %phi = phi i8* [ null, %entry ], [ %alloc, %dyn.alloc ]
-  %hdl = call noalias i8* @llvm.coro.begin(token %id, i8* %phi)
-  br label %loop
-loop:
-  %n.val = phi i32 [ %n, %coro.begin ], [ %inc, %loop ]
-  %inc = add nsw i32 %n.val, 1
-  store i32 %n.val, i32* %promise
-  %0 = call i8 @llvm.coro.suspend(token none, i1 false)
-  switch i8 %0, label %suspend [i8 0, label %loop
-                                i8 1, label %cleanup]
-cleanup:
-  %mem = call i8* @llvm.coro.free(token %id, i8* %hdl)
-  call void @free(i8* %mem)
-  br label %suspend
-suspend:
-  call void @llvm.coro.end(i8* %hdl, i1 false)
-  ret i8* %hdl
-}
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@f</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%n</span><span class="p">)</span> <span class="p">{</span>
+<span class="nl">entry:</span>
+  <span class="nv">%promise</span> <span class="p">=</span> <span class="k">alloca</span> <span class="k">i32</span>
+  <span class="nv">%pv</span> <span class="p">=</span> <span class="k">bitcast</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%promise</span> <span class="k">to</span> <span class="k">i8</span><span class="p">*</span>
+  <span class="nv">%id</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">token</span> <span class="vg">@llvm.coro.id</span><span class="p">(</span><span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%pv</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">)</span>
+  <span class="nv">%need.dyn.alloc</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i1</span> <span class="vg">@llvm.coro.alloc</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">)</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%need.dyn.alloc</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%dyn.alloc</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%coro.begin</span>
+<span class="nl">dyn.alloc:</span>
+  <span class="nv">%size</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i32</span> <span class="vg">@llvm.coro.size.i32</span><span class="p">()</span>
+  <span class="nv">%alloc</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@malloc</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%size</span><span class="p">)</span>
+  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%coro.begin</span>
+<span class="nl">coro.begin:</span>
+  <span class="nv">%phi</span> <span class="p">=</span> <span class="k">phi</span> <span class="k">i8</span><span class="p">*</span> <span class="p">[</span> <span class="k">null</span><span class="p">,</span> <span class="nv">%entry</span> <span class="p">],</span> <span class="p">[</span> <span class="nv">%alloc</span><span class="p">,</span> <span class="nv">%dyn.alloc</span> <span class="p">]</span>
+  <span class="nv">%hdl</span> <span class="p">=</span> <span class="k">call</span> <span class="k">noalias</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.begin</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%phi</span><span class="p">)</span>
+  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%loop</span>
+<span class="nl">loop:</span>
+  <span class="nv">%n.val</span> <span class="p">=</span> <span class="k">phi</span> <span class="k">i32</span> <span class="p">[</span> <span class="nv">%n</span><span class="p">,</span> <span class="nv">%coro.begin</span> <span class="p">],</span> <span class="p">[</span> <span class="nv">%inc</span><span class="p">,</span> <span class="nv">%loop</span> <span class="p">]</span>
+  <span class="nv">%inc</span> <span class="p">=</span> <span class="k">add</span> <span class="k">nsw</span> <span class="k">i32</span> <span class="nv">%n.val</span><span class="p">,</span> <span class="m">1</span>
+  <span class="k">store</span> <span class="k">i32</span> <span class="nv">%n.val</span><span class="p">,</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%promise</span>
+  <span class="nv nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span> <span class="vg">@llvm.coro.suspend</span><span class="p">(</span><span class="kt">token</span> <span class="k">none</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
+  <span class="k">switch</span> <span class="k">i8</span> <span class="nv nv-Anonymous">%0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%suspend</span> <span class="p">[</span><span class="k">i8</span> <span class="m">0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%loop</span>
+                                <span class="k">i8</span> <span class="m">1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cleanup</span><span class="p">]</span>
+<span class="nl">cleanup:</span>
+  <span class="nv">%mem</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.free</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">)</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@free</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%mem</span><span class="p">)</span>
+  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%suspend</span>
+<span class="nl">suspend:</span>
+  <span class="nv">%unused</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i1</span> <span class="vg">@llvm.coro.end</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
+  <span class="k">ret</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>A coroutine consumer can rely on the <a class="reference internal" href="#coro-promise">coro.promise</a> intrinsic to access the
 coroutine promise.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i32</span> <span class="vg">@main</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i32</span> <span class="vg">@main</span><span class="p">()</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="nv">%hdl</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@f</span><span class="p">(</span><span class="k">i32</span> <span class="m">4</span><span class="p">)</span>
   <span class="nv">%promise.addr.raw</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.promise</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">,</span> <span class="k">i32</span> <span class="m">4</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
@@ -519,7 +518,7 @@ coroutine promise.</p>
 </pre></div>
 </div>
 <p>After example in this section is compiled, result of the compilation will be:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i32</span> <span class="vg">@main</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i32</span> <span class="vg">@main</span><span class="p">()</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="k">tail</span> <span class="k">call</span> <span class="kt">void</span> <span class="vg">@print</span><span class="p">(</span><span class="k">i32</span> <span class="m">4</span><span class="p">)</span>
   <span class="k">tail</span> <span class="k">call</span> <span class="kt">void</span> <span class="vg">@print</span><span class="p">(</span><span class="k">i32</span> <span class="m">5</span><span class="p">)</span>
@@ -548,7 +547,7 @@ the resume function.</p>
 <p>The following is an example of a function that keeps resuming the coroutine
 until the final suspend point is reached after which point the coroutine is
 destroyed:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i32</span> <span class="vg">@main</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i32</span> <span class="vg">@main</span><span class="p">()</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="nv">%hdl</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@f</span><span class="p">(</span><span class="k">i32</span> <span class="m">4</span><span class="p">)</span>
   <span class="k">br</span> <span class="kt">label</span> <span class="nv">%while</span>
@@ -565,14 +564,14 @@ destroyed:</p>
 <p>Usually, final suspend point is a frontend injected suspend point that does not
 correspond to any explicitly authored suspend point of the high level language.
 For example, for a Python generator that has only one suspend point:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">coroutine</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">coroutine</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
     <span class="k">yield</span> <span class="n">i</span>
 </pre></div>
 </div>
 <p>Python frontend would inject two more suspend points, so that the actual code
 looks like this:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="kt">void</span><span class="o">*</span> <span class="nf">coroutine</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="o">*</span> <span class="nf">coroutine</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">current_value</span><span class="p">;</span>
   <span class="o">&lt;</span><span class="n">designate</span> <span class="n">current_value</span> <span class="n">to</span> <span class="n">be</span> <span class="n">coroutine</span> <span class="n">promise</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="n">SUSPEND</span><span class="o">&gt;</span> <span class="c1">// injected suspend point, so that the coroutine starts suspended</span>
@@ -584,7 +583,7 @@ looks like this:</p>
 </pre></div>
 </div>
 <p>and python iterator <cite>__next__</cite> would look like:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">__next__</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">hdl</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">__next__</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">hdl</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">coro</span><span class="p">.</span><span class="n">resume</span><span class="p">(</span><span class="n">hdl</span><span class="p">);</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">coro</span><span class="p">.</span><span class="n">done</span><span class="p">(</span><span class="n">hdl</span><span class="p">))</span> <span class="k">throw</span> <span class="n">StopIteration</span><span class="p">();</span>
   <span class="k">return</span> <span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="n">coro</span><span class="p">.</span><span class="n">promise</span><span class="p">(</span><span class="n">hdl</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
@@ -601,16 +600,16 @@ looks like this:</p>
 coroutine. They can be used in any function which happen to have a pointer
 to a <a class="reference internal" href="#coroutine-frame">coroutine frame</a> or a pointer to a <a class="reference internal" href="#coroutine-promise">coroutine promise</a>.</p>
 <div class="section" id="llvm-coro-destroy-intrinsic">
-<span id="coro-destroy"></span><h4><a class="toc-backref" href="#id56">&#8216;llvm.coro.destroy&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-destroy-intrinsic" title="Permalink to this headline">¶</a></h4>
+<span id="coro-destroy"></span><h4><a class="toc-backref" href="#id56">‘llvm.coro.destroy’ Intrinsic</a><a class="headerlink" href="#llvm-coro-destroy-intrinsic" title="Permalink to this headline">¶</a></h4>
 <div class="section" id="syntax">
 <h5>Syntax:<a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-python"><div class="highlight"><pre>declare void @llvm.coro.destroy(i8* &lt;handle&gt;)
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">void</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">destroy</span><span class="p">(</span><span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="overview">
 <h5>Overview:<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.destroy</span></code>&#8216; intrinsic destroys a suspended
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.destroy</span></code>’ intrinsic destroys a suspended
 coroutine.</p>
 </div>
 <div class="section" id="arguments">
@@ -626,13 +625,13 @@ frame. Destroying a coroutine that is not suspended leads to undefined behavior.
 </div>
 </div>
 <div class="section" id="llvm-coro-resume-intrinsic">
-<span id="coro-resume"></span><h4><a class="toc-backref" href="#id57">&#8216;llvm.coro.resume&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-resume-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare void @llvm.coro.resume(i8* &lt;handle&gt;)
+<span id="coro-resume"></span><h4><a class="toc-backref" href="#id57">‘llvm.coro.resume’ Intrinsic</a><a class="headerlink" href="#llvm-coro-resume-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">void</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">resume</span><span class="p">(</span><span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="id3">
 <h5>Overview:<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.resume</span></code>&#8216; intrinsic resumes a suspended coroutine.</p>
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.resume</span></code>’ intrinsic resumes a suspended coroutine.</p>
 </div>
 <div class="section" id="id4">
 <h5>Arguments:<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h5>
@@ -647,13 +646,13 @@ Resuming a coroutine that is not suspended leads to undefined behavior.</p>
 </div>
 </div>
 <div class="section" id="llvm-coro-done-intrinsic">
-<span id="coro-done"></span><h4><a class="toc-backref" href="#id58">&#8216;llvm.coro.done&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-done-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare i1 @llvm.coro.done(i8* &lt;handle&gt;)
+<span id="coro-done"></span><h4><a class="toc-backref" href="#id58">‘llvm.coro.done’ Intrinsic</a><a class="headerlink" href="#llvm-coro-done-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">i1</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">done</span><span class="p">(</span><span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="id6">
 <h5>Overview:<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.done</span></code>&#8216; intrinsic checks whether a suspended coroutine is at
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.done</span></code>’ intrinsic checks whether a suspended coroutine is at
 the final suspend point or not.</p>
 </div>
 <div class="section" id="id7">
@@ -667,13 +666,13 @@ or on a coroutine that is not suspended leads to undefined behavior.</p>
 </div>
 </div>
 <div class="section" id="llvm-coro-promise-intrinsic">
-<span id="coro-promise"></span><h4><a class="toc-backref" href="#id59">&#8216;llvm.coro.promise&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-promise-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare i8* @llvm.coro.promise(i8* &lt;ptr&gt;, i32 &lt;alignment&gt;, i1 &lt;from&gt;)
+<span id="coro-promise"></span><h4><a class="toc-backref" href="#id59">‘llvm.coro.promise’ Intrinsic</a><a class="headerlink" href="#llvm-coro-promise-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">i8</span><span class="o">*</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">promise</span><span class="p">(</span><span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">ptr</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">i32</span> <span class="o">&lt;</span><span class="n">alignment</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">i1</span> <span class="o">&lt;</span><span class="n">from</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="id9">
 <h5>Overview:<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.promise</span></code>&#8216; intrinsic obtains a pointer to a
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.promise</span></code>’ intrinsic obtains a pointer to a
 <a class="reference internal" href="#coroutine-promise">coroutine promise</a> given a coroutine handle and vice versa.</p>
 </div>
 <div class="section" id="id10">
@@ -700,30 +699,30 @@ a coroutine user are responsible to makes sure there is no data races.</p>
 </div>
 <div class="section" id="example">
 <h5>Example:<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-text"><div class="highlight"><pre>define i8* @f(i32 %n) {
-entry:
-  %promise = alloca i32
-  %pv = bitcast i32* %promise to i8*
-  ; the second argument to coro.id points to the coroutine promise.
-  %id = call token @llvm.coro.id(i32 0, i8* %pv, i8* null, i8* null)
-  ...
-  %hdl = call noalias i8* @llvm.coro.begin(token %id, i8* %alloc)
-  ...
-  store i32 42, i32* %promise ; store something into the promise
-  ...
-  ret i8* %hdl
-}
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@f</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%n</span><span class="p">)</span> <span class="p">{</span>
+<span class="nl">entry:</span>
+  <span class="nv">%promise</span> <span class="p">=</span> <span class="k">alloca</span> <span class="k">i32</span>
+  <span class="nv">%pv</span> <span class="p">=</span> <span class="k">bitcast</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%promise</span> <span class="k">to</span> <span class="k">i8</span><span class="p">*</span>
+  <span class="c">; the second argument to coro.id points to the coroutine promise.</span>
+  <span class="nv">%id</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">token</span> <span class="vg">@llvm.coro.id</span><span class="p">(</span><span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%pv</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">)</span>
+  <span class="p">...</span>
+  <span class="nv">%hdl</span> <span class="p">=</span> <span class="k">call</span> <span class="k">noalias</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.begin</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%alloc</span><span class="p">)</span>
+  <span class="p">...</span>
+  <span class="k">store</span> <span class="k">i32</span> <span class="m">42</span><span class="p">,</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%promise</span> <span class="c">; store something into the promise</span>
+  <span class="p">...</span>
+  <span class="k">ret</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span>
+<span class="p">}</span>
 
-define i32 @main() {
-entry:
-  %hdl = call i8* @f(i32 4) ; starts the coroutine and returns its handle
-  %promise.addr.raw = call i8* @llvm.coro.promise(i8* %hdl, i32 4, i1 false)
-  %promise.addr = bitcast i8* %promise.addr.raw to i32*
-  %val = load i32, i32* %promise.addr ; load a value from the promise
-  call void @print(i32 %val)
-  call void @llvm.coro.destroy(i8* %hdl)
-  ret i32 0
-}
+<span class="k">define</span> <span class="k">i32</span> <span class="vg">@main</span><span class="p">()</span> <span class="p">{</span>
+<span class="nl">entry:</span>
+  <span class="nv">%hdl</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@f</span><span class="p">(</span><span class="k">i32</span> <span class="m">4</span><span class="p">)</span> <span class="c">; starts the coroutine and returns its handle</span>
+  <span class="nv">%promise.addr.raw</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.promise</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">,</span> <span class="k">i32</span> <span class="m">4</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
+  <span class="nv">%promise.addr</span> <span class="p">=</span> <span class="k">bitcast</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%promise.addr.raw</span> <span class="k">to</span> <span class="k">i32</span><span class="p">*</span>
+  <span class="nv">%val</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%promise.addr</span> <span class="c">; load a value from the promise</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@print</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%val</span><span class="p">)</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.coro.destroy</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">)</span>
+  <span class="k">ret</span> <span class="k">i32</span> <span class="m">0</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -734,14 +733,14 @@ entry:
 <p>Intrinsics described in this section are used within a coroutine to describe
 the coroutine structure. They should not be used outside of a coroutine.</p>
 <div class="section" id="llvm-coro-size-intrinsic">
-<span id="coro-size"></span><h4><a class="toc-backref" href="#id61">&#8216;llvm.coro.size&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-size-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare i32 @llvm.coro.size.i32()
-declare i64 @llvm.coro.size.i64()
+<span id="coro-size"></span><h4><a class="toc-backref" href="#id61">‘llvm.coro.size’ Intrinsic</a><a class="headerlink" href="#llvm-coro-size-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">i32</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">i32</span><span class="p">()</span>
+<span class="n">declare</span> <span class="n">i64</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">i64</span><span class="p">()</span>
 </pre></div>
 </div>
 <div class="section" id="id12">
 <h5>Overview:<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.size</span></code>&#8216; intrinsic returns the number of bytes
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.size</span></code>’ intrinsic returns the number of bytes
 required to store a <a class="reference internal" href="#coroutine-frame">coroutine frame</a>.</p>
 </div>
 <div class="section" id="id13">
@@ -755,17 +754,17 @@ the coroutine frame.</p>
 </div>
 </div>
 <div class="section" id="llvm-coro-begin-intrinsic">
-<span id="coro-begin"></span><h4><a class="toc-backref" href="#id62">&#8216;llvm.coro.begin&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-begin-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare i8* @llvm.coro.begin(token &lt;id&gt;, i8* &lt;mem&gt;)
+<span id="coro-begin"></span><h4><a class="toc-backref" href="#id62">‘llvm.coro.begin’ Intrinsic</a><a class="headerlink" href="#llvm-coro-begin-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">i8</span><span class="o">*</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="n">token</span> <span class="o">&lt;</span><span class="nb">id</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">mem</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="id15">
 <h5>Overview:<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.begin</span></code>&#8216; intrinsic returns an address of the coroutine frame.</p>
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.begin</span></code>’ intrinsic returns an address of the coroutine frame.</p>
 </div>
 <div class="section" id="id16">
 <h5>Arguments:<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h5>
-<p>The first argument is a token returned by a call to &#8216;<code class="docutils literal"><span class="pre">llvm.coro.id</span></code>&#8216;
+<p>The first argument is a token returned by a call to ‘<code class="docutils literal"><span class="pre">llvm.coro.id</span></code>’
 identifying the coroutine.</p>
 <p>The second argument is a pointer to a block of memory where coroutine frame
 will be stored if it is allocated dynamically.</p>
@@ -781,60 +780,60 @@ with small positive and negative offsets).</p>
 </div>
 </div>
 <div class="section" id="llvm-coro-free-intrinsic">
-<span id="coro-free"></span><h4><a class="toc-backref" href="#id63">&#8216;llvm.coro.free&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-free-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare i8* @llvm.coro.free(token %id, i8* &lt;frame&gt;)
+<span id="coro-free"></span><h4><a class="toc-backref" href="#id63">‘llvm.coro.free’ Intrinsic</a><a class="headerlink" href="#llvm-coro-free-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">i8</span><span class="o">*</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">free</span><span class="p">(</span><span class="n">token</span> <span class="o">%</span><span class="nb">id</span><span class="p">,</span> <span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">frame</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="id18">
 <h5>Overview:<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.free</span></code>&#8216; intrinsic returns a pointer to a block of memory where
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.free</span></code>’ intrinsic returns a pointer to a block of memory where
 coroutine frame is stored or <cite>null</cite> if this instance of a coroutine did not use
 dynamically allocated memory for its coroutine frame.</p>
 </div>
 <div class="section" id="id19">
 <h5>Arguments:<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h5>
-<p>The first argument is a token returned by a call to &#8216;<code class="docutils literal"><span class="pre">llvm.coro.id</span></code>&#8216;
+<p>The first argument is a token returned by a call to ‘<code class="docutils literal"><span class="pre">llvm.coro.id</span></code>’
 identifying the coroutine.</p>
 <p>The second argument is a pointer to the coroutine frame. This should be the same
 pointer that was returned by prior <cite>coro.begin</cite> call.</p>
 </div>
 <div class="section" id="example-custom-deallocation-function">
 <h5>Example (custom deallocation function):<a class="headerlink" href="#example-custom-deallocation-function" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-text"><div class="highlight"><pre>cleanup:
-  %mem = call i8* @llvm.coro.free(token %id, i8* %frame)
-  %mem_not_null = icmp ne i8* %mem, null
-  br i1 %mem_not_null, label %if.then, label %if.end
-if.then:
-  call void @CustomFree(i8* %mem)
-  br label %if.end
-if.end:
-  ret void
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nl">cleanup:</span>
+  <span class="nv">%mem</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.free</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%frame</span><span class="p">)</span>
+  <span class="nv">%mem_not_null</span> <span class="p">=</span> <span class="k">icmp</span> <span class="k">ne</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%mem</span><span class="p">,</span> <span class="k">null</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%mem_not_null</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%if.then</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%if.end</span>
+<span class="nl">if.then:</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@CustomFree</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%mem</span><span class="p">)</span>
+  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%if.end</span>
+<span class="nl">if.end:</span>
+  <span class="k">ret</span> <span class="kt">void</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="example-standard-deallocation-functions">
 <h5>Example (standard deallocation functions):<a class="headerlink" href="#example-standard-deallocation-functions" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-text"><div class="highlight"><pre>cleanup:
-  %mem = call i8* @llvm.coro.free(token %id, i8* %frame)
-  call void @free(i8* %mem)
-  ret void
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nl">cleanup:</span>
+  <span class="nv">%mem</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.free</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%frame</span><span class="p">)</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@free</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%mem</span><span class="p">)</span>
+  <span class="k">ret</span> <span class="kt">void</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="llvm-coro-alloc-intrinsic">
-<span id="coro-alloc"></span><h4><a class="toc-backref" href="#id64">&#8216;llvm.coro.alloc&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-alloc-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare i1 @llvm.coro.alloc(token &lt;id&gt;)
+<span id="coro-alloc"></span><h4><a class="toc-backref" href="#id64">‘llvm.coro.alloc’ Intrinsic</a><a class="headerlink" href="#llvm-coro-alloc-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">i1</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">alloc</span><span class="p">(</span><span class="n">token</span> <span class="o">&lt;</span><span class="nb">id</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="id20">
 <h5>Overview:<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.alloc</span></code>&#8216; intrinsic returns <cite>true</cite> if dynamic allocation is
-required to obtain a memory for the corutine frame and <cite>false</cite> otherwise.</p>
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.alloc</span></code>’ intrinsic returns <cite>true</cite> if dynamic allocation is
+required to obtain a memory for the coroutine frame and <cite>false</cite> otherwise.</p>
 </div>
 <div class="section" id="id21">
 <h5>Arguments:<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h5>
-<p>The first argument is a token returned by a call to &#8216;<code class="docutils literal"><span class="pre">llvm.coro.id</span></code>&#8216;
+<p>The first argument is a token returned by a call to ‘<code class="docutils literal"><span class="pre">llvm.coro.id</span></code>’
 identifying the coroutine.</p>
 </div>
 <div class="section" id="id22">
@@ -845,31 +844,31 @@ when possible.</p>
 </div>
 <div class="section" id="id23">
 <h5>Example:<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-text"><div class="highlight"><pre>entry:
-  %id = call token @llvm.coro.id(i32 0, i8* null, i8* null, i8* null)
-  %dyn.alloc.required = call i1 @llvm.coro.alloc(token %id)
-  br i1 %dyn.alloc.required, label %coro.alloc, label %coro.begin
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nl">entry:</span>
+  <span class="nv">%id</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">token</span> <span class="vg">@llvm.coro.id</span><span class="p">(</span><span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">)</span>
+  <span class="nv">%dyn.alloc.required</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i1</span> <span class="vg">@llvm.coro.alloc</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">)</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%dyn.alloc.required</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%coro.alloc</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%coro.begin</span>
 
-coro.alloc:
-  %frame.size = call i32 @llvm.coro.size()
-  %alloc = call i8* @MyAlloc(i32 %frame.size)
-  br label %coro.begin
+<span class="nl">coro.alloc:</span>
+  <span class="nv">%frame.size</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i32</span> <span class="vg">@llvm.coro.size</span><span class="p">()</span>
+  <span class="nv">%alloc</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@MyAlloc</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%frame.size</span><span class="p">)</span>
+  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%coro.begin</span>
 
-coro.begin:
-  %phi = phi i8* [ null, %entry ], [ %alloc, %coro.alloc ]
-  %frame = call i8* @llvm.coro.begin(token %id, i8* %phi)
+<span class="nl">coro.begin:</span>
+  <span class="nv">%phi</span> <span class="p">=</span> <span class="k">phi</span> <span class="k">i8</span><span class="p">*</span> <span class="p">[</span> <span class="k">null</span><span class="p">,</span> <span class="nv">%entry</span> <span class="p">],</span> <span class="p">[</span> <span class="nv">%alloc</span><span class="p">,</span> <span class="nv">%coro.alloc</span> <span class="p">]</span>
+  <span class="nv">%frame</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.coro.begin</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%id</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%phi</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="llvm-coro-frame-intrinsic">
-<span id="coro-frame"></span><h4><a class="toc-backref" href="#id65">&#8216;llvm.coro.frame&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-frame-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare i8* @llvm.coro.frame()
+<span id="coro-frame"></span><h4><a class="toc-backref" href="#id65">‘llvm.coro.frame’ Intrinsic</a><a class="headerlink" href="#llvm-coro-frame-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">i8</span><span class="o">*</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
 </pre></div>
 </div>
 <div class="section" id="id24">
 <h5>Overview:<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.frame</span></code>&#8216; intrinsic returns an address of the coroutine frame of
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.frame</span></code>’ intrinsic returns an address of the coroutine frame of
 the enclosing coroutine.</p>
 </div>
 <div class="section" id="id25">
@@ -884,14 +883,14 @@ coroutine frame.</p>
 </div>
 </div>
 <div class="section" id="llvm-coro-id-intrinsic">
-<span id="coro-id"></span><h4><a class="toc-backref" href="#id66">&#8216;llvm.coro.id&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-id-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare token @llvm.coro.id(i32 &lt;align&gt;, i8* &lt;promise&gt;, i8* &lt;coroaddr&gt;,
-                                                        i8* &lt;fnaddrs&gt;)
+<span id="coro-id"></span><h4><a class="toc-backref" href="#id66">‘llvm.coro.id’ Intrinsic</a><a class="headerlink" href="#llvm-coro-id-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">token</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">id</span><span class="p">(</span><span class="n">i32</span> <span class="o">&lt;</span><span class="n">align</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">promise</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">coroaddr</span><span class="o">&gt;</span><span class="p">,</span>
+                                                        <span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">fnaddrs</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="id27">
 <h5>Overview:<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.id</span></code>&#8216; intrinsic returns a token identifying a coroutine.</p>
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.id</span></code>’ intrinsic returns a token identifying a coroutine.</p>
 </div>
 <div class="section" id="id28">
 <h5>Arguments:<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h5>
@@ -917,46 +916,107 @@ duplicated.</p>
 </div>
 </div>
 <div class="section" id="llvm-coro-end-intrinsic">
-<span id="coro-end"></span><h4><a class="toc-backref" href="#id67">&#8216;llvm.coro.end&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-end-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare void @llvm.coro.end(i8* &lt;handle&gt;, i1 &lt;unwind&gt;)
+<span id="coro-end"></span><h4><a class="toc-backref" href="#id67">‘llvm.coro.end’ Intrinsic</a><a class="headerlink" href="#llvm-coro-end-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">i1</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">i1</span> <span class="o">&lt;</span><span class="n">unwind</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="id30">
 <h5>Overview:<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.end</span></code>&#8216; marks the point where execution of the resume part of
-the coroutine should end and control returns back to the caller.</p>
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.end</span></code>’ marks the point where execution of the resume part of
+the coroutine should end and control should return to the caller.</p>
 </div>
 <div class="section" id="id31">
 <h5>Arguments:<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h5>
-<p>The first argument should refer to the coroutine handle of the enclosing coroutine.</p>
+<p>The first argument should refer to the coroutine handle of the enclosing
+coroutine. A frontend is allowed to supply null as the first parameter, in this
+case <cite>coro-early</cite> pass will replace the null with an appropriate coroutine
+handle value.</p>
 <p>The second argument should be <cite>true</cite> if this coro.end is in the block that is
-part of the unwind sequence leaving the coroutine body due to exception prior to
-the first reaching any suspend points, and <cite>false</cite> otherwise.</p>
+part of the unwind sequence leaving the coroutine body due to an exception and
+<cite>false</cite> otherwise.</p>
 </div>
 <div class="section" id="id32">
 <h5>Semantics:<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h5>
-<p>The <a class="reference internal" href="#coro-end">coro.end</a> intrinsic is a no-op during an initial invocation of the
-coroutine. When the coroutine resumes, the intrinsic marks the point when
-coroutine need to return control back to the caller.</p>
-<p>This intrinsic is removed by the CoroSplit pass when a coroutine is split into
-the start, resume and destroy parts. In start part, the intrinsic is removed,
-in resume and destroy parts, it is replaced with <cite>ret void</cite> instructions and
-the rest of the block containing <cite>coro.end</cite> instruction is discarded.</p>
-<p>In landing pads it is replaced with an appropriate instruction to unwind to
-caller.</p>
-<p>A frontend is allowed to supply null as the first parameter, in this case
-<cite>coro-early</cite> pass will replace the null with an appropriate coroutine handle
-value.</p>
+<p>The purpose of this intrinsic is to allow frontends to mark the cleanup and
+other code that is only relevant during the initial invocation of the coroutine
+and should not be present in resume and destroy parts.</p>
+<p>This intrinsic is lowered when a coroutine is split into
+the start, resume and destroy parts. In the start part, it is a no-op,
+in resume and destroy parts, it is replaced with <cite>ret void</cite> instruction and
+the rest of the block containing <cite>coro.end</cite> instruction is discarded.
+In landing pads it is replaced with an appropriate instruction to unwind to
+caller. The handling of coro.end differs depending on whether the target is
+using landingpad or WinEH exception model.</p>
+<p>For landingpad based exception model, it is expected that frontend uses the
+<a class="reference internal" href="#coro-end">coro.end</a> intrinsic as follows:</p>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nl">ehcleanup:</span>
+  <span class="nv">%InResumePart</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i1</span> <span class="vg">@llvm.coro.end</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i1</span> <span class="k">true</span><span class="p">)</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%InResumePart</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%eh.resume</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cleanup.cont</span>
+
+<span class="nl">cleanup.cont:</span>
+  <span class="c">; rest of the cleanup</span>
+
+<span class="nl">eh.resume:</span>
+  <span class="nv">%exn</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i8</span><span class="p">*,</span> <span class="k">i8</span><span class="p">**</span> <span class="nv">%exn.slot</span><span class="p">,</span> <span class="k">align</span> <span class="m">8</span>
+  <span class="nv">%sel</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%ehselector.slot</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
+  <span class="nv">%lpad.val</span> <span class="p">=</span> <span class="k">insertvalue</span> <span class="p">{</span> <span class="k">i8</span><span class="p">*,</span> <span class="k">i32</span> <span class="p">}</span> <span class="k">undef</span><span class="p">,</span> <span class="k">i8</span><span class="p">*</span> <span class="nv">%exn</span><span class="p">,</span> <span class="m">0</span>
+  <span class="nv">%lpad.val29</span> <span class="p">=</span> <span class="k">insertvalue</span> <span class="p">{</span> <span class="k">i8</span><span class="p">*,</span> <span class="k">i32</span> <span class="p">}</span> <span class="nv">%lpad.val</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%sel</span><span class="p">,</span> <span class="m">1</span>
+  <span class="k">resume</span> <span class="p">{</span> <span class="k">i8</span><span class="p">*,</span> <span class="k">i32</span> <span class="p">}</span> <span class="nv">%lpad.val29</span>
+</pre></div>
+</div>
+<p>The <cite>CoroSpit</cite> pass replaces <cite>coro.end</cite> with <code class="docutils literal"><span class="pre">True</span></code> in the resume functions,
+thus leading to immediate unwind to the caller, whereas in start function it
+is replaced with <code class="docutils literal"><span class="pre">False</span></code>, thus allowing to proceed to the rest of the cleanup
+code that is only needed during initial invocation of the coroutine.</p>
+<p>For Windows Exception handling model, a frontend should attach a funclet bundle
+referring to an enclosing cleanuppad as follows:</p>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nl">ehcleanup:</span>
+  <span class="nv">%tok</span> <span class="p">=</span> <span class="k">cleanuppad</span> <span class="k">within</span> <span class="k">none</span> <span class="p">[]</span>
+  <span class="nv">%unused</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i1</span> <span class="vg">@llvm.coro.end</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="k">null</span><span class="p">,</span> <span class="k">i1</span> <span class="k">true</span><span class="p">)</span> <span class="p">[</span> <span class="s">&quot;funclet&quot;</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%tok</span><span class="p">)</span> <span class="p">]</span>
+  <span class="k">cleanupret</span> <span class="k">from</span> <span class="nv">%tok</span> <span class="k">unwind</span> <span class="kt">label</span> <span class="nv">%RestOfTheCleanup</span>
+</pre></div>
+</div>
+<p>The <cite>CoroSplit</cite> pass, if the funclet bundle is present, will insert
+<code class="docutils literal"><span class="pre">cleanupret</span> <span class="pre">from</span> <span class="pre">%tok</span> <span class="pre">unwind</span> <span class="pre">to</span> <span class="pre">caller</span></code> before
+the <a class="reference internal" href="#coro-end">coro.end</a> intrinsic and will remove the rest of the block.</p>
+<p>The following table summarizes the handling of <a class="reference internal" href="#coro-end">coro.end</a> intrinsic.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="17%" />
+<col width="25%" />
+<col width="41%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td colspan="2">&#160;</td>
+<td>In Start Function</td>
+<td>In Resume/Destroy Functions</td>
+</tr>
+<tr class="row-even"><td colspan="2">unwind=false</td>
+<td>nothing</td>
+<td><code class="docutils literal"><span class="pre">ret</span> <span class="pre">void</span></code></td>
+</tr>
+<tr class="row-odd"><td rowspan="2">unwind=true</td>
+<td>WinEH</td>
+<td>nothing</td>
+<td><code class="docutils literal"><span class="pre">cleanupret</span> <span class="pre">unwind</span> <span class="pre">to</span> <span class="pre">caller</span></code></td>
+</tr>
+<tr class="row-even"><td>Landingpad</td>
+<td>nothing</td>
+<td>nothing</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="section" id="llvm-coro-suspend-intrinsic">
-<span id="suspend-points"></span><span id="coro-suspend"></span><h4><a class="toc-backref" href="#id68">&#8216;llvm.coro.suspend&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-suspend-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare i8 @llvm.coro.suspend(token &lt;save&gt;, i1 &lt;final&gt;)
+<span id="suspend-points"></span><span id="coro-suspend"></span><h4><a class="toc-backref" href="#id68">‘llvm.coro.suspend’ Intrinsic</a><a class="headerlink" href="#llvm-coro-suspend-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">i8</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">suspend</span><span class="p">(</span><span class="n">token</span> <span class="o">&lt;</span><span class="n">save</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">i1</span> <span class="o">&lt;</span><span class="n">final</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="id33">
 <h5>Overview:<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.suspend</span></code>&#8216; marks the point where execution of the coroutine
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.suspend</span></code>’ marks the point where execution of the coroutine
 need to get suspended and control returned back to the caller.
 Conditional branches consuming the result of this intrinsic lead to basic blocks
 where coroutine should proceed when suspended (-1), resumed (0) or destroyed
@@ -975,21 +1035,21 @@ basic blocks.</p>
 </div>
 <div class="section" id="example-normal-suspend-point">
 <h5>Example (normal suspend point):<a class="headerlink" href="#example-normal-suspend-point" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-text"><div class="highlight"><pre>%0 = call i8 @llvm.coro.suspend(token none, i1 false)
-switch i8 %0, label %suspend [i8 0, label %resume
-                              i8 1, label %cleanup]
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nv nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span> <span class="vg">@llvm.coro.suspend</span><span class="p">(</span><span class="kt">token</span> <span class="k">none</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
+<span class="k">switch</span> <span class="k">i8</span> <span class="nv nv-Anonymous">%0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%suspend</span> <span class="p">[</span><span class="k">i8</span> <span class="m">0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%resume</span>
+                              <span class="k">i8</span> <span class="m">1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cleanup</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="example-final-suspend-point">
 <h5>Example (final suspend point):<a class="headerlink" href="#example-final-suspend-point" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-text"><div class="highlight"><pre>while.end:
-  %s.final = call i8 @llvm.coro.suspend(token none, i1 true)
-  switch i8 %s.final, label %suspend [i8 0, label %trap
-                                      i8 1, label %cleanup]
-trap:
-  call void @llvm.trap()
-  unreachable
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nl">while.end:</span>
+  <span class="nv">%s.final</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span> <span class="vg">@llvm.coro.suspend</span><span class="p">(</span><span class="kt">token</span> <span class="k">none</span><span class="p">,</span> <span class="k">i1</span> <span class="k">true</span><span class="p">)</span>
+  <span class="k">switch</span> <span class="k">i8</span> <span class="nv">%s.final</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%suspend</span> <span class="p">[</span><span class="k">i8</span> <span class="m">0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%trap</span>
+                                      <span class="k">i8</span> <span class="m">1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cleanup</span><span class="p">]</span>
+<span class="nl">trap:</span>
+  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@llvm.trap</span><span class="p">()</span>
+  <span class="k">unreachable</span>
 </pre></div>
 </div>
 </div>
@@ -1005,13 +1065,13 @@ unreachable and can perform optimizations that can take advantage of that fact.<
 </div>
 </div>
 <div class="section" id="llvm-coro-save-intrinsic">
-<span id="coro-save"></span><h4><a class="toc-backref" href="#id69">&#8216;llvm.coro.save&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-save-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare token @llvm.coro.save(i8* &lt;handle&gt;)
+<span id="coro-save"></span><h4><a class="toc-backref" href="#id69">‘llvm.coro.save’ Intrinsic</a><a class="headerlink" href="#llvm-coro-save-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">token</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">handle</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="id36">
 <h5>Overview:<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.save</span></code>&#8216; marks the point where a coroutine need to update its
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.save</span></code>’ marks the point where a coroutine need to update its
 state to prepare for resumption to be considered suspended (and thus eligible
 for resumption).</p>
 </div>
@@ -1034,23 +1094,23 @@ completions of asynchronous operations.</p>
 <cite>async_op</cite> function that may trigger resumption of a coroutine from the same or
 a different thread possibly prior to <cite>async_op</cite> call returning control back
 to the coroutine:</p>
-<div class="highlight-text"><div class="highlight"><pre>%save1 = call token @llvm.coro.save(i8* %hdl)
-call void async_op1(i8* %hdl)
-%suspend1 = call i1 @llvm.coro.suspend(token %save1, i1 false)
-switch i8 %suspend1, label %suspend [i8 0, label %resume1
-                                     i8 1, label %cleanup]
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nv">%save1</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">token</span> <span class="vg">@llvm.coro.save</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">)</span>
+<span class="k">call</span> <span class="kt">void</span> <span class="vg">@async_op1</span><span class="p">(</span><span class="k">i8</span><span class="p">*</span> <span class="nv">%hdl</span><span class="p">)</span>
+<span class="nv">%suspend1</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i1</span> <span class="vg">@llvm.coro.suspend</span><span class="p">(</span><span class="kt">token</span> <span class="nv">%save1</span><span class="p">,</span> <span class="k">i1</span> <span class="k">false</span><span class="p">)</span>
+<span class="k">switch</span> <span class="k">i8</span> <span class="nv">%suspend1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%suspend</span> <span class="p">[</span><span class="k">i8</span> <span class="m">0</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%resume1</span>
+                                     <span class="k">i8</span> <span class="m">1</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cleanup</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="llvm-coro-param-intrinsic">
-<span id="coro-param"></span><h4><a class="toc-backref" href="#id70">&#8216;llvm.coro.param&#8217; Intrinsic</a><a class="headerlink" href="#llvm-coro-param-intrinsic" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare i1 @llvm.coro.param(i8* &lt;original&gt;, i8* &lt;copy&gt;)
+<span id="coro-param"></span><h4><a class="toc-backref" href="#id70">‘llvm.coro.param’ Intrinsic</a><a class="headerlink" href="#llvm-coro-param-intrinsic" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">i1</span> <span class="nd">@llvm</span><span class="o">.</span><span class="n">coro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">original</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">i8</span><span class="o">*</span> <span class="o">&lt;</span><span class="n">copy</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="id40">
 <h5>Overview:<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.coro.param</span></code>&#8216; is used by a frontend to mark up the code used to
+<p>The ‘<code class="docutils literal"><span class="pre">llvm.coro.param</span></code>’ is used by a frontend to mark up the code used to
 construct and destruct copies of the parameters. If the optimizer discovers that
 a particular parameter copy is not used after any suspends, it can remove the
 construction and destruction of the copy by replacing corresponding coro.param
@@ -1068,7 +1128,7 @@ parameter.</p>
 <p>The optimizer is free to always replace this intrinsic with <cite>i1 true</cite>.</p>
 <p>The optimizer is also allowed to replace it with <cite>i1 false</cite> provided that the
 parameter copy is only used prior to control flow reaching any of the suspend
-points. The code that would be DCE&#8217;d if the <cite>coro.param</cite> is replaced with
+points. The code that would be DCE’d if the <cite>coro.param</cite> is replaced with
 <cite>i1 false</cite> is not considered to be a use of the parameter copy.</p>
 <p>The frontend can emit this intrinsic if its language rules allow for this
 optimization.</p>
@@ -1077,7 +1137,7 @@ optimization.</p>
 <h5>Example:<a class="headerlink" href="#id43" title="Permalink to this headline">¶</a></h5>
 <p>Consider the following example. A coroutine takes two parameters <cite>a</cite> and <cite>b</cite>
 that has a destructor and a move constructor.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">A</span> <span class="p">{</span> <span class="o">~</span><span class="n">A</span><span class="p">();</span> <span class="n">A</span><span class="p">(</span><span class="n">A</span><span class="o">&amp;&amp;</span><span class="p">);</span> <span class="kt">bool</span> <span class="nf">foo</span><span class="p">();</span> <span class="kt">void</span> <span class="nf">bar</span><span class="p">();</span> <span class="p">};</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">A</span> <span class="p">{</span> <span class="o">~</span><span class="n">A</span><span class="p">();</span> <span class="n">A</span><span class="p">(</span><span class="n">A</span><span class="o">&amp;&amp;</span><span class="p">);</span> <span class="kt">bool</span> <span class="nf">foo</span><span class="p">();</span> <span class="kt">void</span> <span class="nf">bar</span><span class="p">();</span> <span class="p">};</span>
 
 <span class="n">task</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">A</span> <span class="n">a</span><span class="p">,</span> <span class="n">A</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">foo</span><span class="p">())</span>
@@ -1093,7 +1153,7 @@ that has a destructor and a move constructor.</p>
 into a coroutine frame, whereas <cite>a</cite> does not have to, since it never used
 after suspend.</p>
 <p>A frontend can create parameter copies for <cite>a</cite> and <cite>b</cite> as follows:</p>
-<div class="highlight-text"><div class="highlight"><pre>task&lt;int&gt; f(A a&#39;, A b&#39;) {
+<div class="highlight-text"><div class="highlight"><pre><span></span>task&lt;int&gt; f(A a&#39;, A b&#39;) {
   a = alloca A;
   b = alloca A;
   // move parameters to its copies
@@ -1106,9 +1166,9 @@ after suspend.</p>
 }
 </pre></div>
 </div>
-<p>The optimizer can replace coro.param(a&#8217;,a) with <cite>i1 false</cite> and replace all uses
-of <cite>a</cite> with <cite>a&#8217;</cite>, since it is not used after suspend.</p>
-<p>The optimizer must replace coro.param(b&#8217;, b) with <cite>i1 true</cite>, since <cite>b</cite> is used
+<p>The optimizer can replace coro.param(a’,a) with <cite>i1 false</cite> and replace all uses
+of <cite>a</cite> with <cite>a’</cite>, since it is not used after suspend.</p>
+<p>The optimizer must replace coro.param(b’, b) with <cite>i1 true</cite>, since <cite>b</cite> is used
 after suspend and therefore, it has to reside in the coroutine frame.</p>
 </div>
 </div>
@@ -1190,9 +1250,9 @@ LTO.</li>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

@@ -1,30 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>How To Release LLVM To The Public &mdash; LLVM 4 documentation</title>
-    
+    <title>How To Release LLVM To The Public &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Advice on Packaging LLVM" href="Packaging.html" />
     <link rel="prev" title="LLVMBuild Guide" href="LLVMBuild.html" />
 <style type="text/css">
@@ -33,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -67,16 +66,16 @@
 <h1>How To Release LLVM To The Public<a class="headerlink" href="#how-to-release-llvm-to-the-public" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>This document contains information about successfully releasing LLVM &#8212;
-including sub-projects: e.g., <code class="docutils literal"><span class="pre">clang</span></code> and <code class="docutils literal"><span class="pre">compiler-rt</span></code> &#8212; to the public.
-It is the Release Manager&#8217;s responsibility to ensure that a high quality build
+<p>This document contains information about successfully releasing LLVM —
+including sub-projects: e.g., <code class="docutils literal"><span class="pre">clang</span></code> and <code class="docutils literal"><span class="pre">compiler-rt</span></code> — to the public.
+It is the Release Manager’s responsibility to ensure that a high quality build
 of LLVM is released.</p>
-<p>If you&#8217;re looking for the document on how to test the release candidates and
-create the binary packages, please refer to the <a class="reference internal" href="ReleaseProcess.html"><em>How To Validate a New Release</em></a> instead.</p>
+<p>If you’re looking for the document on how to test the release candidates and
+create the binary packages, please refer to the <a class="reference internal" href="ReleaseProcess.html"><span class="doc">How To Validate a New Release</span></a> instead.</p>
 </div>
 <div class="section" id="release-timeline">
 <span id="timeline"></span><h2>Release Timeline<a class="headerlink" href="#release-timeline" title="Permalink to this headline">¶</a></h2>
-<p>LLVM is released on a time based schedule &#8212; with major releases roughly
+<p>LLVM is released on a time based schedule — with major releases roughly
 every 6 months.  In between major releases there may be dot releases.
 The release manager will determine if and when to make a dot release based
 on feedback from the community.  Typically, dot releases should be made if
@@ -158,7 +157,7 @@ new TableGen feature, etc.</p>
 examining nightly tester and buildbot results.</p>
 </li>
 <li><p class="first">Create the release branch for <code class="docutils literal"><span class="pre">llvm</span></code>, <code class="docutils literal"><span class="pre">clang</span></code>, and other sub-projects,
-from the last known good revision.  The branch&#8217;s name is
+from the last known good revision.  The branch’s name is
 <code class="docutils literal"><span class="pre">release_XY</span></code>, where <code class="docutils literal"><span class="pre">X</span></code> is the major and <code class="docutils literal"><span class="pre">Y</span></code> the minor release
 numbers.  Use <code class="docutils literal"><span class="pre">utils/release/tag.sh</span></code> to tag the release.</p>
 </li>
@@ -168,7 +167,7 @@ tree again.</p>
 <li><p class="first">The Release Manager should switch to the release branch, because all changes
 to the release will now be done in the branch.  The easiest way to do this is
 to grab a working copy using the following commands:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ svn co https://llvm.org/svn/llvm-project/llvm/branches/release_XY llvm-X.Y
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ svn co https://llvm.org/svn/llvm-project/llvm/branches/release_XY llvm-X.Y
 
 $ svn co https://llvm.org/svn/llvm-project/cfe/branches/release_XY clang-X.Y
 
@@ -180,9 +179,9 @@ $ svn co https://llvm.org/svn/llvm-project/test-suite/branches/release_XY test-s
 </div>
 <div class="section" id="update-llvm-version">
 <h4><a class="toc-backref" href="#id3">Update LLVM Version</a><a class="headerlink" href="#update-llvm-version" title="Permalink to this headline">¶</a></h4>
-<p>After creating the LLVM release branch, update the release branches&#8217;
-<code class="docutils literal"><span class="pre">autoconf</span></code> and <code class="docutils literal"><span class="pre">configure.ac</span></code> versions from &#8216;<code class="docutils literal"><span class="pre">X.Ysvn</span></code>&#8216; to &#8216;<code class="docutils literal"><span class="pre">X.Y</span></code>&#8216;.
-Update it on mainline as well to be the next version (&#8216;<code class="docutils literal"><span class="pre">X.Y+1svn</span></code>&#8216;).
+<p>After creating the LLVM release branch, update the release branches’
+<code class="docutils literal"><span class="pre">autoconf</span></code> and <code class="docutils literal"><span class="pre">configure.ac</span></code> versions from ‘<code class="docutils literal"><span class="pre">X.Ysvn</span></code>’ to ‘<code class="docutils literal"><span class="pre">X.Y</span></code>’.
+Update it on mainline as well to be the next version (‘<code class="docutils literal"><span class="pre">X.Y+1svn</span></code>’).
 Regenerate the configure scripts for both <code class="docutils literal"><span class="pre">llvm</span></code> and the <code class="docutils literal"><span class="pre">test-suite</span></code>.</p>
 <p>In addition, the version numbers of all the Bugzilla components must be updated
 for the next release.</p>
@@ -190,12 +189,12 @@ for the next release.</p>
 <div class="section" id="tagging-the-llvm-release-candidates">
 <h4><a class="toc-backref" href="#id4">Tagging the LLVM Release Candidates</a><a class="headerlink" href="#tagging-the-llvm-release-candidates" title="Permalink to this headline">¶</a></h4>
 <p>Tag release candidates using the tag.sh script in utils/release.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./tag.sh -release X.Y.Z -rc $RC
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ./tag.sh -release X.Y.Z -rc $RC
 </pre></div>
 </div>
 <p>The Release Manager may supply pre-packaged source tarballs for users.  This can
 be done with the export.sh script in utils/release.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./export.sh -release X.Y.Z -rc $RC
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ./export.sh -release X.Y.Z -rc $RC
 </pre></div>
 </div>
 <p>This will generate source tarballs for each LLVM project being validated, which
@@ -204,13 +203,13 @@ can be uploaded to the website for further testing.</p>
 <div class="section" id="build-clang-binary-distribution">
 <h4><a class="toc-backref" href="#id5">Build Clang Binary Distribution</a><a class="headerlink" href="#build-clang-binary-distribution" title="Permalink to this headline">¶</a></h4>
 <p>Creating the <code class="docutils literal"><span class="pre">clang</span></code> binary distribution requires following the instructions
-<a class="reference internal" href="ReleaseProcess.html"><em>here</em></a>.</p>
+<a class="reference internal" href="ReleaseProcess.html"><span class="doc">here</span></a>.</p>
 <p>That process will perform both Release+Asserts and Release builds but only
 pack the Release build for upload. You should use the Release+Asserts sysroot,
 normally under <code class="docutils literal"><span class="pre">final/Phase3/Release+Asserts/llvmCore-3.8.1-RCn.install/</span></code>,
 for test-suite and run-time benchmarks, to make sure nothing serious has
 passed through the net. For compile-time benchmarks, use the Release version.</p>
-<p>The minimum required version of the tools you&#8217;ll need are <a class="reference internal" href="GettingStarted.html"><em>here</em></a></p>
+<p>The minimum required version of the tools you’ll need are <a class="reference internal" href="GettingStarted.html"><span class="doc">here</span></a></p>
 </div>
 </div>
 <div class="section" id="release-qualification-criteria">
@@ -227,7 +226,7 @@ each product and only include things on the list.  Every release will have
 some bugs in it.  It is the reality of developing a complex piece of
 software.  We need a very concrete and definitive release criteria that
 ensures we have monotonically improving quality on some metric.  The metric we
-use is described below.  This doesn&#8217;t mean that we don&#8217;t care about other
+use is described below.  This doesn’t mean that we don’t care about other
 criteria, but these are the criteria which we found to be most important and
 which must be satisfied before a release can go out.</p>
 </div>
@@ -271,7 +270,7 @@ your platform.</li>
 <li>Download <code class="docutils literal"><span class="pre">llvm-X.Y</span></code>, <code class="docutils literal"><span class="pre">llvm-test-X.Y</span></code>, and the appropriate <code class="docutils literal"><span class="pre">clang</span></code>
 binary. Build <em>your</em> programs with it and check for conformance and
 performance regressions.</li>
-<li>Run the <a class="reference internal" href="ReleaseProcess.html"><em>release process</em></a>, if your platform is
+<li>Run the <a class="reference internal" href="ReleaseProcess.html"><span class="doc">release process</span></a>, if your platform is
 <em>different</em> than that which is officially supported, and report back errors
 only if they were not reported by the official release tester for that
 architecture.</li>
@@ -279,7 +278,7 @@ architecture.</li>
 <p>We also ask that the OS distribution release managers test their packages with
 the first candidate of every release, and report any <em>new</em> errors in Bugzilla.
 If the bug can be reproduced with an unpatched upstream version of the release
-candidate (as opposed to the distribution&#8217;s own build), the priority should be
+candidate (as opposed to the distribution’s own build), the priority should be
 release blocker.</p>
 <p>During the first round of testing, all regressions must be fixed before the
 second release candidate is tagged.</p>
@@ -295,9 +294,9 @@ next stage.</p>
 should be filled in a bug in Bugzilla with the priority <em>release blocker</em> and
 blocking a specific release.</p>
 <p>To help manage all the bugs reported and which ones are blockers or not, a new
-&#8220;[meta]&#8221; bug should be created and all regressions <em>blocking</em> that Meta. Once
+“[meta]” bug should be created and all regressions <em>blocking</em> that Meta. Once
 all blockers are done, the Meta can be closed.</p>
-<p>If a bug can&#8217;t be reproduced, or stops being a blocker, it should be removed
+<p>If a bug can’t be reproduced, or stops being a blocker, it should be removed
 from the Meta and its priority decreased to <em>normal</em>. Debugging can continue,
 but on trunk.</p>
 </div>
@@ -335,14 +334,14 @@ in step 2.</li>
 </div>
 <div class="section" id="release-final-tasks">
 <h3><a class="toc-backref" href="#id12">Release Final Tasks</a><a class="headerlink" href="#release-final-tasks" title="Permalink to this headline">¶</a></h3>
-<p>The final stages of the release process involves tagging the &#8220;final&#8221; release
+<p>The final stages of the release process involves tagging the “final” release
 branch, updating documentation that refers to the release, and updating the
 demo page.</p>
 <div class="section" id="update-documentation">
 <h4><a class="toc-backref" href="#id13">Update Documentation</a><a class="headerlink" href="#update-documentation" title="Permalink to this headline">¶</a></h4>
-<p>Review the documentation and ensure that it is up to date.  The &#8220;Release Notes&#8221;
+<p>Review the documentation and ensure that it is up to date.  The “Release Notes”
 must be updated to reflect new features, bug fixes, new known issues, and
-changes in the list of supported platforms.  The &#8220;Getting Started Guide&#8221; should
+changes in the list of supported platforms.  The “Getting Started Guide” should
 be updated to reflect the new release version number tag available from
 Subversion and changes in basic system requirements.  Merge both changes from
 mainline into the release branch.</p>
@@ -350,7 +349,7 @@ mainline into the release branch.</p>
 <div class="section" id="tag-the-llvm-final-release">
 <span id="tag"></span><h4><a class="toc-backref" href="#id14">Tag the LLVM Final Release</a><a class="headerlink" href="#tag-the-llvm-final-release" title="Permalink to this headline">¶</a></h4>
 <p>Tag the final release sources using the tag.sh script in utils/release.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ./tag.sh -release X.Y.Z -final
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ./tag.sh -release X.Y.Z -final
 </pre></div>
 </div>
 </div>
@@ -412,9 +411,9 @@ relevant documentation, download pages and bugs fixed.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

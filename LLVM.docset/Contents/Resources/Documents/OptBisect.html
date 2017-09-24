@@ -1,30 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Using -opt-bisect-limit to debug optimization errors &mdash; LLVM 4 documentation</title>
-    
+    <title>Using -opt-bisect-limit to debug optimization errors &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="LLVM Alias Analysis Infrastructure" href="AliasAnalysis.html" />
     <link rel="prev" title="Scudo Hardened Allocator" href="ScudoHardenedAllocator.html" />
 <style type="text/css">
@@ -33,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -102,7 +101,7 @@ transformations that is difficult to replicate with tools like opt and llc.</p>
 <h2><a class="toc-backref" href="#id2">Getting Started</a><a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
 <p>The -opt-bisect-limit command line option can be passed directly to tools such
 as opt, llc and lli.  The syntax is as follows:</p>
-<div class="highlight-python"><div class="highlight"><pre>&lt;tool name&gt; [other options] -opt-bisect-limit=&lt;limit&gt;
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">tool</span> <span class="n">name</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">other</span> <span class="n">options</span><span class="p">]</span> <span class="o">-</span><span class="n">opt</span><span class="o">-</span><span class="n">bisect</span><span class="o">-</span><span class="n">limit</span><span class="o">=&lt;</span><span class="n">limit</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>If a value of -1 is used the tool will perform all optimizations but a message
@@ -113,21 +112,24 @@ opt-bisect-limit.  All optimizations with a higher index value will be skipped.<
 <p>In order to use the -opt-bisect-limit option with a driver that provides a
 wrapper around the LLVM core library, an additional prefix option may be
 required, as defined by the driver.  For example, to use this option with
-clang, the &#8220;-mllvm&#8221; prefix must be used.  A typical clang invocation would look
+clang, the “-mllvm” prefix must be used.  A typical clang invocation would look
 like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>clang -O2 -mllvm -opt-bisect-limit=256 my_file.c
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">clang</span> <span class="o">-</span><span class="n">O2</span> <span class="o">-</span><span class="n">mllvm</span> <span class="o">-</span><span class="n">opt</span><span class="o">-</span><span class="n">bisect</span><span class="o">-</span><span class="n">limit</span><span class="o">=</span><span class="mi">256</span> <span class="n">my_file</span><span class="o">.</span><span class="n">c</span>
 </pre></div>
 </div>
 <p>The -opt-bisect-limit option may also be applied to link-time optimizations by
-using a prefix to indicate that this is a plug-in option for the linker.  The
+using a prefix to indicate that this is a plug-in option for the linker. The
 following syntax will set a bisect limit for LTO transformations:</p>
-<div class="highlight-python"><div class="highlight"><pre>clang -flto -Wl,-plugin-opt,-opt-bisect-limit=256 my_file.o my_other_file.o
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># When using lld, or ld64 (macOS)</span>
+<span class="n">clang</span> <span class="o">-</span><span class="n">flto</span> <span class="o">-</span><span class="n">Wl</span><span class="p">,</span><span class="o">-</span><span class="n">mllvm</span><span class="p">,</span><span class="o">-</span><span class="n">opt</span><span class="o">-</span><span class="n">bisect</span><span class="o">-</span><span class="n">limit</span><span class="o">=</span><span class="mi">256</span> <span class="n">my_file</span><span class="o">.</span><span class="n">o</span> <span class="n">my_other_file</span><span class="o">.</span><span class="n">o</span>
+<span class="c1"># When using Gold</span>
+<span class="n">clang</span> <span class="o">-</span><span class="n">flto</span> <span class="o">-</span><span class="n">Wl</span><span class="p">,</span><span class="o">-</span><span class="n">plugin</span><span class="o">-</span><span class="n">opt</span><span class="p">,</span><span class="o">-</span><span class="n">opt</span><span class="o">-</span><span class="n">bisect</span><span class="o">-</span><span class="n">limit</span><span class="o">=</span><span class="mi">256</span> <span class="n">my_file</span><span class="o">.</span><span class="n">o</span> <span class="n">my_other_file</span><span class="o">.</span><span class="n">o</span>
 </pre></div>
 </div>
 <p>LTO passes are run by a library instance invoked by the linker. Therefore any
 passes run in the primary driver compilation phase are not affected by options
-passed via &#8216;-Wl,-plugin-opt&#8217; and LTO passes are not affected by options
-passed to the driver-invoked LLVM invocation via &#8216;-mllvm&#8217;.</p>
+passed via ‘-Wl,-plugin-opt’ and LTO passes are not affected by options
+passed to the driver-invoked LLVM invocation via ‘-mllvm’.</p>
 </div>
 <div class="section" id="bisection-index-values">
 <h2><a class="toc-backref" href="#id3">Bisection Index Values</a><a class="headerlink" href="#bisection-index-values" title="Permalink to this headline">¶</a></h2>
@@ -157,7 +159,7 @@ specifically instrumented to enable bisection at this finer level of granularity
 </div>
 <div class="section" id="example-usage">
 <h2><a class="toc-backref" href="#id4">Example Usage</a><a class="headerlink" href="#example-usage" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> opt -O2 -o test-opt.bc -opt-bisect-limit<span class="o">=</span><span class="m">16</span> test.ll
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> opt -O2 -o test-opt.bc -opt-bisect-limit<span class="o">=</span><span class="m">16</span> test.ll
 
 <span class="go">BISECT: running pass (1) Simplify the CFG on function (g)</span>
 <span class="go">BISECT: running pass (2) SROA on function (g)</span>
@@ -195,7 +197,7 @@ see if it should be skipped.</p>
 <p>The OptBisect object is intended to be accessed through LLVMContext and each
 Pass base class contains a helper function that abstracts the details in order
 to make this check uniform across all passes.  These helper functions are:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">bool</span> <span class="n">ModulePass</span><span class="o">::</span><span class="n">skipModule</span><span class="p">(</span><span class="n">Module</span> <span class="o">&amp;</span><span class="n">M</span><span class="p">);</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="n">ModulePass</span><span class="o">::</span><span class="n">skipModule</span><span class="p">(</span><span class="n">Module</span> <span class="o">&amp;</span><span class="n">M</span><span class="p">);</span>
 <span class="kt">bool</span> <span class="n">CallGraphSCCPass</span><span class="o">::</span><span class="n">skipSCC</span><span class="p">(</span><span class="n">CallGraphSCC</span> <span class="o">&amp;</span><span class="n">SCC</span><span class="p">);</span>
 <span class="kt">bool</span> <span class="n">FunctionPass</span><span class="o">::</span><span class="n">skipFunction</span><span class="p">(</span><span class="k">const</span> <span class="n">Function</span> <span class="o">&amp;</span><span class="n">F</span><span class="p">);</span>
 <span class="kt">bool</span> <span class="n">BasicBlockPass</span><span class="o">::</span><span class="n">skipBasicBlock</span><span class="p">(</span><span class="k">const</span> <span class="n">BasicBlock</span> <span class="o">&amp;</span><span class="n">BB</span><span class="p">);</span>
@@ -203,7 +205,7 @@ to make this check uniform across all passes.  These helper functions are:</p>
 </pre></div>
 </div>
 <p>A MachineFunctionPass should use FunctionPass::skipFunction() as such:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">bool</span> <span class="n">MyMachineFunctionPass</span><span class="o">::</span><span class="n">runOnMachineFunction</span><span class="p">(</span><span class="n">Function</span> <span class="o">&amp;</span><span class="n">MF</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="n">MyMachineFunctionPass</span><span class="o">::</span><span class="n">runOnMachineFunction</span><span class="p">(</span><span class="n">Function</span> <span class="o">&amp;</span><span class="n">MF</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">skipFunction</span><span class="p">(</span><span class="o">*</span><span class="n">MF</span><span class="p">.</span><span class="n">getFunction</span><span class="p">())</span>
         <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
   <span class="c1">// Otherwise, run the pass normally.</span>
@@ -212,9 +214,9 @@ to make this check uniform across all passes.  These helper functions are:</p>
 </div>
 <p>In addition to checking with the OptBisect class to see if the pass should be
 skipped, the skipFunction(), skipLoop() and skipBasicBlock() helper functions
-also look for the presence of the &#8220;optnone&#8221; function attribute.  The calling
+also look for the presence of the “optnone” function attribute.  The calling
 pass will be unable to determine whether it is being skipped because the
-&#8220;optnone&#8221; attribute is present or because the opt-bisect-limit has been
+“optnone” attribute is present or because the opt-bisect-limit has been
 reached.  This is desirable because the behavior should be the same in either
 case.</p>
 <p>The majority of LLVM passes which can be skipped have already been instrumented
@@ -226,14 +228,8 @@ should be, you can add it as described above.</p>
 <h2><a class="toc-backref" href="#id6">Adding Finer Granularity</a><a class="headerlink" href="#adding-finer-granularity" title="Permalink to this headline">¶</a></h2>
 <p>Once the pass in which an incorrect transformation is performed has been
 determined, it may be useful to perform further analysis in order to determine
-which specific transformation is causing the problem.  Ideally all passes
-would be instrumented to allow skipping of individual transformations.  This
-functionality is available through the OptBisect object but it is impractical
-to proactively instrument every existing pass.  It is hoped that as developers
-find that they need a pass to be instrumented they will add the instrumentation
-and contribute it back to the LLVM source base.</p>
-<p>Helper functions will be added to simplify this level of instrumentation, but
-this work is not yet completed.  For more information, contact Andy Kaylor.</p>
+which specific transformation is causing the problem.  Debug counters
+can be used for this purpose.</p>
 </div>
 </div>
 
@@ -260,9 +256,9 @@ this work is not yet completed.  For more information, contact Andy Kaylor.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

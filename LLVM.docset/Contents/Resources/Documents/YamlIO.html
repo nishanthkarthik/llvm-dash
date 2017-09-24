@@ -1,30 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>YAML I/O &mdash; LLVM 4 documentation</title>
-    
+    <title>YAML I/O &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="The Often Misunderstood GEP Instruction" href="GetElementPtr.html" />
     <link rel="prev" title="LLVM’s Analysis and Transform Passes" href="Passes.html" />
 <style type="text/css">
@@ -33,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -105,17 +104,17 @@
 <h2><a class="toc-backref" href="#id1">Introduction to YAML</a><a class="headerlink" href="#introduction-to-yaml" title="Permalink to this headline">¶</a></h2>
 <p>YAML is a human readable data serialization language.  The full YAML language
 spec can be read at <a class="reference external" href="http://www.yaml.org/spec/1.2/spec.html#Introduction">yaml.org</a>.  The simplest form of
-yaml is just &#8220;scalars&#8221;, &#8220;mappings&#8221;, and &#8220;sequences&#8221;.  A scalar is any number
+yaml is just “scalars”, “mappings”, and “sequences”.  A scalar is any number
 or string.  The pound/hash symbol (#) begins a comment line.   A mapping is
 a set of key-value pairs where the key ends with a colon.  For example:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># a mapping</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># a mapping</span>
 <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
 <span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">7</span>
 </pre></div>
 </div>
-<p>A sequence is a list of items where each item starts with a leading dash (&#8216;-&#8216;).
+<p>A sequence is a list of items where each item starts with a leading dash (‘-‘).
 For example:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># a sequence</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># a sequence</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">x86</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">x86_64</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">PowerPC</span>
@@ -123,7 +122,7 @@ For example:</p>
 </div>
 <p>You can combine mappings and sequences by indenting.  For example a sequence
 of mappings in which one of the mapping values is itself a sequence:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># a sequence of mappings with one key&#39;s value being a sequence</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># a sequence of mappings with one key&#39;s value being a sequence</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
   <span class="l l-Scalar l-Scalar-Plain">cpus</span><span class="p p-Indicator">:</span>
    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">x86</span>
@@ -138,10 +137,10 @@ of mappings in which one of the mapping values is itself a sequence:</p>
 </pre></div>
 </div>
 <p>Sometime sequences are known to be short and the one entry per line is too
-verbose, so YAML offers an alternate syntax for sequences called a &#8220;Flow
-Sequence&#8221; in which you put comma separated sequence elements into square
+verbose, so YAML offers an alternate syntax for sequences called a “Flow
+Sequence” in which you put comma separated sequence elements into square
 brackets.  The above example could then be simplified to :</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># a sequence of mappings with one key&#39;s value being a flow sequence</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># a sequence of mappings with one key&#39;s value being a flow sequence</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
   <span class="l l-Scalar l-Scalar-Plain">cpus</span><span class="p p-Indicator">:</span>      <span class="p p-Indicator">[</span> <span class="nv">x86</span><span class="p p-Indicator">,</span> <span class="nv">x86_64</span> <span class="p p-Indicator">]</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Bob</span>
@@ -157,7 +156,7 @@ brackets.  The above example could then be simplified to :</p>
 but having a program read and write YAML involves a lot of tedious details.
 The YAML I/O library structures and simplifies reading and writing YAML
 documents.</p>
-<p>YAML I/O assumes you have some &#8220;native&#8221; data structures which you want to be
+<p>YAML I/O assumes you have some “native” data structures which you want to be
 able to dump as YAML and recreate from YAML.  The first step is to try
 writing example YAML for your data structures. You may find after looking at
 possible YAML representations that a direct mapping of your data structures
@@ -174,7 +173,7 @@ corresponding denormalization step.</p>
 abstract base templates.  You specialize those templates on your data types.
 For instance, if you have an enumerated type FooBar you could specialize
 ScalarEnumerationTraits on that type and define the enumeration() method:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">ScalarEnumerationTraits</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">ScalarEnumerationTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
 <span class="k">template</span> <span class="o">&lt;&gt;</span>
@@ -193,7 +192,7 @@ This assures that the code for writing and parsing of YAML stays in sync.</p>
 llvm::yaml::MappingTraits.
 If your native data structure happens to be a struct that is already normalized,
 then the specialization is simple.  For example:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
 <span class="k">template</span> <span class="o">&lt;&gt;</span>
@@ -210,7 +209,7 @@ iterators and a push_back() method.  Therefore any of the STL containers
 (such as std::vector&lt;&gt;) will automatically translate to YAML sequences.</p>
 <p>Once you have defined specializations for your data types, you can
 programmatically use YAML I/O to write a YAML document:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">Output</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">Output</span><span class="p">;</span>
 
 <span class="n">Person</span> <span class="n">tom</span><span class="p">;</span>
 <span class="n">tom</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Tom&quot;</span><span class="p">;</span>
@@ -227,14 +226,14 @@ programmatically use YAML I/O to write a YAML document:</p>
 </pre></div>
 </div>
 <p>This would write the following:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
   <span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">8</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Dan</span>
   <span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">7</span>
 </pre></div>
 </div>
 <p>And you can also read such YAML documents with the following code:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">Input</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">Input</span><span class="p">;</span>
 
 <span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">PersonList</span><span class="p">;</span>
 <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PersonList</span><span class="o">&gt;</span> <span class="n">docs</span><span class="p">;</span>
@@ -260,9 +259,9 @@ single file.  That is why reading YAML produces a vector of your document type.<
 <h2><a class="toc-backref" href="#id3">Error Handling</a><a class="headerlink" href="#error-handling" title="Permalink to this headline">¶</a></h2>
 <p>When parsing a YAML document, if the input does not match your schema (as
 expressed in your XxxTraits&lt;&gt; specializations).  YAML I/O
-will print out an error message and your Input object&#8217;s error() method will
+will print out an error message and your Input object’s error() method will
 return true. For instance the following document:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
   <span class="l l-Scalar l-Scalar-Plain">shoe-size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">12</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Dan</span>
   <span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">7</span>
@@ -270,7 +269,7 @@ return true. For instance the following document:</p>
 </div>
 <p>Has a key (shoe-size) that is not defined in the schema.  YAML I/O will
 automatically generate this error:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">YAML:2:2</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">error</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">unknown key &#39;shoe-size&#39;</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">YAML:2:2</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">error</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">unknown key &#39;shoe-size&#39;</span>
   <span class="l l-Scalar l-Scalar-Plain">shoe-size</span><span class="p p-Indicator">:</span>       <span class="l l-Scalar l-Scalar-Plain">12</span>
   <span class="l l-Scalar l-Scalar-Plain">^~~~~~~~~</span>
 </pre></div>
@@ -313,7 +312,7 @@ unsigned int, to YAML I/O both types look exactly like unsigned int.  To
 facilitate make unique type names, YAML I/O provides a macro which is used
 like a typedef on built-in types, but expands to create a class with conversion
 operators to and from the base type.  For example:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">LLVM_YAML_STRONG_TYPEDEF</span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">,</span> <span class="n">MyFooFlags</span><span class="p">)</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">LLVM_YAML_STRONG_TYPEDEF</span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">,</span> <span class="n">MyFooFlags</span><span class="p">)</span>
 <span class="n">LLVM_YAML_STRONG_TYPEDEF</span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">,</span> <span class="n">MyBarFlags</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -343,7 +342,7 @@ values in YAML documents. This is done by specializing ScalarEnumerationTraits&l
 on your enumeration type and define a enumeration() method.
 For instance, suppose you had an enumeration of CPUs and a struct with it as
 a field:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">enum</span> <span class="n">CPUs</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="n">CPUs</span> <span class="p">{</span>
   <span class="n">cpu_x86_64</span>  <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
   <span class="n">cpu_x86</span>     <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
   <span class="n">cpu_PowerPC</span> <span class="o">=</span> <span class="mi">8</span>
@@ -358,7 +357,7 @@ a field:</p>
 <p>To support reading and writing of this enumeration, you can define a
 ScalarEnumerationTraits specialization on CPUs, which can then be used
 as a field type:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">ScalarEnumerationTraits</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">ScalarEnumerationTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
@@ -388,10 +387,10 @@ specified by the enumCase() methods, a runtime assertion is triggered.</p>
 <div class="section" id="bitvalue">
 <h3><a class="toc-backref" href="#id9">BitValue</a><a class="headerlink" href="#bitvalue" title="Permalink to this headline">¶</a></h3>
 <p>Another common data structure in C++ is a field where each bit has a unique
-meaning.  This is often used in a &#8220;flags&#8221; field.  YAML I/O has support for
+meaning.  This is often used in a “flags” field.  YAML I/O has support for
 converting such fields to a flow sequence.   For instance suppose you
 had the following bit flags defined:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">enum</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="p">{</span>
   <span class="n">flagsPointy</span> <span class="o">=</span> <span class="mi">1</span>
   <span class="n">flagsHollow</span> <span class="o">=</span> <span class="mi">2</span>
   <span class="n">flagsFlat</span>   <span class="o">=</span> <span class="mi">4</span>
@@ -403,7 +402,7 @@ had the following bit flags defined:</p>
 </div>
 <p>To support reading and writing of MyFlags, you specialize ScalarBitSetTraits&lt;&gt;
 on MyFlags and provide the bit values and their names.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">ScalarBitSetTraits</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">ScalarBitSetTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
@@ -436,13 +435,13 @@ bitset trait against the flags field, and each that matches will
 cause the corresponding string to be added to the flow sequence.  The opposite
 is done when reading and any unknown string values will result in a error. With
 the above schema, a same valid YAML document is:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>    <span class="l l-Scalar l-Scalar-Plain">Tom</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>    <span class="l l-Scalar l-Scalar-Plain">Tom</span>
 <span class="l l-Scalar l-Scalar-Plain">flags</span><span class="p p-Indicator">:</span>   <span class="p p-Indicator">[</span> <span class="nv">pointy</span><span class="p p-Indicator">,</span> <span class="nv">flat</span> <span class="p p-Indicator">]</span>
 </pre></div>
 </div>
-<p>Sometimes a &#8220;flags&#8221; field might contains an enumeration part
+<p>Sometimes a “flags” field might contains an enumeration part
 defined by a bit-mask.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">enum</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="p">{</span>
   <span class="n">flagsFeatureA</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
   <span class="n">flagsFeatureB</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
   <span class="n">flagsFeatureC</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
@@ -456,7 +455,7 @@ defined by a bit-mask.</p>
 </div>
 <p>To support reading and writing such fields, you need to use the maskedBitSet()
 method and provide the bit values, their names and the enumeration mask.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">template</span> <span class="o">&lt;&gt;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;&gt;</span>
 <span class="k">struct</span> <span class="n">ScalarBitSetTraits</span><span class="o">&lt;</span><span class="n">MyFlags</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="k">static</span> <span class="kt">void</span> <span class="n">bitset</span><span class="p">(</span><span class="n">IO</span> <span class="o">&amp;</span><span class="n">io</span><span class="p">,</span> <span class="n">MyFlags</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">io</span><span class="p">.</span><span class="n">bitSetCase</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s">&quot;featureA&quot;</span><span class="p">,</span>  <span class="n">flagsFeatureA</span><span class="p">);</span>
@@ -485,7 +484,7 @@ your specialization must create a temporary llvm::StringRef.  When reading,
 YAML I/O will provide an llvm::StringRef of scalar and your specialization
 must convert that to your native data type.  An outline of a custom scalar type
 looks like:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">ScalarTraits</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">ScalarTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
 <span class="k">template</span> <span class="o">&lt;&gt;</span>
@@ -509,14 +508,14 @@ looks like:</p>
 <h3><a class="toc-backref" href="#id11">Block Scalars</a><a class="headerlink" href="#block-scalars" title="Permalink to this headline">¶</a></h3>
 <p>YAML block scalars are string literals that are represented in YAML using the
 literal block notation, just like the example shown below:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">text</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">text</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
   <span class="no">First line</span>
   <span class="no">Second line</span>
 </pre></div>
 </div>
 <p>The YAML I/O library provides support for translating between YAML block scalars
 and specific C++ types by allowing you to specialize BlockScalarTraits&lt;&gt; on
-your data type. The library doesn&#8217;t provide any built-in support for block
+your data type. The library doesn’t provide any built-in support for block
 scalar I/O for types like std::string and llvm::StringRef as they are already
 supported by YAML I/O and use the ordinary scalar notation by default.</p>
 <p>BlockScalarTraits specializations are very similar to the
@@ -526,7 +525,7 @@ it will also provide an llvm::StringRef that has the value of that block scalar
 and your specialization must convert that to your native data type when reading.
 An example of a custom type with an appropriate specialization of
 BlockScalarTraits is shown below:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">BlockScalarTraits</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">BlockScalarTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="n">MyStringType</span> <span class="p">{</span>
@@ -553,10 +552,10 @@ BlockScalarTraits is shown below:</p>
 <div class="section" id="mappings">
 <h2><a class="toc-backref" href="#id12">Mappings</a><a class="headerlink" href="#mappings" title="Permalink to this headline">¶</a></h2>
 <p>To be translated to or from a YAML mapping for your type T you must specialize
-llvm::yaml::MappingTraits on T and implement the &#8220;void mapping(IO &amp;io, T&amp;)&#8221;
+llvm::yaml::MappingTraits on T and implement the “void mapping(IO &amp;io, T&amp;)”
 method. If your native data structures use pointers to a class everywhere,
 you can specialize on the class pointer.  Examples:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
 <span class="c1">// Example of struct Foo which is used by value</span>
@@ -583,8 +582,8 @@ you can specialize on the class pointer.  Examples:</p>
 <p>The mapping() method is responsible, if needed, for normalizing and
 denormalizing. In a simple case where the native data structure requires no
 normalization, the mapping method just uses mapOptional() or mapRequired() to
-bind the struct&#8217;s fields to YAML key names.  For example:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
+bind the struct’s fields to YAML key names.  For example:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
 <span class="k">template</span> <span class="o">&lt;&gt;</span>
@@ -606,22 +605,22 @@ do the normalization and denormalization.  The template is used to create
 a local variable in your mapping() method which contains the normalized keys.</p>
 <p>Suppose you have native data type
 Polar which specifies a position in polar coordinates (distance, angle):</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">Polar</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Polar</span> <span class="p">{</span>
   <span class="kt">float</span> <span class="n">distance</span><span class="p">;</span>
   <span class="kt">float</span> <span class="n">angle</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>but you&#8217;ve decided the normalized YAML for should be in x,y coordinates. That
+<p>but you’ve decided the normalized YAML for should be in x,y coordinates. That
 is, you want the yaml to look like:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">x</span><span class="p p-Indicator">:</span>   <span class="l l-Scalar l-Scalar-Plain">10.3</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">x</span><span class="p p-Indicator">:</span>   <span class="l l-Scalar l-Scalar-Plain">10.3</span>
 <span class="l l-Scalar l-Scalar-Plain">y</span><span class="p p-Indicator">:</span>   <span class="l l-Scalar l-Scalar-Plain">-4.7</span>
 </pre></div>
 </div>
 <p>You can support this by defining a MappingTraits that normalizes the polar
 coordinates to x,y coordinates when writing YAML and denormalizes x,y
 coordinates into polar when reading YAML.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
 <span class="k">template</span> <span class="o">&lt;&gt;</span>
@@ -653,11 +652,11 @@ coordinates into polar when reading YAML.</p>
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>When writing YAML, the local variable &#8220;keys&#8221; will be a stack allocated
+<p>When writing YAML, the local variable “keys” will be a stack allocated
 instance of NormalizedPolar, constructed from the supplied polar object which
 initializes it x and y fields.  The mapRequired() methods then write out the x
 and y values as key/value pairs.</p>
-<p>When reading YAML, the local variable &#8220;keys&#8221; will be a stack allocated instance
+<p>When reading YAML, the local variable “keys” will be a stack allocated instance
 of NormalizedPolar, constructed by the empty constructor.  The mapRequired
 methods will find the matching key in the YAML document and fill in the x and y
 fields of the NormalizedPolar object keys. At the end of the mapping() method
@@ -670,7 +669,7 @@ normalized instance is stack allocated.  In these cases, the utility template
 MappingNormalizationHeap&lt;&gt; can be used instead.  It just like
 MappingNormalization&lt;&gt; except that it heap allocates the normalized object
 when reading YAML.  It never destroys the normalized object.  The denormalize()
-method can this return &#8220;this&#8221;.</p>
+method can this return “this”.</p>
 </div>
 <div class="section" id="default-values">
 <h3><a class="toc-backref" href="#id15">Default values</a><a class="headerlink" href="#default-values" title="Permalink to this headline">¶</a></h3>
@@ -683,7 +682,7 @@ for those optional keys?
 There are two steps to how those optional fields are filled in. First, the
 second parameter to the mapping() method is a reference to a native class.  That
 native class must have a default constructor.  Whatever value the default
-constructor initially sets for an optional field will be that field&#8217;s value.
+constructor initially sets for an optional field will be that field’s value.
 Second, the mapOptional() method has an optional third parameter.  If provided
 it is the value that mapOptional() should set that field to if the YAML document
 does not have that key.</p>
@@ -706,7 +705,7 @@ functionality.  For instance, if the first field bound is the cpu and the second
 field bound is flags, and the flags are cpu specific, you can programmatically
 switch how the flags are converted to and from YAML based on the cpu.
 This works for both reading and writing. For example:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="n">Info</span> <span class="p">{</span>
@@ -735,7 +734,7 @@ it is parsed. This allows dynamic types of nodes.  But the YAML I/O model uses
 static typing, so there are limits to how you can use tags with the YAML I/O
 model. Recently, we added support to YAML I/O for checking/setting the optional
 tag on a map. Using this functionality it is even possbile to support different
-mappings, as long as they are convertable.</p>
+mappings, as long as they are convertible.</p>
 <p>To check a tag, inside your mapping() method you can use io.mapTag() to specify
 what the tag should be.  This will also add that tag when writing yaml.</p>
 </div>
@@ -751,7 +750,7 @@ method during input will be printed just a like a syntax error would be printed.
 When writing yaml, the <code class="docutils literal"><span class="pre">validate()</span></code> method is called <em>before</em> the yaml
 key/values  are written.  Any error during output will trigger an <code class="docutils literal"><span class="pre">assert()</span></code>
 because it is a programming error to have invalid struct values.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="n">Stuff</span> <span class="p">{</span>
@@ -775,11 +774,11 @@ because it is a programming error to have invalid struct values.</p>
 </div>
 <div class="section" id="flow-mapping">
 <h3><a class="toc-backref" href="#id19">Flow Mapping</a><a class="headerlink" href="#flow-mapping" title="Permalink to this headline">¶</a></h3>
-<p>A YAML &#8220;flow mapping&#8221; is a mapping that uses the inline notation
+<p>A YAML “flow mapping” is a mapping that uses the inline notation
 (e.g { x: 1, y: 0 } ) when written to YAML. To specify that a type should be
 written in YAML using flow mapping, your MappingTraits specialization should
-add &#8220;static const bool flow = true;&#8221;. For instance:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
+add “static const bool flow = true;”. For instance:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">MappingTraits</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">IO</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="n">Stuff</span> <span class="p">{</span>
@@ -806,7 +805,7 @@ configuration.</p>
 llvm::yaml::SequenceTraits on T and implement two methods:
 <code class="docutils literal"><span class="pre">size_t</span> <span class="pre">size(IO</span> <span class="pre">&amp;io,</span> <span class="pre">T&amp;)</span></code> and
 <code class="docutils literal"><span class="pre">T::value_type&amp;</span> <span class="pre">element(IO</span> <span class="pre">&amp;io,</span> <span class="pre">T&amp;,</span> <span class="pre">size_t</span> <span class="pre">indx)</span></code>.  For example:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">template</span> <span class="o">&lt;&gt;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;&gt;</span>
 <span class="k">struct</span> <span class="n">SequenceTraits</span><span class="o">&lt;</span><span class="n">MySeq</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="k">static</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">(</span><span class="n">IO</span> <span class="o">&amp;</span><span class="n">io</span><span class="p">,</span> <span class="n">MySeq</span> <span class="o">&amp;</span><span class="n">list</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
   <span class="k">static</span> <span class="n">MySeqEl</span> <span class="o">&amp;</span><span class="n">element</span><span class="p">(</span><span class="n">IO</span> <span class="o">&amp;</span><span class="n">io</span><span class="p">,</span> <span class="n">MySeq</span> <span class="o">&amp;</span><span class="n">list</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">index</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
@@ -814,18 +813,18 @@ llvm::yaml::SequenceTraits on T and implement two methods:
 </pre></div>
 </div>
 <p>The size() method returns how many elements are currently in your sequence.
-The element() method returns a reference to the i&#8217;th element in the sequence.
+The element() method returns a reference to the i’th element in the sequence.
 When parsing YAML, the element() method may be called with an index one bigger
 than the current size.  Your element() method should allocate space for one
 more element (using default constructor if element is a C++ object) and returns
 a reference to that new allocated space.</p>
 <div class="section" id="flow-sequence">
 <h3><a class="toc-backref" href="#id21">Flow Sequence</a><a class="headerlink" href="#flow-sequence" title="Permalink to this headline">¶</a></h3>
-<p>A YAML &#8220;flow sequence&#8221; is a sequence that when written to YAML it uses the
+<p>A YAML “flow sequence” is a sequence that when written to YAML it uses the
 inline notation (e.g [ foo, bar ] ).  To specify that a sequence type should
 be written in YAML as a flow sequence, your SequenceTraits specialization should
-add &#8220;static const bool flow = true;&#8221;.  For instance:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">template</span> <span class="o">&lt;&gt;</span>
+add “static const bool flow = true;”.  For instance:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;&gt;</span>
 <span class="k">struct</span> <span class="n">SequenceTraits</span><span class="o">&lt;</span><span class="n">MyList</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="k">static</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">(</span><span class="n">IO</span> <span class="o">&amp;</span><span class="n">io</span><span class="p">,</span> <span class="n">MyList</span> <span class="o">&amp;</span><span class="n">list</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
   <span class="k">static</span> <span class="n">MyListEl</span> <span class="o">&amp;</span><span class="n">element</span><span class="p">(</span><span class="n">IO</span> <span class="o">&amp;</span><span class="n">io</span><span class="p">,</span> <span class="n">MyList</span> <span class="o">&amp;</span><span class="n">list</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">index</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
@@ -848,7 +847,7 @@ LLVM_YAML_IS_SEQUENCE_VECTOR() and LLVM_YAML_IS_FLOW_SEQUENCE_VECTOR() which
 can be used to easily specify SequenceTraits&lt;&gt; on a std::vector type.  YAML
 I/O does not partial specialize SequenceTraits on std::vector&lt;&gt; because that
 would force all vectors to be sequences.  An example use of the macros:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">MyType1</span><span class="o">&gt;</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">MyType1</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">MyType2</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="n">LLVM_YAML_IS_SEQUENCE_VECTOR</span><span class="p">(</span><span class="n">MyType1</span><span class="p">)</span>
 <span class="n">LLVM_YAML_IS_FLOW_SEQUENCE_VECTOR</span><span class="p">(</span><span class="n">MyType2</span><span class="p">)</span>
@@ -858,15 +857,15 @@ would force all vectors to be sequences.  An example use of the macros:</p>
 </div>
 <div class="section" id="document-list">
 <h2><a class="toc-backref" href="#id23">Document List</a><a class="headerlink" href="#document-list" title="Permalink to this headline">¶</a></h2>
-<p>YAML allows you to define multiple &#8220;documents&#8221; in a single YAML file.  Each
-new document starts with a left aligned &#8220;&#8212;&#8221; token.  The end of all documents
-is denoted with a left aligned &#8221;...&#8221; token.  Many users of YAML will never
+<p>YAML allows you to define multiple “documents” in a single YAML file.  Each
+new document starts with a left aligned “—” token.  The end of all documents
+is denoted with a left aligned “…” token.  Many users of YAML will never
 have need for multiple documents.  The top level node in their YAML schema
 will be a mapping or sequence. For those cases, the following is not needed.
 But for cases where you do want multiple documents, you can specify a
 trait for you document list type.  The trait has the same methods as
 SequenceTraits but is named DocumentListTraits.  For example:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">template</span> <span class="o">&lt;&gt;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;&gt;</span>
 <span class="k">struct</span> <span class="n">DocumentListTraits</span><span class="o">&lt;</span><span class="n">MyDocList</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="k">static</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">(</span><span class="n">IO</span> <span class="o">&amp;</span><span class="n">io</span><span class="p">,</span> <span class="n">MyDocList</span> <span class="o">&amp;</span><span class="n">list</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
   <span class="k">static</span> <span class="n">MyDocType</span> <span class="n">element</span><span class="p">(</span><span class="n">IO</span> <span class="o">&amp;</span><span class="n">io</span><span class="p">,</span> <span class="n">MyDocList</span> <span class="o">&amp;</span><span class="n">list</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">index</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
@@ -877,14 +876,14 @@ SequenceTraits but is named DocumentListTraits.  For example:</p>
 <div class="section" id="user-context-data">
 <h2><a class="toc-backref" href="#id24">User Context Data</a><a class="headerlink" href="#user-context-data" title="Permalink to this headline">¶</a></h2>
 <p>When an llvm::yaml::Input or llvm::yaml::Output object is created their
-constructors take an optional &#8220;context&#8221; parameter.  This is a pointer to
+constructors take an optional “context” parameter.  This is a pointer to
 whatever state information you might need.</p>
 <p>For instance, in a previous example we showed how the conversion type for a
 flags field could be determined at runtime based on the value of another field
 in the mapping. But what if an inner mapping needs to know some field value
-of an outer mapping?  That is where the &#8220;context&#8221; parameter comes in. You
-can set values in the context in the outer map&#8217;s mapping() method and
-retrieve those values in the inner map&#8217;s mapping() method.</p>
+of an outer mapping?  That is where the “context” parameter comes in. You
+can set values in the context in the outer map’s mapping() method and
+retrieve those values in the inner map’s mapping() method.</p>
 <p>The context value is just a void*.  All your traits which use the context
 and operate on your native data types, need to agree what the context value
 actually is.  It could be a pointer to an object or struct which your various
@@ -896,21 +895,21 @@ traits use to shared context sensitive information.</p>
 in-memory data structures, using traits defined on your data types.
 To instantiate an Output object you need an llvm::raw_ostream, an optional
 context pointer and an optional wrapping column:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Output</span> <span class="o">:</span> <span class="k">public</span> <span class="n">IO</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Output</span> <span class="o">:</span> <span class="k">public</span> <span class="n">IO</span> <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
   <span class="n">Output</span><span class="p">(</span><span class="n">llvm</span><span class="o">::</span><span class="n">raw_ostream</span> <span class="o">&amp;</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">context</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">,</span> <span class="kt">int</span> <span class="n">WrapColumn</span> <span class="o">=</span> <span class="mi">70</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Once you have an Output object, you can use the C++ stream operator on it
 to write your native data as YAML. One thing to recall is that a YAML file
-can contain multiple &#8220;documents&#8221;.  If the top level data structure you are
+can contain multiple “documents”.  If the top level data structure you are
 streaming as YAML is a mapping, scalar, or sequence, then Output assumes you
 are generating one document and wraps the mapping output
-with  &#8220;<code class="docutils literal"><span class="pre">---</span></code>&#8221; and trailing &#8220;<code class="docutils literal"><span class="pre">...</span></code>&#8221;.</p>
+with  “<code class="docutils literal"><span class="pre">---</span></code>” and trailing “<code class="docutils literal"><span class="pre">...</span></code>”.</p>
 <p>The WrapColumn parameter will cause the flow mappings and sequences to
 line-wrap when they go over the supplied column. Pass 0 to completely
 suppress the wrapping.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">Output</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">Output</span><span class="p">;</span>
 
 <span class="kt">void</span> <span class="nf">dumpMyMapDoc</span><span class="p">(</span><span class="k">const</span> <span class="n">MyMapType</span> <span class="o">&amp;</span><span class="n">info</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">Output</span> <span class="n">yout</span><span class="p">(</span><span class="n">llvm</span><span class="o">::</span><span class="n">outs</span><span class="p">());</span>
@@ -919,7 +918,7 @@ suppress the wrapping.</p>
 </pre></div>
 </div>
 <p>The above could produce output like:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="nn">---</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="nn">---</span>
 <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
 <span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">7</span>
 <span class="nn">...</span>
@@ -927,9 +926,9 @@ suppress the wrapping.</p>
 </div>
 <p>On the other hand, if the top level data structure you are streaming as YAML
 has a DocumentListTraits specialization, then Output walks through each element
-of your DocumentList and generates a &#8220;&#8212;&#8221; before the start of each element
-and ends with a &#8221;...&#8221;.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">Output</span><span class="p">;</span>
+of your DocumentList and generates a “—” before the start of each element
+and ends with a “…”.</p>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">Output</span><span class="p">;</span>
 
 <span class="kt">void</span> <span class="nf">dumpMyMapDoc</span><span class="p">(</span><span class="k">const</span> <span class="n">MyDocListType</span> <span class="o">&amp;</span><span class="n">docList</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">Output</span> <span class="n">yout</span><span class="p">(</span><span class="n">llvm</span><span class="o">::</span><span class="n">outs</span><span class="p">());</span>
@@ -938,7 +937,7 @@ and ends with a &#8221;...&#8221;.</p>
 </pre></div>
 </div>
 <p>The above could produce output like:</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="nn">---</span>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="nn">---</span>
 <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>      <span class="l l-Scalar l-Scalar-Plain">Tom</span>
 <span class="l l-Scalar l-Scalar-Plain">hat-size</span><span class="p p-Indicator">:</span>  <span class="l l-Scalar l-Scalar-Plain">7</span>
 <span class="nn">---</span>
@@ -954,19 +953,19 @@ and ends with a &#8221;...&#8221;.</p>
 data structures. To instantiate an Input
 object you need a StringRef to the entire YAML file, and optionally a context
 pointer:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Input</span> <span class="o">:</span> <span class="k">public</span> <span class="n">IO</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Input</span> <span class="o">:</span> <span class="k">public</span> <span class="n">IO</span> <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
   <span class="n">Input</span><span class="p">(</span><span class="n">StringRef</span> <span class="n">inputContent</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">context</span><span class="o">=</span><span class="nb">NULL</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Once you have an Input object, you can use the C++ stream operator to read
 the document(s).  If you expect there might be multiple YAML documents in
-one file, you&#8217;ll need to specialize DocumentListTraits on a list of your
+one file, you’ll need to specialize DocumentListTraits on a list of your
 document type and stream in that document list type.  Otherwise you can
 just stream in the document type.  Also, you can check if there was
 any syntax errors in the YAML be calling the error() method on the Input
 object.  For example:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="c1">// Reading a single document</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Reading a single document</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">Input</span><span class="p">;</span>
 
 <span class="n">Input</span> <span class="nf">yin</span><span class="p">(</span><span class="n">mb</span><span class="p">.</span><span class="n">getBuffer</span><span class="p">());</span>
@@ -980,7 +979,7 @@ object.  For example:</p>
   <span class="k">return</span><span class="p">;</span>
 </pre></div>
 </div>
-<div class="highlight-c++"><div class="highlight"><pre><span class="c1">// Reading multiple documents in one file</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Reading multiple documents in one file</span>
 <span class="k">using</span> <span class="n">llvm</span><span class="o">::</span><span class="n">yaml</span><span class="o">::</span><span class="n">Input</span><span class="p">;</span>
 
 <span class="n">LLVM_YAML_IS_DOCUMENT_LIST_VECTOR</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">MyDocType</span><span class="o">&gt;</span><span class="p">)</span>
@@ -1022,9 +1021,9 @@ object.  For example:</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

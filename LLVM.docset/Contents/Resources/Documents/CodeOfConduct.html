@@ -1,30 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>LLVM Community Code of Conduct &mdash; LLVM 4 documentation</title>
-    
+    <title>LLVM Community Code of Conduct &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Compiling CUDA with clang" href="CompileCudaWithLLVM.html" />
     <link rel="prev" title="MCJIT Design and Implementation" href="MCJITDesignAndImplementation.html" />
 <style type="text/css">
@@ -33,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -71,7 +70,7 @@
 by the community.</p>
 </div>
 <p>The LLVM community has always worked to be a welcoming and respectful
-community, and we want to ensure that doesn&#8217;t change as we grow and evolve. To
+community, and we want to ensure that doesn’t change as we grow and evolve. To
 that end, we have a few ground rules that we ask people to adhere to:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#be-friendly-and-patient">be friendly and patient</a>,</li>
@@ -81,8 +80,8 @@ that end, we have a few ground rules that we ask people to adhere to:</p>
 <li><a class="reference internal" href="#be-careful-in-the-words-that-you-choose-and-be-kind-to-others">be careful in the words that you choose and be kind to others</a>, and</li>
 <li><a class="reference internal" href="#when-we-disagree-try-to-understand-why">when we disagree, try to understand why</a>.</li>
 </ul>
-<p>This isn&#8217;t an exhaustive list of things that you can&#8217;t do. Rather, take it in
-the spirit in which it&#8217;s intended - a guide to make it easier to communicate
+<p>This isn’t an exhaustive list of things that you can’t do. Rather, take it in
+the spirit in which it’s intended - a guide to make it easier to communicate
 and participate in the community.</p>
 <p>This code of conduct applies to all spaces managed by the LLVM project or The
 LLVM Foundation. This includes IRC channels, mailing lists, bug trackers, LLVM
@@ -91,11 +90,11 @@ by the project that the community uses for communication. It applies to all of
 your communication and conduct in these spaces, including emails, chats, things
 you say, slides, videos, posters, signs, or even t-shirts you display in these
 spaces. In addition, violations of this code outside these spaces may, in rare
-cases, affect a person&#8217;s ability to participate within them, when the conduct
+cases, affect a person’s ability to participate within them, when the conduct
 amounts to an egregious violation of this code.</p>
 <p>If you believe someone is violating the code of conduct, we ask that you report
 it by emailing <a class="reference external" href="mailto:conduct&#37;&#52;&#48;llvm&#46;org">conduct<span>&#64;</span>llvm<span>&#46;</span>org</a>. For more details please see our
-<a class="reference internal" href="ReportingGuide.html"><em>Reporting Guide</em></a>.</p>
+<a class="reference internal" href="ReportingGuide.html"><span class="doc">Reporting Guide</span></a>.</p>
 <ul class="simple" id="be-friendly-and-patient">
 <li><strong>Be friendly and patient.</strong></li>
 </ul>
@@ -111,14 +110,14 @@ political belief, religion or lack thereof, and mental and physical ability.</li
 <li><strong>Be considerate.</strong> Your work will be used by other people, and you in turn
 will depend on the work of others. Any decision you take will affect users
 and colleagues, and you should take those consequences into account. Remember
-that we&#8217;re a world-wide community, so you might not be communicating in
-someone else&#8217;s primary language.</li>
+that we’re a world-wide community, so you might not be communicating in
+someone else’s primary language.</li>
 </ul>
 <ul class="simple" id="be-respectful">
 <li><strong>Be respectful.</strong> Not all of us will agree all the time, but disagreement is
 no excuse for poor behavior and poor manners. We might all experience some
 frustration now and then, but we cannot allow that frustration to turn into
-a personal attack. It&#8217;s important to remember that a community where people
+a personal attack. It’s important to remember that a community where people
 feel uncomfortable or threatened is not a productive one. Members of the LLVM
 community should be respectful when dealing with other members as well as
 with people outside the LLVM community.</li>
@@ -126,13 +125,13 @@ with people outside the LLVM community.</li>
 <ul id="be-careful-in-the-words-that-you-choose-and-be-kind-to-others">
 <li><p class="first"><strong>Be careful in the words that you choose and be kind to others.</strong> Do not
 insult or put down other participants. Harassment and other exclusionary
-behavior aren&#8217;t acceptable. This includes, but is not limited to:</p>
+behavior aren’t acceptable. This includes, but is not limited to:</p>
 <ul class="simple">
 <li>Violent threats or language directed against another person.</li>
 <li>Discriminatory jokes and language.</li>
 <li>Posting sexually explicit or violent material.</li>
-<li>Posting (or threatening to post) other people&#8217;s personally identifying
-information (&#8220;doxing&#8221;).</li>
+<li>Posting (or threatening to post) other people’s personally identifying
+information (“doxing”).</li>
 <li>Personal insults, especially those using racist or sexist terms.</li>
 <li>Unwelcome sexual attention.</li>
 <li>Advocating for, or encouraging, any of the above behavior.</li>
@@ -145,11 +144,11 @@ behavior after being asked to stop is considered harassment.</p>
 <li><strong>When we disagree, try to understand why.</strong> Disagreements, both social and
 technical, happen all the time and LLVM is no exception. It is important that
 we resolve disagreements and differing views constructively. Remember that
-we&#8217;re different. The strength of LLVM comes from its varied community, people
+we’re different. The strength of LLVM comes from its varied community, people
 from a wide range of backgrounds. Different people have different
 perspectives on issues. Being unable to understand why someone holds
-a viewpoint doesn&#8217;t mean that they&#8217;re wrong. Don&#8217;t forget that it is human to
-err and blaming each other doesn&#8217;t get us anywhere. Instead, focus on helping
+a viewpoint doesn’t mean that they’re wrong. Don’t forget that it is human to
+err and blaming each other doesn’t get us anywhere. Instead, focus on helping
 to resolve issues and learning from mistakes.</li>
 </ul>
 <div class="section" id="questions">
@@ -184,9 +183,9 @@ based on wording from the <a class="reference external" href="http://speakup.io/
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

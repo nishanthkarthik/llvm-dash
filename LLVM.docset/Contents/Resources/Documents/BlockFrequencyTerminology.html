@@ -1,30 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>LLVM Block Frequency Terminology &mdash; LLVM 4 documentation</title>
-    
+    <title>LLVM Block Frequency Terminology &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="LLVM Branch Weight Metadata" href="BranchWeightMetadata.html" />
     <link rel="prev" title="LLVM Bitcode File Format" href="BitCodeFormat.html" />
 <style type="text/css">
@@ -33,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -95,9 +94,9 @@ sum of its outgoing branch probabilities should be 1.0.</p>
 <p>Rather than storing fractions on each edge, we store an integer weight.
 Weights are relative to the other edges of a given predecessor block.  The
 branch probability associated with a given edge is its own weight divided by
-the sum of the weights on the predecessor&#8217;s outgoing edges.</p>
+the sum of the weights on the predecessor’s outgoing edges.</p>
 <p>For example, consider this IR:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="kt">void</span> <span class="vg">@foo</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="kt">void</span> <span class="vg">@foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="c">; ...</span>
     <span class="nl">A:</span>
         <span class="k">br</span> <span class="k">i1</span> <span class="nv">%cond</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%B</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%C</span><span class="p">,</span> <span class="nv">!prof</span> <span class="nv nv-Anonymous">!0</span>
@@ -107,13 +106,13 @@ the sum of the weights on the predecessor&#8217;s outgoing edges.</p>
 </pre></div>
 </div>
 <p>and this simple graph representation:</p>
-<div class="highlight-python"><div class="highlight"><pre>A -&gt; B  (edge-weight: 7)
-A -&gt; C  (edge-weight: 8)
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">-&gt;</span> <span class="n">B</span>  <span class="p">(</span><span class="n">edge</span><span class="o">-</span><span class="n">weight</span><span class="p">:</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">-&gt;</span> <span class="n">C</span>  <span class="p">(</span><span class="n">edge</span><span class="o">-</span><span class="n">weight</span><span class="p">:</span> <span class="mi">8</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The probability of branching from block A to block B is 7/15, and the
 probability of branching from block A to block C is 8/15.</p>
-<p>See <a class="reference internal" href="BranchWeightMetadata.html"><em>LLVM Branch Weight Metadata</em></a> for details about the branch weight IR
+<p>See <a class="reference internal" href="BranchWeightMetadata.html"><span class="doc">LLVM Branch Weight Metadata</span></a> for details about the branch weight IR
 representation.</p>
 </div>
 <div class="section" id="block-frequency">
@@ -128,8 +127,8 @@ the expected number of times the block will execute per entry to the function.</
 <h2><a class="toc-backref" href="#id5">Implementation: a series of DAGs</a><a class="headerlink" href="#implementation-a-series-of-dags" title="Permalink to this headline">¶</a></h2>
 <p>The implementation of the block frequency calculation analyses each loop,
 bottom-up, ignoring backedges; i.e., as a DAG.  After each loop is processed,
-it&#8217;s packaged up to act as a pseudo-node in its parent loop&#8217;s (or the
-function&#8217;s) DAG analysis.</p>
+it’s packaged up to act as a pseudo-node in its parent loop’s (or the
+function’s) DAG analysis.</p>
 </div>
 <div class="section" id="block-mass">
 <h2><a class="toc-backref" href="#id6">Block Mass</a><a class="headerlink" href="#block-mass" title="Permalink to this headline">¶</a></h2>
@@ -140,15 +139,15 @@ represents a number just above <code class="docutils literal"><span class="pre">
 <p>After mass is fully distributed, in any cut of the DAG that separates the exit
 nodes from the entry node, the sum of the block masses of the nodes succeeded
 by a cut edge should equal <code class="docutils literal"><span class="pre">UINT64_MAX</span></code>.  In other words, mass is conserved
-as it &#8220;falls&#8221; through the DAG.</p>
-<p>If a function&#8217;s basic block graph is a DAG, then block masses are valid block
+as it “falls” through the DAG.</p>
+<p>If a function’s basic block graph is a DAG, then block masses are valid block
 frequencies.  This works poorly in practise though, since downstream users rely
 on adding block frequencies together without hitting the maximum.</p>
 </div>
 <div class="section" id="loop-scale">
 <h2><a class="toc-backref" href="#id7">Loop Scale</a><a class="headerlink" href="#loop-scale" title="Permalink to this headline">¶</a></h2>
 <p>Loop scale is a metric that indicates how many times a loop iterates per entry.
-As mass is distributed through the loop&#8217;s DAG, the (otherwise ignored) backedge
+As mass is distributed through the loop’s DAG, the (otherwise ignored) backedge
 mass is collected.  This backedge mass is used to compute the exit frequency,
 and thus the loop scale.</p>
 </div>
@@ -156,18 +155,18 @@ and thus the loop scale.</p>
 <h2><a class="toc-backref" href="#id8">Implementation: Getting from mass and scale to frequency</a><a class="headerlink" href="#implementation-getting-from-mass-and-scale-to-frequency" title="Permalink to this headline">¶</a></h2>
 <p>After analysing the complete series of DAGs, each block has a mass (local to
 its containing loop, if any), and each loop pseudo-node has a loop scale and
-its own mass (from its parent&#8217;s DAG).</p>
+its own mass (from its parent’s DAG).</p>
 <p>We can get an initial frequency assignment (with entry frequency of 1.0) by
-multiplying these masses and loop scales together.  A given block&#8217;s frequency
-is the product of its mass, the mass of containing loops&#8217; pseudo nodes, and the
-containing loops&#8217; loop scales.</p>
+multiplying these masses and loop scales together.  A given block’s frequency
+is the product of its mass, the mass of containing loops’ pseudo nodes, and the
+containing loops’ loop scales.</p>
 <p>Since downstream users need integers (not floating point), this initial
 frequency assignment is shifted as necessary into the range of <code class="docutils literal"><span class="pre">uint64_t</span></code>.</p>
 </div>
 <div class="section" id="block-bias">
 <h2><a class="toc-backref" href="#id9">Block Bias</a><a class="headerlink" href="#block-bias" title="Permalink to this headline">¶</a></h2>
 <p>Block bias is a proposed <em>absolute</em> metric to indicate a bias toward or away
-from a given block during a function&#8217;s execution.  The idea is that bias can be
+from a given block during a function’s execution.  The idea is that bias can be
 used in isolation to indicate whether a block is relatively hot or cold, or to
 compare two blocks to indicate whether one is hotter or colder than the other.</p>
 <p>The proposed calculation involves calculating a <em>reference</em> block frequency,
@@ -206,9 +205,9 @@ unbiased graph.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

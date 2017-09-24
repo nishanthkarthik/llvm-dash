@@ -1,30 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>The LLVM Target-Independent Code Generator &mdash; LLVM 4 documentation</title>
-    
+    <title>The LLVM Target-Independent Code Generator &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Exception Handling in LLVM" href="ExceptionHandling.html" />
     <link rel="prev" title="LLVM bugpoint tool: design and usage" href="Bugpoint.html" />
 <style type="text/css">
@@ -33,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -107,7 +106,7 @@
 <li><a class="reference internal" href="#machineinstr-bundles" id="id29"><code class="docutils literal"><span class="pre">MachineInstr</span> <span class="pre">Bundles</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#the-mc-layer" id="id30">The &#8220;MC&#8221; Layer</a><ul>
+<li><a class="reference internal" href="#the-mc-layer" id="id30">The “MC” Layer</a><ul>
 <li><a class="reference internal" href="#the-mcstreamer-api" id="id31">The <code class="docutils literal"><span class="pre">MCStreamer</span></code> API</a></li>
 <li><a class="reference internal" href="#the-mccontext-class" id="id32">The <code class="docutils literal"><span class="pre">MCContext</span></code> class</a></li>
 <li><a class="reference internal" href="#the-mcsymbol-class" id="id33">The <code class="docutils literal"><span class="pre">MCSymbol</span></code> class</a></li>
@@ -202,11 +201,7 @@
 <li><a class="reference internal" href="#program-start" id="id100">Program start</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#the-amdgpu-backend" id="id101">The AMDGPU backend</a><ul>
-<li><a class="reference internal" href="#target-triples-supported" id="id102">Target triples supported</a></li>
-<li><a class="reference internal" href="#relocations" id="id103">Relocations</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#the-amdgpu-backend" id="id101">The AMDGPU backend</a></li>
 </ul>
 </li>
 </ul>
@@ -219,7 +214,7 @@
 <h2><a class="toc-backref" href="#id8">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>The LLVM target-independent code generator is a framework that provides a suite
 of reusable components for translating the LLVM internal representation to the
-machine code for a specified target&#8212;either in assembly form (suitable for a
+machine code for a specified target—either in assembly form (suitable for a
 static compiler) or in binary machine code format (usable for a JIT
 compiler). The LLVM target-independent code generator consists of six main
 components:</p>
@@ -230,12 +225,12 @@ These interfaces are defined in <code class="docutils literal"><span class="pre"
 <li>Classes used to represent the <a class="reference internal" href="#code-being-generated">code being generated</a> for a target.  These
 classes are intended to be abstract enough to represent the machine code for
 <em>any</em> target machine.  These classes are defined in
-<code class="docutils literal"><span class="pre">include/llvm/CodeGen/</span></code>. At this level, concepts like &#8220;constant pool
-entries&#8221; and &#8220;jump tables&#8221; are explicitly exposed.</li>
+<code class="docutils literal"><span class="pre">include/llvm/CodeGen/</span></code>. At this level, concepts like “constant pool
+entries” and “jump tables” are explicitly exposed.</li>
 <li>Classes and algorithms used to represent code at the object file level, the
 <a class="reference internal" href="#mc-layer">MC Layer</a>.  These classes represent assembly level constructs like labels,
-sections, and instructions.  At this level, concepts like &#8220;constant pool
-entries&#8221; and &#8220;jump tables&#8221; don&#8217;t exist.</li>
+sections, and instructions.  At this level, concepts like “constant pool
+entries” and “jump tables” don’t exist.</li>
 <li><a class="reference internal" href="#target-independent-algorithms">Target-independent algorithms</a> used to implement various phases of native
 code generation (register allocation, scheduling, stack frame representation,
 etc).  This code lives in <code class="docutils literal"><span class="pre">lib/CodeGen/</span></code>.</li>
@@ -254,7 +249,7 @@ different pieces of this will be useful to you.  In any case, you should be
 familiar with the <a class="reference internal" href="#target-description">target description</a> and <a class="reference internal" href="#machine-code-representation">machine code representation</a>
 classes.  If you want to add a backend for a new target, you will need to
 <a class="reference internal" href="#implement-the-target-description">implement the target description</a> classes for your new target and understand
-the <a class="reference internal" href="LangRef.html"><em>LLVM code representation</em></a>.  If you are interested in
+the <a class="reference internal" href="LangRef.html"><span class="doc">LLVM code representation</span></a>.  If you are interested in
 implementing a new <a class="reference internal" href="#code-generation-algorithm">code generation algorithm</a>, it should only depend on the
 target-description and machine code representation classes, ensuring that it is
 portable.</p>
@@ -287,37 +282,37 @@ description model: FPGAs for example.</p>
 quality code generation for standard register-based microprocessors.  Code
 generation in this model is divided into the following stages:</p>
 <ol class="arabic simple">
-<li><a class="reference internal" href="#instruction-selection">Instruction Selection</a> &#8212; This phase determines an efficient way to
+<li><a class="reference internal" href="#instruction-selection">Instruction Selection</a> — This phase determines an efficient way to
 express the input LLVM code in the target instruction set.  This stage
 produces the initial code for the program in the target instruction set, then
 makes use of virtual registers in SSA form and physical registers that
 represent any required register assignments due to target constraints or
 calling conventions.  This step turns the LLVM code into a DAG of target
 instructions.</li>
-<li><a class="reference internal" href="#scheduling-and-formation">Scheduling and Formation</a> &#8212; This phase takes the DAG of target
+<li><a class="reference internal" href="#scheduling-and-formation">Scheduling and Formation</a> — This phase takes the DAG of target
 instructions produced by the instruction selection phase, determines an
 ordering of the instructions, then emits the instructions as <span class="raw-html"><tt></span>
 <a class="reference internal" href="#machineinstr">MachineInstr</a>s <span class="raw-html"></tt></span> with that ordering.  Note that we
 describe this in the <a class="reference internal" href="#instruction-selection-section">instruction selection section</a> because it operates on
 a <a class="reference internal" href="#selectiondag">SelectionDAG</a>.</li>
-<li><a class="reference internal" href="#ssa-based-machine-code-optimizations">SSA-based Machine Code Optimizations</a> &#8212; This optional stage consists of a
+<li><a class="reference internal" href="#ssa-based-machine-code-optimizations">SSA-based Machine Code Optimizations</a> — This optional stage consists of a
 series of machine-code optimizations that operate on the SSA-form produced by
 the instruction selector.  Optimizations like modulo-scheduling or peephole
 optimization work here.</li>
-<li><a class="reference internal" href="#register-allocation">Register Allocation</a> &#8212; The target code is transformed from an infinite
+<li><a class="reference internal" href="#register-allocation">Register Allocation</a> — The target code is transformed from an infinite
 virtual register file in SSA form to the concrete register file used by the
 target.  This phase introduces spill code and eliminates all virtual register
 references from the program.</li>
-<li><a class="reference internal" href="#prolog-epilog-code-insertion">Prolog/Epilog Code Insertion</a> &#8212; Once the machine code has been generated
+<li><a class="reference internal" href="#prolog-epilog-code-insertion">Prolog/Epilog Code Insertion</a> — Once the machine code has been generated
 for the function and the amount of stack space required is known (used for
-LLVM alloca&#8217;s and spill slots), the prolog and epilog code for the function
-can be inserted and &#8220;abstract stack location references&#8221; can be eliminated.
+LLVM alloca’s and spill slots), the prolog and epilog code for the function
+can be inserted and “abstract stack location references” can be eliminated.
 This stage is responsible for implementing optimizations like frame-pointer
 elimination and stack packing.</li>
-<li><a class="reference internal" href="#late-machine-code-optimizations">Late Machine Code Optimizations</a> &#8212; Optimizations that operate on &#8220;final&#8221;
+<li><a class="reference internal" href="#late-machine-code-optimizations">Late Machine Code Optimizations</a> — Optimizations that operate on “final”
 machine code can go here, such as spill code scheduling and peephole
 optimizations.</li>
-<li><a class="reference internal" href="#code-emission">Code Emission</a> &#8212; The final stage actually puts out the code for the
+<li><a class="reference internal" href="#code-emission">Code Emission</a> — The final stage actually puts out the code for the
 current function, either in the target assembler format or in machine
 code.</li>
 </ol>
@@ -341,7 +336,7 @@ architecture.  These target descriptions often have a large amount of common
 information (e.g., an <code class="docutils literal"><span class="pre">add</span></code> instruction is almost identical to a <code class="docutils literal"><span class="pre">sub</span></code>
 instruction).  In order to allow the maximum amount of commonality to be
 factored out, the LLVM code generator uses the
-<a class="reference internal" href="TableGen/index.html"><em>TableGen</em></a> tool to describe big chunks of the
+<a class="reference internal" href="TableGen/index.html"><span class="doc">TableGen</span></a> tool to describe big chunks of the
 target machine, which allows the use of domain-specific and target-specific
 abstractions to reduce the amount of repetition.</p>
 <p>As LLVM continues to be developed and refined, we plan to move more and more of
@@ -421,7 +416,7 @@ registers).  Each SSA virtual register created by the instruction selector has
 an associated register class.  When the register allocator runs, it replaces
 virtual registers with a physical register in the set.</p>
 <p>The target-specific implementations of these classes is auto-generated from a
-<a class="reference internal" href="TableGen/index.html"><em>TableGen</em></a> description of the register file.</p>
+<a class="reference internal" href="TableGen/index.html"><span class="doc">TableGen</span></a> description of the register file.</p>
 </div>
 <div class="section" id="the-targetinstrinfo-class">
 <span id="targetinstrinfo"></span><h3><a class="toc-backref" href="#id17">The <code class="docutils literal"><span class="pre">TargetInstrInfo</span></code> class</a><a class="headerlink" href="#the-targetinstrinfo-class" title="Permalink to this headline">¶</a></h3>
@@ -486,13 +481,13 @@ addition, a machine operand should be marked as a def or a use of the value
 <p>By convention, the LLVM code generator orders instruction operands so that all
 register definitions come before the register uses, even on architectures that
 are normally printed in other orders.  For example, the SPARC add instruction:
-&#8220;<code class="docutils literal"><span class="pre">add</span> <span class="pre">%i1,</span> <span class="pre">%i2,</span> <span class="pre">%i3</span></code>&#8221; adds the &#8220;%i1&#8221;, and &#8220;%i2&#8221; registers and stores the
-result into the &#8220;%i3&#8221; register.  In the LLVM code generator, the operands should
-be stored as &#8220;<code class="docutils literal"><span class="pre">%i3,</span> <span class="pre">%i1,</span> <span class="pre">%i2</span></code>&#8221;: with the destination first.</p>
+“<code class="docutils literal"><span class="pre">add</span> <span class="pre">%i1,</span> <span class="pre">%i2,</span> <span class="pre">%i3</span></code>” adds the “%i1”, and “%i2” registers and stores the
+result into the “%i3” register.  In the LLVM code generator, the operands should
+be stored as “<code class="docutils literal"><span class="pre">%i3,</span> <span class="pre">%i1,</span> <span class="pre">%i2</span></code>”: with the destination first.</p>
 <p>Keeping destination (definition) operands at the beginning of the operand list
 has several advantages.  In particular, the debugging printer will print the
 instruction like this:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="nv">%r3</span> <span class="p">=</span> <span class="k">add</span> <span class="nv">%i1</span><span class="p">,</span> <span class="nv">%i2</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nv">%r3</span> <span class="p">=</span> <span class="k">add</span> <span class="nv">%i1</span><span class="p">,</span> <span class="nv">%i2</span>
 </pre></div>
 </div>
 <p>Also if the first operand is a def, it is easier to <a class="reference internal" href="#create-instructions">create instructions</a> whose
@@ -503,7 +498,7 @@ only def is the first operand.</p>
 the <code class="docutils literal"><span class="pre">include/llvm/CodeGen/MachineInstrBuilder.h</span></code> file.  The <code class="docutils literal"><span class="pre">BuildMI</span></code>
 functions make it easy to build arbitrary machine instructions.  Usage of the
 <code class="docutils literal"><span class="pre">BuildMI</span></code> functions look like this:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="c1">// Create a &#39;DestReg = mov 42&#39; (rendered in X86 assembly as &#39;mov DestReg, 42&#39;)</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">// Create a &#39;DestReg = mov 42&#39; (rendered in X86 assembly as &#39;mov DestReg, 42&#39;)</span>
 <span class="c1">// instruction and insert it at the end of the given MachineBasicBlock.</span>
 <span class="k">const</span> <span class="n">TargetInstrInfo</span> <span class="o">&amp;</span><span class="n">TII</span> <span class="o">=</span> <span class="p">...</span>
 <span class="n">MachineBasicBlock</span> <span class="o">&amp;</span><span class="n">MBB</span> <span class="o">=</span> <span class="p">...</span>
@@ -526,7 +521,7 @@ functions make it easy to build arbitrary machine instructions.  Usage of the
 </div>
 <p>If you need to add a definition operand (other than the optional destination
 register), you must explicitly mark it as such:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">MI</span><span class="p">.</span><span class="n">addReg</span><span class="p">(</span><span class="n">Reg</span><span class="p">,</span> <span class="n">RegState</span><span class="o">::</span><span class="n">Define</span><span class="p">);</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="n">MI</span><span class="p">.</span><span class="n">addReg</span><span class="p">(</span><span class="n">Reg</span><span class="p">,</span> <span class="n">RegState</span><span class="o">::</span><span class="n">Define</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -541,7 +536,7 @@ registers), or external factors like calling conventions.  In any case, the
 instruction selector should emit code that copies a virtual register into or out
 of a physical register when needed.</p>
 <p>For example, consider this simple LLVM example:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i32</span> <span class="vg">@test</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%X</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%Y</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i32</span> <span class="vg">@test</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%X</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%Y</span><span class="p">)</span> <span class="p">{</span>
   <span class="nv">%Z</span> <span class="p">=</span> <span class="k">sdiv</span> <span class="k">i32</span> <span class="nv">%X</span><span class="p">,</span> <span class="nv">%Y</span>
   <span class="k">ret</span> <span class="k">i32</span> <span class="nv">%Z</span>
 <span class="p">}</span>
@@ -549,7 +544,7 @@ of a physical register when needed.</p>
 </div>
 <p>The X86 instruction selector might produce this machine code for the <code class="docutils literal"><span class="pre">div</span></code> and
 <code class="docutils literal"><span class="pre">ret</span></code>:</p>
-<div class="highlight-text"><div class="highlight"><pre>;; Start of div
+<div class="highlight-text"><div class="highlight"><pre><span></span>;; Start of div
 %EAX = mov %reg1024           ;; Copy X (in reg1024) into EAX
 %reg1027 = sar %reg1024, 31
 %EDX = mov %reg1027           ;; Sign extend X into EDX
@@ -564,7 +559,7 @@ ret
 <p>By the end of code generation, the register allocator would coalesce the
 registers and delete the resultant identity moves producing the following
 code:</p>
-<div class="highlight-text"><div class="highlight"><pre>;; X is in EAX, Y is in ECX
+<div class="highlight-text"><div class="highlight"><pre><span></span>;; X is in EAX, Y is in ECX
 mov %EAX, %EDX
 sar %EDX, 31
 idiv %ECX
@@ -589,7 +584,7 @@ considered to be clobbered by the instruction.</p>
 </div>
 <div class="section" id="machine-code-in-ssa-form">
 <h4><a class="toc-backref" href="#id26">Machine code in SSA form</a><a class="headerlink" href="#machine-code-in-ssa-form" title="Permalink to this headline">¶</a></h4>
-<p><code class="docutils literal"><span class="pre">MachineInstr</span></code>&#8216;s are initially selected in SSA-form, and are maintained in
+<p><code class="docutils literal"><span class="pre">MachineInstr</span></code>’s are initially selected in SSA-form, and are maintained in
 SSA-form until register allocation happens.  For the most part, this is
 trivially simple since LLVM is already in SSA form; LLVM PHI nodes become
 machine code PHI nodes, and virtual registers are only allowed to have a single
@@ -604,7 +599,7 @@ are no virtual registers left in the code.</p>
 (<span class="raw-html"><tt></span> <a class="reference internal" href="#machineinstr">MachineInstr</a> <span class="raw-html"></tt></span> instances).  It roughly
 corresponds to the LLVM code input to the instruction selector, but there can be
 a one-to-many mapping (i.e. one LLVM basic block can map to multiple machine
-basic blocks). The <code class="docutils literal"><span class="pre">MachineBasicBlock</span></code> class has a &#8220;<code class="docutils literal"><span class="pre">getBasicBlock</span></code>&#8221; method,
+basic blocks). The <code class="docutils literal"><span class="pre">MachineBasicBlock</span></code> class has a “<code class="docutils literal"><span class="pre">getBasicBlock</span></code>” method,
 which returns the LLVM basic block that it comes from.</p>
 </div>
 <div class="section" id="the-machinefunction-class">
@@ -625,46 +620,46 @@ number of parallel instructions. It can also be used to model a sequential list
 of instructions (potentially with data dependencies) that cannot be legally
 separated (e.g. ARM Thumb2 IT blocks).</p>
 <p>Conceptually a MI bundle is a MI with a number of other MIs nested within:</p>
-<div class="highlight-python"><div class="highlight"><pre>--------------
-|   Bundle   | ---------
---------------          \
-       |           ----------------
-       |           |      MI      |
-       |           ----------------
-       |                   |
-       |           ----------------
-       |           |      MI      |
-       |           ----------------
-       |                   |
-       |           ----------------
-       |           |      MI      |
-       |           ----------------
-       |
---------------
-|   Bundle   | --------
---------------         \
-       |           ----------------
-       |           |      MI      |
-       |           ----------------
-       |                   |
-       |           ----------------
-       |           |      MI      |
-       |           ----------------
-       |                   |
-       |                  ...
-       |
---------------
-|   Bundle   | --------
---------------         \
-       |
-      ...
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">--------------</span>
+<span class="o">|</span>   <span class="n">Bundle</span>   <span class="o">|</span> <span class="o">---------</span>
+<span class="o">--------------</span>          \
+       <span class="o">|</span>           <span class="o">----------------</span>
+       <span class="o">|</span>           <span class="o">|</span>      <span class="n">MI</span>      <span class="o">|</span>
+       <span class="o">|</span>           <span class="o">----------------</span>
+       <span class="o">|</span>                   <span class="o">|</span>
+       <span class="o">|</span>           <span class="o">----------------</span>
+       <span class="o">|</span>           <span class="o">|</span>      <span class="n">MI</span>      <span class="o">|</span>
+       <span class="o">|</span>           <span class="o">----------------</span>
+       <span class="o">|</span>                   <span class="o">|</span>
+       <span class="o">|</span>           <span class="o">----------------</span>
+       <span class="o">|</span>           <span class="o">|</span>      <span class="n">MI</span>      <span class="o">|</span>
+       <span class="o">|</span>           <span class="o">----------------</span>
+       <span class="o">|</span>
+<span class="o">--------------</span>
+<span class="o">|</span>   <span class="n">Bundle</span>   <span class="o">|</span> <span class="o">--------</span>
+<span class="o">--------------</span>         \
+       <span class="o">|</span>           <span class="o">----------------</span>
+       <span class="o">|</span>           <span class="o">|</span>      <span class="n">MI</span>      <span class="o">|</span>
+       <span class="o">|</span>           <span class="o">----------------</span>
+       <span class="o">|</span>                   <span class="o">|</span>
+       <span class="o">|</span>           <span class="o">----------------</span>
+       <span class="o">|</span>           <span class="o">|</span>      <span class="n">MI</span>      <span class="o">|</span>
+       <span class="o">|</span>           <span class="o">----------------</span>
+       <span class="o">|</span>                   <span class="o">|</span>
+       <span class="o">|</span>                  <span class="o">...</span>
+       <span class="o">|</span>
+<span class="o">--------------</span>
+<span class="o">|</span>   <span class="n">Bundle</span>   <span class="o">|</span> <span class="o">--------</span>
+<span class="o">--------------</span>         \
+       <span class="o">|</span>
+      <span class="o">...</span>
 </pre></div>
 </div>
 <p>MI bundle support does not change the physical representations of
 MachineBasicBlock and MachineInstr. All the MIs (including top level and nested
-ones) are stored as sequential list of MIs. The &#8220;bundled&#8221; MIs are marked with
-the &#8216;InsideBundle&#8217; flag. A top level MI with the special BUNDLE opcode is used
-to represent the start of a bundle. It&#8217;s legal to mix BUNDLE MIs with indiviual
+ones) are stored as sequential list of MIs. The “bundled” MIs are marked with
+the ‘InsideBundle’ flag. A top level MI with the special BUNDLE opcode is used
+to represent the start of a bundle. It’s legal to mix BUNDLE MIs with indiviual
 MIs that are not inside bundles nor represent bundles.</p>
 <p>MachineInstr passes should operate on a MI bundle as a single unit. Member
 methods have been taught to correctly handle bundles and MIs inside bundles.
@@ -673,9 +668,9 @@ enforce the bundle-as-a-single-unit concept. An alternative iterator
 instr_iterator has been added to MachineBasicBlock to allow passes to iterate
 over all of the MIs in a MachineBasicBlock, including those which are nested
 inside bundles. The top level BUNDLE instruction must have the correct set of
-register MachineOperand&#8217;s that represent the cumulative inputs and outputs of
+register MachineOperand’s that represent the cumulative inputs and outputs of
 the bundled MIs.</p>
-<p>Packing / bundling of MachineInstr&#8217;s should be done as part of the register
+<p>Packing / bundling of MachineInstr’s should be done as part of the register
 allocation super-pass. More specifically, the pass which determines what MIs
 should be bundled together must be done after code generator exits SSA form
 (i.e. after two-address pass, PHI elimination, and copy coalescing).  Bundles
@@ -687,10 +682,10 @@ and use lists.</p>
 </div>
 </div>
 <div class="section" id="the-mc-layer">
-<span id="mc-layer"></span><h2><a class="toc-backref" href="#id30">The &#8220;MC&#8221; Layer</a><a class="headerlink" href="#the-mc-layer" title="Permalink to this headline">¶</a></h2>
+<span id="mc-layer"></span><h2><a class="toc-backref" href="#id30">The “MC” Layer</a><a class="headerlink" href="#the-mc-layer" title="Permalink to this headline">¶</a></h2>
 <p>The MC Layer is used to represent and process code at the raw machine code
-level, devoid of &#8220;high level&#8221; information like &#8220;constant pools&#8221;, &#8220;jump tables&#8221;,
-&#8220;global variables&#8221; or anything like that.  At this level, LLVM handles things
+level, devoid of “high level” information like “constant pools”, “jump tables”,
+“global variables” or anything like that.  At this level, LLVM handles things
 like label names, machine instructions, and sections in the object file.  The
 code in this layer is used for a number of important purposes: the tail end of
 the code generator uses it to write a .s or .o file, and it is also used by the
@@ -740,16 +735,16 @@ interact with to create symbols and sections.  This class can not be subclassed.
 are two interesting kinds of symbols: assembler temporary symbols, and normal
 symbols.  Assembler temporary symbols are used and processed by the assembler
 but are discarded when the object file is produced.  The distinction is usually
-represented by adding a prefix to the label, for example &#8220;L&#8221; labels are
+represented by adding a prefix to the label, for example “L” labels are
 assembler temporary labels in MachO.</p>
 <p>MCSymbols are created by MCContext and uniqued there.  This means that MCSymbols
 can be compared for pointer equivalence to find out if they are the same symbol.
 Note that pointer inequality does not guarantee the labels will end up at
-different addresses though.  It&#8217;s perfectly legal to output something like this
+different addresses though.  It’s perfectly legal to output something like this
 to the .s file:</p>
-<div class="highlight-python"><div class="highlight"><pre>foo:
-bar:
-  .byte 4
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">foo</span><span class="p">:</span>
+<span class="n">bar</span><span class="p">:</span>
+  <span class="o">.</span><span class="n">byte</span> <span class="mi">4</span>
 </pre></div>
 </div>
 <p>In this case, both the foo and bar symbols will have the same address.</p>
@@ -760,7 +755,7 @@ bar:
 subclassed by object file specific implementations (e.g. <code class="docutils literal"><span class="pre">MCSectionMachO</span></code>,
 <code class="docutils literal"><span class="pre">MCSectionCOFF</span></code>, <code class="docutils literal"><span class="pre">MCSectionELF</span></code>) and these are created and uniqued by
 MCContext.  The MCStreamer has a notion of the current section, which can be
-changed with the SwitchToSection method (which corresponds to a &#8221;.section&#8221;
+changed with the SwitchToSection method (which corresponds to a “.section”
 directive in a .s file).</p>
 </div>
 <div class="section" id="the-mcinst-class">
@@ -769,7 +764,7 @@ directive in a .s file).</p>
 It is a simple class (much more so than <a class="reference internal" href="#machineinstr">MachineInstr</a>) that holds a
 target-specific opcode and a vector of MCOperands.  MCOperand, in turn, is a
 simple discriminated union of three cases: 1) a simple immediate, 2) a target
-register ID, 3) a symbolic expression (e.g. &#8220;<code class="docutils literal"><span class="pre">Lfoo-Lbar+42</span></code>&#8221;) as an MCExpr.</p>
+register ID, 3) a symbolic expression (e.g. “<code class="docutils literal"><span class="pre">Lfoo-Lbar+42</span></code>”) as an MCExpr.</p>
 <p>MCInst is the common currency used to represent machine instructions at the MC
 layer.  It is the type used by the instruction encoder, the instruction printer,
 and the type generated by the assembly parser and disassembler.</p>
@@ -796,7 +791,7 @@ things that require custom C++ code.</p>
 is amenable to instruction selection using automatic techniques
 (e.g. dynamic-programming based optimal pattern matching selectors). It is also
 well-suited to other phases of code generation; in particular, instruction
-scheduling (SelectionDAG&#8217;s are very close to scheduling DAGs post-selection).
+scheduling (SelectionDAG’s are very close to scheduling DAGs post-selection).
 Additionally, the SelectionDAG provides a host representation where a large
 variety of very-low-level (but target-independent) <a class="reference internal" href="#optimizations">optimizations</a> may be
 performed; ones which require extensive information about the instructions
@@ -818,20 +813,20 @@ respectively.  Each value produced by an <code class="docutils literal"><span cl
 <p>SelectionDAGs contain two different kinds of values: those that represent data
 flow and those that represent control flow dependencies.  Data values are simple
 edges with an integer or floating point value type.  Control edges are
-represented as &#8220;chain&#8221; edges which are of type <code class="docutils literal"><span class="pre">MVT::Other</span></code>.  These edges
+represented as “chain” edges which are of type <code class="docutils literal"><span class="pre">MVT::Other</span></code>.  These edges
 provide an ordering between nodes that have side effects (such as loads, stores,
 calls, returns, etc).  All nodes that have side effects should take a token
 chain as input and produce a new one as output.  By convention, token chain
 inputs are always operand #0, and chain results are always the last value
 produced by an operation. However, after instruction selection, the
-machine nodes have their chain after the instruction&#8217;s operands, and
+machine nodes have their chain after the instruction’s operands, and
 may be followed by glue nodes.</p>
-<p>A SelectionDAG has designated &#8220;Entry&#8221; and &#8220;Root&#8221; nodes.  The Entry node is
+<p>A SelectionDAG has designated “Entry” and “Root” nodes.  The Entry node is
 always a marker node with an Opcode of <code class="docutils literal"><span class="pre">ISD::EntryToken</span></code>.  The Root node is
 the final side-effecting node in the token chain. For example, in a single basic
 block function it would be the return node.</p>
-<p>One important concept for SelectionDAGs is the notion of a &#8220;legal&#8221; vs.
-&#8220;illegal&#8221; DAG.  A legal DAG for a target is one that only uses supported
+<p>One important concept for SelectionDAGs is the notion of a “legal” vs.
+“illegal” DAG.  A legal DAG for a target is one that only uses supported
 operations and supported types.  On a 32-bit PowerPC, for example, a DAG with a
 value of type i1, i8, i16, or i64 would be illegal, as would a DAG that uses a
 SREM or UREM operation.  The <a class="reference internal" href="#legalize-types">legalize types</a> and <a class="reference internal" href="#legalize-operations">legalize operations</a> phases
@@ -841,25 +836,25 @@ are responsible for turning an illegal DAG into a legal DAG.</p>
 <span id="selectiondag-process"></span><h4><a class="toc-backref" href="#id39">SelectionDAG Instruction Selection Process</a><a class="headerlink" href="#selectiondag-instruction-selection-process" title="Permalink to this headline">¶</a></h4>
 <p>SelectionDAG-based instruction selection consists of the following steps:</p>
 <ol class="arabic simple">
-<li><a class="reference internal" href="#build-initial-dag">Build initial DAG</a> &#8212; This stage performs a simple translation from the
+<li><a class="reference internal" href="#build-initial-dag">Build initial DAG</a> — This stage performs a simple translation from the
 input LLVM code to an illegal SelectionDAG.</li>
-<li><a class="reference internal" href="#optimize-selectiondag">Optimize SelectionDAG</a> &#8212; This stage performs simple optimizations on the
+<li><a class="reference internal" href="#optimize-selectiondag">Optimize SelectionDAG</a> — This stage performs simple optimizations on the
 SelectionDAG to simplify it, and recognize meta instructions (like rotates
 and <code class="docutils literal"><span class="pre">div</span></code>/<code class="docutils literal"><span class="pre">rem</span></code> pairs) for targets that support these meta operations.
 This makes the resultant code more efficient and the <a class="reference internal" href="#select-instructions-from-dag">select instructions
 from DAG</a> phase (below) simpler.</li>
-<li><a class="reference internal" href="#legalize-selectiondag-types">Legalize SelectionDAG Types</a> &#8212; This stage transforms SelectionDAG nodes
+<li><a class="reference internal" href="#legalize-selectiondag-types">Legalize SelectionDAG Types</a> — This stage transforms SelectionDAG nodes
 to eliminate any types that are unsupported on the target.</li>
-<li><a class="reference internal" href="#optimize-selectiondag">Optimize SelectionDAG</a> &#8212; The SelectionDAG optimizer is run to clean up
+<li><a class="reference internal" href="#optimize-selectiondag">Optimize SelectionDAG</a> — The SelectionDAG optimizer is run to clean up
 redundancies exposed by type legalization.</li>
-<li><a class="reference internal" href="#legalize-selectiondag-ops">Legalize SelectionDAG Ops</a> &#8212; This stage transforms SelectionDAG nodes to
+<li><a class="reference internal" href="#legalize-selectiondag-ops">Legalize SelectionDAG Ops</a> — This stage transforms SelectionDAG nodes to
 eliminate any operations that are unsupported on the target.</li>
-<li><a class="reference internal" href="#optimize-selectiondag">Optimize SelectionDAG</a> &#8212; The SelectionDAG optimizer is run to eliminate
+<li><a class="reference internal" href="#optimize-selectiondag">Optimize SelectionDAG</a> — The SelectionDAG optimizer is run to eliminate
 inefficiencies introduced by operation legalization.</li>
-<li><a class="reference internal" href="#select-instructions-from-dag">Select instructions from DAG</a> &#8212; Finally, the target instruction selector
+<li><a class="reference internal" href="#select-instructions-from-dag">Select instructions from DAG</a> — Finally, the target instruction selector
 matches the DAG operations to target instructions.  This process translates
 the target-independent input DAG into another DAG of target instructions.</li>
-<li><a class="reference internal" href="#selectiondag-scheduling-and-formation">SelectionDAG Scheduling and Formation</a> &#8212; The last phase assigns a linear
+<li><a class="reference internal" href="#selectiondag-scheduling-and-formation">SelectionDAG Scheduling and Formation</a> — The last phase assigns a linear
 order to the instructions in the target-instruction DAG and emits them into
 the MachineFunction being compiled.  This step uses traditional prepass
 scheduling techniques.</li>
@@ -880,10 +875,10 @@ pass.</li>
 <li><code class="docutils literal"><span class="pre">-view-isel-dags</span></code> displays the DAG before the Select phase.</li>
 <li><code class="docutils literal"><span class="pre">-view-sched-dags</span></code> displays the DAG before Scheduling.</li>
 </ul>
-<p>The <code class="docutils literal"><span class="pre">-view-sunit-dags</span></code> displays the Scheduler&#8217;s dependency graph.  This graph
+<p>The <code class="docutils literal"><span class="pre">-view-sunit-dags</span></code> displays the Scheduler’s dependency graph.  This graph
 is based on the final SelectionDAG, with nodes that must be scheduled together
 bundled into a single scheduling-unit node, and with immediate operands and
-other nodes that aren&#8217;t relevant for scheduling omitted.</p>
+other nodes that aren’t relevant for scheduling omitted.</p>
 <p>The option <code class="docutils literal"><span class="pre">-filter-view-dags</span></code> allows to select the name of the basic block
 that you are interested to visualize and filters all the previous
 <code class="docutils literal"><span class="pre">view-*-dags</span></code> options.</p>
@@ -904,8 +899,8 @@ varargs, etc.  For these features, the <span class="raw-html"><tt></span> <a cla
 <p>The Legalize phase is in charge of converting a DAG to only use the types that
 are natively supported by the target.</p>
 <p>There are two main ways of converting values of unsupported scalar types to
-values of supported types: converting small types to larger types (&#8220;promoting&#8221;),
-and breaking up large integer types into smaller ones (&#8220;expanding&#8221;).  For
+values of supported types: converting small types to larger types (“promoting”),
+and breaking up large integer types into smaller ones (“expanding”).  For
 example, a target might require that all f32 values are promoted to f64 and that
 all i1/i8/i16 values are promoted to i32.  The same target might require that
 all i64 values be expanded into pairs of i32 values.  These changes can insert
@@ -914,9 +909,9 @@ behavior as the input.</p>
 <p>There are two main ways of converting values of unsupported vector types to
 value of supported types: splitting vector types, multiple times if necessary,
 until a legal type is found, and extending vector types by adding elements to
-the end to round them out to legal types (&#8220;widening&#8221;).  If a vector gets split
+the end to round them out to legal types (“widening”).  If a vector gets split
 all the way down to single-element parts with no supported vector type being
-found, the elements are converted to scalars (&#8220;scalarizing&#8221;).</p>
+found, the elements are converted to scalars (“scalarizing”).</p>
 <p>A target implementation tells the legalizer which types are supported (and which
 register class to use for them) by calling the <code class="docutils literal"><span class="pre">addRegisterClass</span></code> method in
 its <code class="docutils literal"><span class="pre">TargetLowering</span></code> constructor.</p>
@@ -929,9 +924,9 @@ that are natively supported by the target.</p>
 every supported datatype (e.g. X86 does not support byte conditional moves and
 PowerPC does not support sign-extending loads from a 16-bit memory location).
 Legalize takes care of this by open-coding another sequence of operations to
-emulate the operation (&#8220;expansion&#8221;), by promoting one type to a larger type that
-supports the operation (&#8220;promotion&#8221;), or by using a target-specific hook to
-implement the legalization (&#8220;custom&#8221;).</p>
+emulate the operation (“expansion”), by promoting one type to a larger type that
+supports the operation (“promotion”), or by using a target-specific hook to
+implement the legalization (“custom”).</p>
 <p>A target implementation tells the legalizer which operations are not supported
 (and which of the above three actions to take) by calling the
 <code class="docutils literal"><span class="pre">setOperationAction</span></code> method in its <code class="docutils literal"><span class="pre">TargetLowering</span></code> constructor.</p>
@@ -954,10 +949,10 @@ code legal instead of focusing on generating <em>good</em> and legal code).</p>
 zero extension instructions.  We currently use ad-hoc techniques, but could move
 to more rigorous techniques in the future.  Here are some good papers on the
 subject:</p>
-<p>&#8220;<a class="reference external" href="http://www.eecs.harvard.edu/~nr/pubs/widen-abstract.html">Widening integer arithmetic</a>&#8221; <span class="raw-html"><br></span>
+<p>“<a class="reference external" href="http://www.eecs.harvard.edu/~nr/pubs/widen-abstract.html">Widening integer arithmetic</a>” <span class="raw-html"><br></span>
 Kevin Redwine and Norman Ramsey <span class="raw-html"><br></span>
 International Conference on Compiler Construction (CC) 2004</p>
-<p>&#8220;<a class="reference external" href="http://portal.acm.org/citation.cfm?doid=512529.512552">Effective sign extension elimination</a>&#8221;  <span class="raw-html"><br></span>
+<p>“<a class="reference external" href="http://portal.acm.org/citation.cfm?doid=512529.512552">Effective sign extension elimination</a>”  <span class="raw-html"><br></span>
 Motohiro Kawahito, Hideaki Komatsu, and Toshio Nakatani <span class="raw-html"><br></span>
 Proceedings of the ACM SIGPLAN 2002 Conference on Programming Language Design
 and Implementation.</p>
@@ -968,19 +963,19 @@ and Implementation.</p>
 selection.  This phase takes a legal SelectionDAG as input, pattern matches the
 instructions supported by the target to this DAG, and produces a new DAG of
 target code.  For example, consider the following LLVM fragment:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="nv">%t1</span> <span class="p">=</span> <span class="k">fadd</span> <span class="kt">float</span> <span class="nv">%W</span><span class="p">,</span> <span class="nv">%X</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="nv">%t1</span> <span class="p">=</span> <span class="k">fadd</span> <span class="kt">float</span> <span class="nv">%W</span><span class="p">,</span> <span class="nv">%X</span>
 <span class="nv">%t2</span> <span class="p">=</span> <span class="k">fmul</span> <span class="kt">float</span> <span class="nv">%t1</span><span class="p">,</span> <span class="nv">%Y</span>
 <span class="nv">%t3</span> <span class="p">=</span> <span class="k">fadd</span> <span class="kt">float</span> <span class="nv">%t2</span><span class="p">,</span> <span class="nv">%Z</span>
 </pre></div>
 </div>
 <p>This LLVM code corresponds to a SelectionDAG that looks basically like this:</p>
-<div class="highlight-text"><div class="highlight"><pre>(fadd:f32 (fmul:f32 (fadd:f32 W, X), Y), Z)
+<div class="highlight-text"><div class="highlight"><pre><span></span>(fadd:f32 (fmul:f32 (fadd:f32 W, X), Y), Z)
 </pre></div>
 </div>
 <p>If a target supports floating point multiply-and-add (FMA) operations, one of
 the adds can be merged with the multiply.  On the PowerPC, for example, the
 output of the instruction selector might look like this DAG:</p>
-<div class="highlight-python"><div class="highlight"><pre>(FMADDS (FADDS W, X), Y, Z)
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">FMADDS</span> <span class="p">(</span><span class="n">FADDS</span> <span class="n">W</span><span class="p">,</span> <span class="n">X</span><span class="p">),</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal"><span class="pre">FMADDS</span></code> instruction is a ternary instruction that multiplies its first
@@ -988,7 +983,7 @@ two operands and adds the third (as single-precision floating-point numbers).
 The <code class="docutils literal"><span class="pre">FADDS</span></code> instruction is a simple binary single-precision add instruction.
 To perform this pattern match, the PowerPC backend includes the following
 instruction definitions:</p>
-<div class="highlight-text"><div class="highlight"><pre>def FMADDS : AForm_1&lt;59, 29,
+<div class="highlight-text"><div class="highlight"><pre><span></span>def FMADDS : AForm_1&lt;59, 29,
                     (ops F4RC:$FRT, F4RC:$FRA, F4RC:$FRC, F4RC:$FRB),
                     &quot;fmadds $FRT, $FRA, $FRC, $FRB&quot;,
 <span class="hll">                    [(set F4RC:$FRT, (fadd (fmul F4RC:$FRA, F4RC:$FRC),
@@ -1002,61 +997,61 @@ instruction definitions:</p>
 <p>The highlighted portion of the instruction definitions indicates the pattern
 used to match the instructions. The DAG operators (like <code class="docutils literal"><span class="pre">fmul</span></code>/<code class="docutils literal"><span class="pre">fadd</span></code>)
 are defined in the <code class="docutils literal"><span class="pre">include/llvm/Target/TargetSelectionDAG.td</span></code> file.
-&#8220;<code class="docutils literal"><span class="pre">F4RC</span></code>&#8221; is the register class of the input and result values.</p>
+“<code class="docutils literal"><span class="pre">F4RC</span></code>” is the register class of the input and result values.</p>
 <p>The TableGen DAG instruction selector generator reads the instruction patterns
 in the <code class="docutils literal"><span class="pre">.td</span></code> file and automatically builds parts of the pattern matching code
 for your target.  It has the following strengths:</p>
 <ul>
-<li><p class="first">At compiler-compiler time, it analyzes your instruction patterns and tells you
+<li><p class="first">At compiler-compile time, it analyzes your instruction patterns and tells you
 if your patterns make sense or not.</p>
 </li>
 <li><p class="first">It can handle arbitrary constraints on operands for the pattern match.  In
-particular, it is straight-forward to say things like &#8220;match any immediate
-that is a 13-bit sign-extended value&#8221;.  For examples, see the <code class="docutils literal"><span class="pre">immSExt16</span></code>
+particular, it is straight-forward to say things like “match any immediate
+that is a 13-bit sign-extended value”.  For examples, see the <code class="docutils literal"><span class="pre">immSExt16</span></code>
 and related <code class="docutils literal"><span class="pre">tblgen</span></code> classes in the PowerPC backend.</p>
 </li>
 <li><p class="first">It knows several important identities for the patterns defined.  For example,
 it knows that addition is commutative, so it allows the <code class="docutils literal"><span class="pre">FMADDS</span></code> pattern
-above to match &#8220;<code class="docutils literal"><span class="pre">(fadd</span> <span class="pre">X,</span> <span class="pre">(fmul</span> <span class="pre">Y,</span> <span class="pre">Z))</span></code>&#8221; as well as &#8220;<code class="docutils literal"><span class="pre">(fadd</span> <span class="pre">(fmul</span> <span class="pre">X,</span> <span class="pre">Y),</span>
-<span class="pre">Z)</span></code>&#8221;, without the target author having to specially handle this case.</p>
+above to match “<code class="docutils literal"><span class="pre">(fadd</span> <span class="pre">X,</span> <span class="pre">(fmul</span> <span class="pre">Y,</span> <span class="pre">Z))</span></code>” as well as “<code class="docutils literal"><span class="pre">(fadd</span> <span class="pre">(fmul</span> <span class="pre">X,</span> <span class="pre">Y),</span>
+<span class="pre">Z)</span></code>”, without the target author having to specially handle this case.</p>
 </li>
 <li><p class="first">It has a full-featured type-inferencing system.  In particular, you should
 rarely have to explicitly tell the system what type parts of your patterns
-are.  In the <code class="docutils literal"><span class="pre">FMADDS</span></code> case above, we didn&#8217;t have to tell <code class="docutils literal"><span class="pre">tblgen</span></code> that all
-of the nodes in the pattern are of type &#8216;f32&#8217;.  It was able to infer and
-propagate this knowledge from the fact that <code class="docutils literal"><span class="pre">F4RC</span></code> has type &#8216;f32&#8217;.</p>
+are.  In the <code class="docutils literal"><span class="pre">FMADDS</span></code> case above, we didn’t have to tell <code class="docutils literal"><span class="pre">tblgen</span></code> that all
+of the nodes in the pattern are of type ‘f32’.  It was able to infer and
+propagate this knowledge from the fact that <code class="docutils literal"><span class="pre">F4RC</span></code> has type ‘f32’.</p>
 </li>
-<li><p class="first">Targets can define their own (and rely on built-in) &#8220;pattern fragments&#8221;.
+<li><p class="first">Targets can define their own (and rely on built-in) “pattern fragments”.
 Pattern fragments are chunks of reusable patterns that get inlined into your
-patterns during compiler-compiler time.  For example, the integer &#8220;<code class="docutils literal"><span class="pre">(not</span>
-<span class="pre">x)</span></code>&#8221; operation is actually defined as a pattern fragment that expands as
-&#8220;<code class="docutils literal"><span class="pre">(xor</span> <span class="pre">x,</span> <span class="pre">-1)</span></code>&#8221;, since the SelectionDAG does not have a native &#8216;<code class="docutils literal"><span class="pre">not</span></code>&#8216;
+patterns during compiler-compile time.  For example, the integer “<code class="docutils literal"><span class="pre">(not</span>
+<span class="pre">x)</span></code>” operation is actually defined as a pattern fragment that expands as
+“<code class="docutils literal"><span class="pre">(xor</span> <span class="pre">x,</span> <span class="pre">-1)</span></code>”, since the SelectionDAG does not have a native ‘<code class="docutils literal"><span class="pre">not</span></code>’
 operation.  Targets can define their own short-hand fragments as they see fit.
-See the definition of &#8216;<code class="docutils literal"><span class="pre">not</span></code>&#8216; and &#8216;<code class="docutils literal"><span class="pre">ineg</span></code>&#8216; for examples.</p>
+See the definition of ‘<code class="docutils literal"><span class="pre">not</span></code>’ and ‘<code class="docutils literal"><span class="pre">ineg</span></code>’ for examples.</p>
 </li>
 <li><p class="first">In addition to instructions, targets can specify arbitrary patterns that map
-to one or more instructions using the &#8216;Pat&#8217; class.  For example, the PowerPC
+to one or more instructions using the ‘Pat’ class.  For example, the PowerPC
 has no way to load an arbitrary integer immediate into a register in one
 instruction. To tell tblgen how to do this, it defines:</p>
-<div class="highlight-python"><div class="highlight"><pre>// Arbitrary immediate support.  Implement in terms of LIS/ORI.
+<div class="highlight-default"><div class="highlight"><pre><span></span>// Arbitrary immediate support.  Implement in terms of LIS/ORI.
 def : Pat&lt;(i32 imm:$imm),
           (ORI (LIS (HI16 imm:$imm)), (LO16 imm:$imm))&gt;;
 </pre></div>
 </div>
 <p>If none of the single-instruction patterns for loading an immediate into a
-register match, this will be used.  This rule says &#8220;match an arbitrary i32
-immediate, turning it into an <code class="docutils literal"><span class="pre">ORI</span></code> (&#8216;or a 16-bit immediate&#8217;) and an <code class="docutils literal"><span class="pre">LIS</span></code>
-(&#8216;load 16-bit immediate, where the immediate is shifted to the left 16 bits&#8217;)
-instruction&#8221;.  To make this work, the <code class="docutils literal"><span class="pre">LO16</span></code>/<code class="docutils literal"><span class="pre">HI16</span></code> node transformations
+register match, this will be used.  This rule says “match an arbitrary i32
+immediate, turning it into an <code class="docutils literal"><span class="pre">ORI</span></code> (‘or a 16-bit immediate’) and an <code class="docutils literal"><span class="pre">LIS</span></code>
+(‘load 16-bit immediate, where the immediate is shifted to the left 16 bits’)
+instruction”.  To make this work, the <code class="docutils literal"><span class="pre">LO16</span></code>/<code class="docutils literal"><span class="pre">HI16</span></code> node transformations
 are used to manipulate the input immediate (in this case, take the high or low
 16-bits of the immediate).</p>
 </li>
-<li><p class="first">When using the &#8216;Pat&#8217; class to map a pattern to an instruction that has one
+<li><p class="first">When using the ‘Pat’ class to map a pattern to an instruction that has one
 or more complex operands (like e.g. <a class="reference internal" href="#x86-addressing-mode">X86 addressing mode</a>), the pattern may
 either specify the operand as a whole using a <code class="docutils literal"><span class="pre">ComplexPattern</span></code>, or else it
 may specify the components of the complex operand separately.  The latter is
 done e.g. for pre-increment instructions by the PowerPC back end:</p>
-<div class="highlight-python"><div class="highlight"><pre>def STWU  : DForm_1&lt;37, (outs ptr_rc:$ea_res), (ins GPRC:$rS, memri:$dst),
+<div class="highlight-default"><div class="highlight"><pre><span></span>def STWU  : DForm_1&lt;37, (outs ptr_rc:$ea_res), (ins GPRC:$rS, memri:$dst),
                 &quot;stwu $rS, $dst&quot;, LdStStoreUpd, []&gt;,
                 RegConstraint&lt;&quot;$dst.reg = $ea_res&quot;&gt;, NoEncode&lt;&quot;$ea_res&quot;&gt;;
 
@@ -1082,16 +1077,16 @@ for your instruction selector.</li>
 <li>There is no great way to support matching complex addressing modes yet.  In
 the future, we will extend pattern fragments to allow them to define multiple
 values (e.g. the four operands of the <a class="reference internal" href="#x86-addressing-mode">X86 addressing mode</a>, which are
-currently matched with custom C++ code).  In addition, we&#8217;ll extend fragments
+currently matched with custom C++ code).  In addition, we’ll extend fragments
 so that a fragment can match multiple different patterns.</li>
-<li>We don&#8217;t automatically infer flags like <code class="docutils literal"><span class="pre">isStore</span></code>/<code class="docutils literal"><span class="pre">isLoad</span></code> yet.</li>
-<li>We don&#8217;t automatically generate the set of supported registers and operations
+<li>We don’t automatically infer flags like <code class="docutils literal"><span class="pre">isStore</span></code>/<code class="docutils literal"><span class="pre">isLoad</span></code> yet.</li>
+<li>We don’t automatically generate the set of supported registers and operations
 for the <a class="reference internal" href="#legalizer">Legalizer</a> yet.</li>
-<li>We don&#8217;t have a way of tying in custom legalized nodes yet.</li>
+<li>We don’t have a way of tying in custom legalized nodes yet.</li>
 </ul>
 <p>Despite these limitations, the instruction selector generator is still quite
 useful for most of the binary and logical operations in typical instruction
-sets.  If you run into any problems or can&#8217;t figure out how to do something,
+sets.  If you run into any problems or can’t figure out how to do something,
 please let Chris know!</p>
 </div>
 <div class="section" id="selectiondag-scheduling-and-formation-phase">
@@ -1142,18 +1137,18 @@ not register allocatable (e.g., a stack pointer or condition codes), it is not
 tracked.</p>
 <p>Physical registers may be live in to or out of a function. Live in values are
 typically arguments in registers. Live out values are typically return values in
-registers. Live in values are marked as such, and are given a dummy &#8220;defining&#8221;
+registers. Live in values are marked as such, and are given a dummy “defining”
 instruction during live intervals analysis. If the last basic block of a
-function is a <code class="docutils literal"><span class="pre">return</span></code>, then it&#8217;s marked as using all live out values in the
+function is a <code class="docutils literal"><span class="pre">return</span></code>, then it’s marked as using all live out values in the
 function.</p>
 <p><code class="docutils literal"><span class="pre">PHI</span></code> nodes need to be handled specially, because the calculation of the live
 variable information from a depth first traversal of the CFG of the function
-won&#8217;t guarantee that a virtual register used by the <code class="docutils literal"><span class="pre">PHI</span></code> node is defined
-before it&#8217;s used. When a <code class="docutils literal"><span class="pre">PHI</span></code> node is encountered, only the definition is
+won’t guarantee that a virtual register used by the <code class="docutils literal"><span class="pre">PHI</span></code> node is defined
+before it’s used. When a <code class="docutils literal"><span class="pre">PHI</span></code> node is encountered, only the definition is
 handled, because the uses will be handled in other basic blocks.</p>
 <p>For each <code class="docutils literal"><span class="pre">PHI</span></code> node of the current basic block, we simulate an assignment at
 the end of the current basic block and traverse the successor basic blocks. If a
-successor basic block has a <code class="docutils literal"><span class="pre">PHI</span></code> node and one of the <code class="docutils literal"><span class="pre">PHI</span></code> node&#8217;s operands
+successor basic block has a <code class="docutils literal"><span class="pre">PHI</span></code> node and one of the <code class="docutils literal"><span class="pre">PHI</span></code> node’s operands
 is coming from the current basic block, then the variable is marked as <em>alive</em>
 within the current basic block and all of its predecessor basic blocks, until
 the basic block with the defining instruction is encountered.</p>
@@ -1162,14 +1157,14 @@ the basic block with the defining instruction is encountered.</p>
 <h4><a class="toc-backref" href="#id50">Live Intervals Analysis</a><a class="headerlink" href="#live-intervals-analysis" title="Permalink to this headline">¶</a></h4>
 <p>We now have the information available to perform the live intervals analysis and
 build the live intervals themselves.  We start off by numbering the basic blocks
-and machine instructions.  We then handle the &#8220;live-in&#8221; values.  These are in
+and machine instructions.  We then handle the “live-in” values.  These are in
 physical registers, so the physical register is assumed to be killed by the end
 of the basic block.  Live intervals for virtual registers are computed for some
 ordering of the machine instructions <code class="docutils literal"><span class="pre">[1,</span> <span class="pre">N]</span></code>.  A live interval is an interval
 <code class="docutils literal"><span class="pre">[i,</span> <span class="pre">j)</span></code>, where <code class="docutils literal"><span class="pre">1</span> <span class="pre">&gt;=</span> <span class="pre">i</span> <span class="pre">&gt;=</span> <span class="pre">j</span> <span class="pre">&gt;</span> <span class="pre">N</span></code>, for which a variable is live.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">More to come...</p>
+<p class="last">More to come…</p>
 </div>
 </div>
 </div>
@@ -1204,7 +1199,7 @@ particular class. For instance, in the X86 architecture, some virtuals can only
 be allocated to 8 bit registers.  A register class is described by
 <code class="docutils literal"><span class="pre">TargetRegisterClass</span></code> objects.  To discover if a virtual register is
 compatible with a given physical, this code can be used:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">bool</span> <span class="n">RegMapping_Fer</span><span class="o">::</span><span class="n">compatible_class</span><span class="p">(</span><span class="n">MachineFunction</span> <span class="o">&amp;</span><span class="n">mf</span><span class="p">,</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">bool</span> <span class="n">RegMapping_Fer</span><span class="o">::</span><span class="n">compatible_class</span><span class="p">(</span><span class="n">MachineFunction</span> <span class="o">&amp;</span><span class="n">mf</span><span class="p">,</span>
                                       <span class="kt">unsigned</span> <span class="n">v_reg</span><span class="p">,</span>
                                       <span class="kt">unsigned</span> <span class="n">p_reg</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">assert</span><span class="p">(</span><span class="n">TargetRegisterInfo</span><span class="o">::</span><span class="n">isPhysicalRegister</span><span class="p">(</span><span class="n">p_reg</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
@@ -1232,7 +1227,7 @@ virtual register. Use an <code class="docutils literal"><span class="pre">Indexe
 information per virtual register. If you need to enumerate all virtual
 registers, use the function <code class="docutils literal"><span class="pre">TargetRegisterInfo::index2VirtReg()</span></code> to find the
 virtual register numbers:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">for</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">MRI</span><span class="o">-&gt;</span><span class="n">getNumVirtRegs</span><span class="p">();</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">e</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">MRI</span><span class="o">-&gt;</span><span class="n">getNumVirtRegs</span><span class="p">();</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">e</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
   <span class="kt">unsigned</span> <span class="n">VirtReg</span> <span class="o">=</span> <span class="n">TargetRegisterInfo</span><span class="o">::</span><span class="n">index2VirtReg</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
   <span class="n">stuff</span><span class="p">(</span><span class="n">VirtReg</span><span class="p">);</span>
 <span class="p">}</span>
@@ -1289,7 +1284,7 @@ inserting load and store instructions. In order to map a virtual register to a
 physical one, use <code class="docutils literal"><span class="pre">VirtRegMap::assignVirt2Phys(vreg,</span> <span class="pre">preg)</span></code>.  In order to map
 a certain virtual register to memory, use
 <code class="docutils literal"><span class="pre">VirtRegMap::assignVirt2StackSlot(vreg)</span></code>. This method will return the stack
-slot where <code class="docutils literal"><span class="pre">vreg</span></code>&#8216;s value will be located.  If it is necessary to map another
+slot where <code class="docutils literal"><span class="pre">vreg</span></code>’s value will be located.  If it is necessary to map another
 virtual register to the same stack slot, use
 <code class="docutils literal"><span class="pre">VirtRegMap::assignVirt2StackSlot(vreg,</span> <span class="pre">stack_location)</span></code>. One important point
 to consider when using the indirect mapping, is that even if a virtual register
@@ -1321,8 +1316,8 @@ must be run before register allocation takes place. After its execution, the
 resulting code may no longer be in SSA form. This happens, for instance, in
 situations where an instruction such as <code class="docutils literal"><span class="pre">%a</span> <span class="pre">=</span> <span class="pre">ADD</span> <span class="pre">%b</span> <span class="pre">%c</span></code> is converted to two
 instructions such as:</p>
-<div class="highlight-python"><div class="highlight"><pre>%a = MOVE %b
-%a = ADD %a %c
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">a</span> <span class="o">=</span> <span class="n">MOVE</span> <span class="o">%</span><span class="n">b</span>
+<span class="o">%</span><span class="n">a</span> <span class="o">=</span> <span class="n">ADD</span> <span class="o">%</span><span class="n">a</span> <span class="o">%</span><span class="n">c</span>
 </pre></div>
 </div>
 <p>Notice that, internally, the second instruction is represented as <code class="docutils literal"><span class="pre">ADD</span>
@@ -1350,12 +1345,12 @@ allocator.</p>
 <p><em>Instruction folding</em> is an optimization performed during register allocation
 that removes unnecessary copy instructions. For instance, a sequence of
 instructions such as:</p>
-<div class="highlight-python"><div class="highlight"><pre>%EBX = LOAD %mem_address
-%EAX = COPY %EBX
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">EBX</span> <span class="o">=</span> <span class="n">LOAD</span> <span class="o">%</span><span class="n">mem_address</span>
+<span class="o">%</span><span class="n">EAX</span> <span class="o">=</span> <span class="n">COPY</span> <span class="o">%</span><span class="n">EBX</span>
 </pre></div>
 </div>
 <p>can be safely substituted by the single instruction:</p>
-<div class="highlight-python"><div class="highlight"><pre>%EAX = LOAD %mem_address
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">EAX</span> <span class="o">=</span> <span class="n">LOAD</span> <span class="o">%</span><span class="n">mem_address</span>
 </pre></div>
 </div>
 <p>Instructions can be folded with the
@@ -1369,26 +1364,26 @@ original instruction. See <code class="docutils literal"><span class="pre">LiveI
 <p>The LLVM infrastructure provides the application developer with three different
 register allocators:</p>
 <ul class="simple">
-<li><em>Fast</em> &#8212; This register allocator is the default for debug builds. It
+<li><em>Fast</em> — This register allocator is the default for debug builds. It
 allocates registers on a basic block level, attempting to keep values in
 registers and reusing registers as appropriate.</li>
-<li><em>Basic</em> &#8212; This is an incremental approach to register allocation. Live
+<li><em>Basic</em> — This is an incremental approach to register allocation. Live
 ranges are assigned to registers one at a time in an order that is driven by
 heuristics. Since code can be rewritten on-the-fly during allocation, this
 framework allows interesting allocators to be developed as extensions. It is
 not itself a production register allocator but is a potentially useful
 stand-alone mode for triaging bugs and as a performance baseline.</li>
-<li><em>Greedy</em> &#8212; <em>The default allocator</em>. This is a highly tuned implementation of
+<li><em>Greedy</em> — <em>The default allocator</em>. This is a highly tuned implementation of
 the <em>Basic</em> allocator that incorporates global live range splitting. This
 allocator works hard to minimize the cost of spill code.</li>
-<li><em>PBQP</em> &#8212; A Partitioned Boolean Quadratic Programming (PBQP) based register
+<li><em>PBQP</em> — A Partitioned Boolean Quadratic Programming (PBQP) based register
 allocator. This allocator works by constructing a PBQP problem representing
 the register allocation problem under consideration, solving this using a PBQP
 solver, and mapping the solution back to a register assignment.</li>
 </ul>
 <p>The type of register allocator used in <code class="docutils literal"><span class="pre">llc</span></code> can be chosen with the command
 line option <code class="docutils literal"><span class="pre">-regalloc=...</span></code>:</p>
-<div class="highlight-bash"><div class="highlight"><pre>$ llc -regalloc<span class="o">=</span>linearscan file.bc -o ln.s
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ llc -regalloc<span class="o">=</span>linearscan file.bc -o ln.s
 $ llc -regalloc<span class="o">=</span>fast file.bc -o fa.s
 $ llc -regalloc<span class="o">=</span>pbqp file.bc -o pbqp.s
 </pre></div>
@@ -1483,9 +1478,9 @@ registers were saved and their order. (See the
 <code class="docutils literal"><span class="pre">encodeCompactUnwindRegistersWithoutFrame()</span></code> function in
 <code class="docutils literal"><span class="pre">lib/Target/X86FrameLowering.cpp</span></code> for the encoding algorithm.)</dd>
 <dt><em>Frameless with a Large Constant Stack Size (``EBP`` or ``RBP`` is not used as a frame pointer)</em></dt>
-<dd>This case is like the &#8220;Frameless with a Small Constant Stack Size&#8221; case, but
+<dd>This case is like the “Frameless with a Small Constant Stack Size” case, but
 the stack size is too large to encode in the compact unwind encoding. Instead
-it requires that the function contains &#8220;<code class="docutils literal"><span class="pre">subl</span> <span class="pre">$nnnnnn,</span> <span class="pre">%esp</span></code>&#8221; in its
+it requires that the function contains “<code class="docutils literal"><span class="pre">subl</span> <span class="pre">$nnnnnn,</span> <span class="pre">%esp</span></code>” in its
 prolog. The compact encoding contains the offset to the <code class="docutils literal"><span class="pre">$nnnnnn</span></code> value in
 the function in bits 9-12 (mask: <code class="docutils literal"><span class="pre">0x00001C00</span></code>).</dd>
 </dl>
@@ -1505,19 +1500,19 @@ to the abstractions used by the MC layer (<a class="reference internal" href="#m
 is done with a combination of several different classes: the (misnamed)
 target-independent AsmPrinter class, target-specific subclasses of AsmPrinter
 (such as SparcAsmPrinter), and the TargetLoweringObjectFile class.</p>
-<p>Since the MC layer works at the level of abstraction of object files, it doesn&#8217;t
+<p>Since the MC layer works at the level of abstraction of object files, it doesn’t
 have a notion of functions, global variables etc.  Instead, it thinks about
 labels, directives, and instructions.  A key class used at this time is the
 MCStreamer class.  This is an abstract API that is implemented in different ways
 (e.g. to output a .s file, output an ELF .o file, etc) that is effectively an
-&#8220;assembler API&#8221;.  MCStreamer has one method per directive, such as EmitLabel,
+“assembler API”.  MCStreamer has one method per directive, such as EmitLabel,
 EmitSymbolAttribute, SwitchSection, etc, which directly correspond to assembly
 level directives.</p>
 <p>If you are interested in implementing a code generator for a target, there are
 three important things that you have to implement for your target:</p>
 <ol class="arabic simple">
 <li>First, you need a subclass of AsmPrinter for your target.  This class
-implements the general lowering process converting MachineFunction&#8217;s into MC
+implements the general lowering process converting MachineFunction’s into MC
 label constructs.  The AsmPrinter base class provides a number of useful
 methods and routines, and also allows you to override the lowering process in
 some important ways.  You should get much of the lowering for free if you are
@@ -1526,10 +1521,10 @@ TargetLoweringObjectFile class implements much of the common logic.</li>
 <li>Second, you need to implement an instruction printer for your target.  The
 instruction printer takes an <a class="reference internal" href="#mcinst">MCInst</a> and renders it to a raw_ostream as
 text.  Most of this is automatically generated from the .td file (when you
-specify something like &#8220;<code class="docutils literal"><span class="pre">add</span> <span class="pre">$dst,</span> <span class="pre">$src1,</span> <span class="pre">$src2</span></code>&#8221; in the instructions), but
+specify something like “<code class="docutils literal"><span class="pre">add</span> <span class="pre">$dst,</span> <span class="pre">$src1,</span> <span class="pre">$src2</span></code>” in the instructions), but
 you need to implement routines to print operands.</li>
 <li>Third, you need to implement code that lowers a <a class="reference internal" href="#machineinstr">MachineInstr</a> to an MCInst,
-usually implemented in &#8220;&lt;target&gt;MCInstLower.cpp&#8221;.  This lowering process is
+usually implemented in “&lt;target&gt;MCInstLower.cpp”.  This lowering process is
 often target specific, and is responsible for turning jump table entries,
 constant pool indices, global variable addresses, etc into MCLabels as
 appropriate.  This translation layer is also responsible for expanding pseudo
@@ -1538,7 +1533,7 @@ correspond to. The MCInsts that are generated by this are fed into the
 instruction printer or the encoder.</li>
 </ol>
 <p>Finally, at your choosing, you can also implement a subclass of MCCodeEmitter
-which lowers MCInst&#8217;s into machine code bytes and relocations.  This is
+which lowers MCInst’s into machine code bytes and relocations.  This is
 important if you want to support direct .o file emission, or would like to
 implement an assembler for your target.</p>
 </div>
@@ -1563,7 +1558,7 @@ packet.</p>
 </div>
 <div class="section" id="how-the-packetization-tables-are-generated-and-used">
 <h4><a class="toc-backref" href="#id63">How the packetization tables are generated and used</a><a class="headerlink" href="#how-the-packetization-tables-are-generated-and-used" title="Permalink to this headline">¶</a></h4>
-<p>The packetizer reads instruction classes from a target&#8217;s itineraries and creates
+<p>The packetizer reads instruction classes from a target’s itineraries and creates
 a deterministic finite automaton (DFA) to represent the state of a packet. A DFA
 consists of three major elements: inputs, states, and transitions. The set of
 inputs for the generated DFA represents the instruction being added to a
@@ -1586,9 +1581,9 @@ whether an instruction can be added to a packet. See
 </div>
 <div class="section" id="implementing-a-native-assembler">
 <h2><a class="toc-backref" href="#id64">Implementing a Native Assembler</a><a class="headerlink" href="#implementing-a-native-assembler" title="Permalink to this headline">¶</a></h2>
-<p>Though you&#8217;re probably reading this because you want to write or maintain a
+<p>Though you’re probably reading this because you want to write or maintain a
 compiler backend, LLVM also fully supports building a native assembler.
-We&#8217;ve tried hard to automate the generation of the assembler from the .td files
+We’ve tried hard to automate the generation of the assembler from the .td files
 (in particular the instruction syntax and encodings), which means that a large
 part of the manual and repetitive data entry can be factored and shared with the
 compiler.</p>
@@ -1616,21 +1611,21 @@ description.</p>
 <p>The first phase of alias processing is simple instruction mnemonic remapping for
 classes of instructions which are allowed with two different mnemonics.  This
 phase is a simple and unconditionally remapping from one input mnemonic to one
-output mnemonic.  It isn&#8217;t possible for this form of alias to look at the
+output mnemonic.  It isn’t possible for this form of alias to look at the
 operands at all, so the remapping must apply for all forms of a given mnemonic.
 Mnemonic aliases are defined simply, for example X86 has:</p>
-<div class="highlight-python"><div class="highlight"><pre>def : MnemonicAlias&lt;&quot;cbw&quot;,     &quot;cbtw&quot;&gt;;
+<div class="highlight-default"><div class="highlight"><pre><span></span>def : MnemonicAlias&lt;&quot;cbw&quot;,     &quot;cbtw&quot;&gt;;
 def : MnemonicAlias&lt;&quot;smovq&quot;,   &quot;movsq&quot;&gt;;
 def : MnemonicAlias&lt;&quot;fldcww&quot;,  &quot;fldcw&quot;&gt;;
 def : MnemonicAlias&lt;&quot;fucompi&quot;, &quot;fucomip&quot;&gt;;
 def : MnemonicAlias&lt;&quot;ud2a&quot;,    &quot;ud2&quot;&gt;;
 </pre></div>
 </div>
-<p>... and many others.  With a MnemonicAlias definition, the mnemonic is remapped
-simply and directly.  Though MnemonicAlias&#8217;s can&#8217;t look at any aspect of the
+<p>… and many others.  With a MnemonicAlias definition, the mnemonic is remapped
+simply and directly.  Though MnemonicAlias’s can’t look at any aspect of the
 instruction (such as the operands) they can depend on global modes (the same
 ones supported by the matcher), through a Requires clause:</p>
-<div class="highlight-python"><div class="highlight"><pre>def : MnemonicAlias&lt;&quot;pushf&quot;, &quot;pushfq&quot;&gt;, Requires&lt;[In64BitMode]&gt;;
+<div class="highlight-default"><div class="highlight"><pre><span></span>def : MnemonicAlias&lt;&quot;pushf&quot;, &quot;pushfq&quot;&gt;, Requires&lt;[In64BitMode]&gt;;
 def : MnemonicAlias&lt;&quot;pushf&quot;, &quot;pushfl&quot;&gt;, Requires&lt;[In32BitMode]&gt;;
 </pre></div>
 </div>
@@ -1643,7 +1638,7 @@ the current instruction set.</p>
 it provides new forms for the matcher to match along with a specific instruction
 to generate.  An instruction alias has two parts: the string to match and the
 instruction to generate.  For example:</p>
-<div class="highlight-python"><div class="highlight"><pre>def : InstAlias&lt;&quot;movsx $src, $dst&quot;, (MOVSX16rr8W GR16:$dst, GR8  :$src)&gt;;
+<div class="highlight-default"><div class="highlight"><pre><span></span>def : InstAlias&lt;&quot;movsx $src, $dst&quot;, (MOVSX16rr8W GR16:$dst, GR8  :$src)&gt;;
 def : InstAlias&lt;&quot;movsx $src, $dst&quot;, (MOVSX16rm8W GR16:$dst, i8mem:$src)&gt;;
 def : InstAlias&lt;&quot;movsx $src, $dst&quot;, (MOVSX32rr8  GR32:$dst, GR8  :$src)&gt;;
 def : InstAlias&lt;&quot;movsx $src, $dst&quot;, (MOVSX32rr16 GR32:$dst, GR16 :$src)&gt;;
@@ -1657,19 +1652,19 @@ mnemonic in multiple different ways depending on what operands are present in
 the assembly.  The result of instruction aliases can include operands in a
 different order than the destination instruction, and can use an input multiple
 times, for example:</p>
-<div class="highlight-python"><div class="highlight"><pre>def : InstAlias&lt;&quot;clrb $reg&quot;, (XOR8rr  GR8 :$reg, GR8 :$reg)&gt;;
+<div class="highlight-default"><div class="highlight"><pre><span></span>def : InstAlias&lt;&quot;clrb $reg&quot;, (XOR8rr  GR8 :$reg, GR8 :$reg)&gt;;
 def : InstAlias&lt;&quot;clrw $reg&quot;, (XOR16rr GR16:$reg, GR16:$reg)&gt;;
 def : InstAlias&lt;&quot;clrl $reg&quot;, (XOR32rr GR32:$reg, GR32:$reg)&gt;;
 def : InstAlias&lt;&quot;clrq $reg&quot;, (XOR64rr GR64:$reg, GR64:$reg)&gt;;
 </pre></div>
 </div>
 <p>This example also shows that tied operands are only listed once.  In the X86
-backend, XOR8rr has two input GR8&#8217;s and one output GR8 (where an input is tied
+backend, XOR8rr has two input GR8’s and one output GR8 (where an input is tied
 to the output).  InstAliases take a flattened operand list without duplicates
 for tied operands.  The result of an instruction alias can also use immediates
 and fixed physical registers which are added as simple immediate operands in the
 result, for example:</p>
-<div class="highlight-python"><div class="highlight"><pre>// Fixed Immediate operand.
+<div class="highlight-default"><div class="highlight"><pre><span></span>// Fixed Immediate operand.
 def : InstAlias&lt;&quot;aad&quot;, (AAD8i8 10)&gt;;
 
 // Fixed register operand.
@@ -1682,8 +1677,8 @@ def : InstAlias&lt;&quot;fcomi $reg&quot;, (COM_FIr RST:$reg)&gt;;
 <p>Instruction aliases can also have a Requires clause to make them subtarget
 specific.</p>
 <p>If the back-end supports it, the instruction printer can automatically emit the
-alias rather than what&#8217;s being aliased. It typically leads to better, more
-readable code. If it&#8217;s better to print out what&#8217;s being aliased, then pass a &#8216;0&#8217;
+alias rather than what’s being aliased. It typically leads to better, more
+readable code. If it’s better to print out what’s being aliased, then pass a ‘0’
 as the third parameter to the InstAlias definition.</p>
 </div>
 </div>
@@ -1871,7 +1866,7 @@ the native .o file writer.</p>
 <div class="section" id="disassembler">
 <span id="feat-disassembler"></span><h4><a class="toc-backref" href="#id74">Disassembler</a><a class="headerlink" href="#disassembler" title="Permalink to this headline">¶</a></h4>
 <p>This box indicates whether the target supports the MCDisassembler API for
-disassembling machine opcode bytes into MCInst&#8217;s.</p>
+disassembling machine opcode bytes into MCInst’s.</p>
 </div>
 <div class="section" id="inline-asm">
 <span id="feat-inlineasm"></span><h4><a class="toc-backref" href="#id75">Inline Asm</a><a class="headerlink" href="#inline-asm" title="Permalink to this headline">¶</a></h4>
@@ -1891,14 +1886,14 @@ lacks NEON and full Thumb support.</p>
 ELF, and/or COFF) files directly from the target.  Note that the target also
 must include an assembly parser and general inline assembly support for full
 inline assembly support in the .o writer.</p>
-<p>Targets that don&#8217;t support this feature can obviously still write out .o files,
+<p>Targets that don’t support this feature can obviously still write out .o files,
 they just rely on having an external assembler to translate from a .s file to a
 .o file (as is the case for many C compilers).</p>
 </div>
 <div class="section" id="tail-calls">
 <span id="feat-tailcall"></span><h4><a class="toc-backref" href="#id78">Tail Calls</a><a class="headerlink" href="#tail-calls" title="Permalink to this headline">¶</a></h4>
 <p>This box indicates whether the target supports guaranteed tail calls.  These are
-calls marked &#8220;<a class="reference external" href="LangRef.html#i_call">tail</a>&#8221; and use the fastcc calling
+calls marked “<a class="reference external" href="LangRef.html#i_call">tail</a>” and use the fastcc calling
 convention.  Please see the <a class="reference internal" href="#tail-call-section">tail call section</a> for more details.</p>
 </div>
 <div class="section" id="segmented-stacks">
@@ -1907,7 +1902,7 @@ convention.  Please see the <a class="reference internal" href="#tail-call-secti
 the traditional large C stack with many linked segments. It is compatible with
 the <a class="reference external" href="http://gcc.gnu.org/wiki/SplitStacks">gcc implementation</a> used by the Go
 front end.</p>
-<p id="feat-segstacks-x86">Basic support exists on the X86 backend. Currently vararg doesn&#8217;t work and the
+<p id="feat-segstacks-x86">Basic support exists on the X86 backend. Currently vararg doesn’t work and the
 object files are not marked the way the gold linker expects, but simple Go
 programs can be built by dragonegg.</p>
 </div>
@@ -1939,7 +1934,7 @@ are supported.</li>
 </ul>
 <p>Example:</p>
 <p>Call as <code class="docutils literal"><span class="pre">llc</span> <span class="pre">-tailcallopt</span> <span class="pre">test.ll</span></code>.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">declare</span> <span class="k">fastcc</span> <span class="k">i32</span> <span class="vg">@tailcallee</span><span class="p">(</span><span class="k">i32</span> <span class="k">inreg</span> <span class="nv">%a1</span><span class="p">,</span> <span class="k">i32</span> <span class="k">inreg</span> <span class="nv">%a2</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%a3</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%a4</span><span class="p">)</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">declare</span> <span class="k">fastcc</span> <span class="k">i32</span> <span class="vg">@tailcallee</span><span class="p">(</span><span class="k">i32</span> <span class="k">inreg</span> <span class="nv">%a1</span><span class="p">,</span> <span class="k">i32</span> <span class="k">inreg</span> <span class="nv">%a2</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%a3</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%a4</span><span class="p">)</span>
 
 <span class="k">define</span> <span class="k">fastcc</span> <span class="k">i32</span> <span class="vg">@tailcaller</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%in1</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%in2</span><span class="p">)</span> <span class="p">{</span>
   <span class="nv">%l1</span> <span class="p">=</span> <span class="k">add</span> <span class="k">i32</span> <span class="nv">%in1</span><span class="p">,</span> <span class="nv">%in2</span>
@@ -1950,7 +1945,7 @@ are supported.</li>
 </div>
 <p>Implications of <code class="docutils literal"><span class="pre">-tailcallopt</span></code>:</p>
 <p>To support tail call optimization in situations where the callee has more
-arguments than the caller a &#8216;callee pops arguments&#8217; convention is used. This
+arguments than the caller a ‘callee pops arguments’ convention is used. This
 currently causes each <code class="docutils literal"><span class="pre">fastcc</span></code> call that is not tail call optimized (because
 one or more of above constraints are not met) to be followed by a readjustment
 of the stack. So performance might be worse in such cases.</p>
@@ -1970,11 +1965,11 @@ following constraints are met:</p>
 ret uses value of call or is void).</li>
 <li>Caller and callee have matching return type or the callee result is not used.</li>
 <li>If any of the callee arguments are being passed in stack, they must be
-available in caller&#8217;s own incoming argument stack and the frame offsets must
+available in caller’s own incoming argument stack and the frame offsets must
 be the same.</li>
 </ul>
 <p>Example:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">declare</span> <span class="k">i32</span> <span class="vg">@bar</span><span class="p">(</span><span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">)</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span></span><span class="k">declare</span> <span class="k">i32</span> <span class="vg">@bar</span><span class="p">(</span><span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">)</span>
 
 <span class="k">define</span> <span class="k">i32</span> <span class="vg">@foo</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%a</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%b</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%c</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
@@ -1995,24 +1990,24 @@ includes support for ISA extensions such as MMX and SSE.</p>
 backend.  This is not an exhaustive list, and it would be useful to add those
 that people test.</p>
 <ul class="simple">
-<li><strong>i686-pc-linux-gnu</strong> &#8212; Linux</li>
-<li><strong>i386-unknown-freebsd5.3</strong> &#8212; FreeBSD 5.3</li>
-<li><strong>i686-pc-cygwin</strong> &#8212; Cygwin on Win32</li>
-<li><strong>i686-pc-mingw32</strong> &#8212; MingW on Win32</li>
-<li><strong>i386-pc-mingw32msvc</strong> &#8212; MingW crosscompiler on Linux</li>
-<li><strong>i686-apple-darwin*</strong> &#8212; Apple Darwin on X86</li>
-<li><strong>x86_64-unknown-linux-gnu</strong> &#8212; Linux</li>
+<li><strong>i686-pc-linux-gnu</strong> — Linux</li>
+<li><strong>i386-unknown-freebsd5.3</strong> — FreeBSD 5.3</li>
+<li><strong>i686-pc-cygwin</strong> — Cygwin on Win32</li>
+<li><strong>i686-pc-mingw32</strong> — MingW on Win32</li>
+<li><strong>i386-pc-mingw32msvc</strong> — MingW crosscompiler on Linux</li>
+<li><strong>i686-apple-darwin*</strong> — Apple Darwin on X86</li>
+<li><strong>x86_64-unknown-linux-gnu</strong> — Linux</li>
 </ul>
 </div>
 <div class="section" id="x86-calling-conventions-supported">
 <h4><a class="toc-backref" href="#id84">X86 Calling Conventions supported</a><a class="headerlink" href="#x86-calling-conventions-supported" title="Permalink to this headline">¶</a></h4>
 <p>The following target-specific calling conventions are known to backend:</p>
 <ul class="simple">
-<li><strong>x86_StdCall</strong> &#8212; stdcall calling convention seen on Microsoft Windows
+<li><strong>x86_StdCall</strong> — stdcall calling convention seen on Microsoft Windows
 platform (CC ID = 64).</li>
-<li><strong>x86_FastCall</strong> &#8212; fastcall calling convention seen on Microsoft Windows
+<li><strong>x86_FastCall</strong> — fastcall calling convention seen on Microsoft Windows
 platform (CC ID = 65).</li>
-<li><strong>x86_ThisCall</strong> &#8212; Similar to X86_StdCall. Passes first argument in ECX,
+<li><strong>x86_ThisCall</strong> — Similar to X86_StdCall. Passes first argument in ECX,
 others via stack. Callee is responsible for stack cleaning. This convention is
 used by MSVC by default for methods in its ABI (CC ID = 70).</li>
 </ul>
@@ -2022,27 +2017,27 @@ used by MSVC by default for methods in its ABI (CC ID = 70).</li>
 <p>The x86 has a very flexible way of accessing memory.  It is capable of forming
 memory addresses of the following expression directly in integer instructions
 (which use ModR/M addressing):</p>
-<div class="highlight-python"><div class="highlight"><pre>SegmentReg: Base + [1,2,4,8] * IndexReg + Disp32
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SegmentReg</span><span class="p">:</span> <span class="n">Base</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span> <span class="o">*</span> <span class="n">IndexReg</span> <span class="o">+</span> <span class="n">Disp32</span>
 </pre></div>
 </div>
 <p>In order to represent this, LLVM tracks no less than 5 operands for each memory
-operand of this form.  This means that the &#8220;load&#8221; form of &#8216;<code class="docutils literal"><span class="pre">mov</span></code>&#8216; has the
+operand of this form.  This means that the “load” form of ‘<code class="docutils literal"><span class="pre">mov</span></code>’ has the
 following <code class="docutils literal"><span class="pre">MachineOperand</span></code>s in this order:</p>
-<div class="highlight-python"><div class="highlight"><pre>Index:        0     |    1        2       3           4          5
-Meaning:   DestReg, | BaseReg,  Scale, IndexReg, Displacement Segment
-OperandTy: VirtReg, | VirtReg, UnsImm, VirtReg,   SignExtImm  PhysReg
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Index</span><span class="p">:</span>        <span class="mi">0</span>     <span class="o">|</span>    <span class="mi">1</span>        <span class="mi">2</span>       <span class="mi">3</span>           <span class="mi">4</span>          <span class="mi">5</span>
+<span class="n">Meaning</span><span class="p">:</span>   <span class="n">DestReg</span><span class="p">,</span> <span class="o">|</span> <span class="n">BaseReg</span><span class="p">,</span>  <span class="n">Scale</span><span class="p">,</span> <span class="n">IndexReg</span><span class="p">,</span> <span class="n">Displacement</span> <span class="n">Segment</span>
+<span class="n">OperandTy</span><span class="p">:</span> <span class="n">VirtReg</span><span class="p">,</span> <span class="o">|</span> <span class="n">VirtReg</span><span class="p">,</span> <span class="n">UnsImm</span><span class="p">,</span> <span class="n">VirtReg</span><span class="p">,</span>   <span class="n">SignExtImm</span>  <span class="n">PhysReg</span>
 </pre></div>
 </div>
 <p>Stores, and all other instructions, treat the four memory operands in the same
 way and in the same order.  If the segment register is unspecified (regno = 0),
-then no segment override is generated.  &#8220;Lea&#8221; operations do not have a segment
+then no segment override is generated.  “Lea” operations do not have a segment
 register specified, so they only have 4 operands for their memory reference.</p>
 </div>
 <div class="section" id="x86-address-spaces-supported">
 <h4><a class="toc-backref" href="#id86">X86 address spaces supported</a><a class="headerlink" href="#x86-address-spaces-supported" title="Permalink to this headline">¶</a></h4>
 <p>x86 has a feature which provides the ability to perform loads and stores to
 different address spaces via the x86 segment registers.  A segment override
-prefix byte on an instruction causes the instruction&#8217;s memory access to go to
+prefix byte on an instruction causes the instruction’s memory access to go to
 the specified segment.  LLVM address space 0 is the default address space, which
 includes the stack, and any unqualified memory accesses in a program.  Address
 spaces 1-255 are currently reserved for user-defined code.  The GS-segment is
@@ -2056,7 +2051,7 @@ differences.</p>
 are to be allocated in thread-local memory. There are no type qualifiers
 involved, and these variables can be pointed to with normal pointers and
 accessed with normal loads and stores.  The <code class="docutils literal"><span class="pre">thread_local</span></code> keyword is
-target-independent at the LLVM IR level (though LLVM doesn&#8217;t yet have
+target-independent at the LLVM IR level (though LLVM doesn’t yet have
 implementations of it for some configurations)</p>
 <p>Special address spaces, in contrast, apply to static types. Every load and store
 has a particular address space in its address operand type, and this is what
@@ -2064,7 +2059,7 @@ determines which address space is accessed.  LLVM ignores these special address
 space qualifiers on global variables, and does not provide a way to directly
 allocate storage in them.  At the LLVM IR level, the behavior of these special
 address spaces depends in part on the underlying OS or runtime environment, and
-they are specific to x86 (and LLVM doesn&#8217;t yet handle them correctly in some
+they are specific to x86 (and LLVM doesn’t yet handle them correctly in some
 cases).</p>
 <p>Some operating systems and runtime environments use (or may in the future use)
 the FS/GS-segment registers for various low-level purposes, so care should be
@@ -2074,10 +2069,10 @@ taken when considering them.</p>
 <h4><a class="toc-backref" href="#id87">Instruction naming</a><a class="headerlink" href="#instruction-naming" title="Permalink to this headline">¶</a></h4>
 <p>An instruction name consists of the base name, a default operand size, and a a
 character per operand with an optional special size. For example:</p>
-<div class="highlight-python"><div class="highlight"><pre>ADD8rr      -&gt; add, 8-bit register, 8-bit register
-IMUL16rmi   -&gt; imul, 16-bit register, 16-bit memory, 16-bit immediate
-IMUL16rmi8  -&gt; imul, 16-bit register, 16-bit memory, 8-bit immediate
-MOVSX32rm16 -&gt; movsx, 32-bit register, 16-bit memory
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ADD8rr</span>      <span class="o">-&gt;</span> <span class="n">add</span><span class="p">,</span> <span class="mi">8</span><span class="o">-</span><span class="n">bit</span> <span class="n">register</span><span class="p">,</span> <span class="mi">8</span><span class="o">-</span><span class="n">bit</span> <span class="n">register</span>
+<span class="n">IMUL16rmi</span>   <span class="o">-&gt;</span> <span class="n">imul</span><span class="p">,</span> <span class="mi">16</span><span class="o">-</span><span class="n">bit</span> <span class="n">register</span><span class="p">,</span> <span class="mi">16</span><span class="o">-</span><span class="n">bit</span> <span class="n">memory</span><span class="p">,</span> <span class="mi">16</span><span class="o">-</span><span class="n">bit</span> <span class="n">immediate</span>
+<span class="n">IMUL16rmi8</span>  <span class="o">-&gt;</span> <span class="n">imul</span><span class="p">,</span> <span class="mi">16</span><span class="o">-</span><span class="n">bit</span> <span class="n">register</span><span class="p">,</span> <span class="mi">16</span><span class="o">-</span><span class="n">bit</span> <span class="n">memory</span><span class="p">,</span> <span class="mi">8</span><span class="o">-</span><span class="n">bit</span> <span class="n">immediate</span>
+<span class="n">MOVSX32rm16</span> <span class="o">-&gt;</span> <span class="n">movsx</span><span class="p">,</span> <span class="mi">32</span><span class="o">-</span><span class="n">bit</span> <span class="n">register</span><span class="p">,</span> <span class="mi">16</span><span class="o">-</span><span class="n">bit</span> <span class="n">memory</span>
 </pre></div>
 </div>
 </div>
@@ -2099,7 +2094,7 @@ space for GPRs are 8 bytes wide (not 4) and r13 is reserved for system use.</p>
 </div>
 <div class="section" id="frame-layout">
 <h4><a class="toc-backref" href="#id90">Frame Layout</a><a class="headerlink" href="#frame-layout" title="Permalink to this headline">¶</a></h4>
-<p>The size of a PowerPC frame is usually fixed for the duration of a function&#8217;s
+<p>The size of a PowerPC frame is usually fixed for the duration of a function’s
 invocation.  Since the frame is fixed size, all references into the frame can be
 accessed via fixed offsets from the stack pointer.  The exception to this is
 when dynamic alloca or variable sized arrays are present, then a base pointer
@@ -2281,7 +2276,7 @@ the official NVIDIA toolchain.</p>
 </div>
 <div class="section" id="the-extended-berkeley-packet-filter-ebpf-backend">
 <h3><a class="toc-backref" href="#id94">The extended Berkeley Packet Filter (eBPF) backend</a><a class="headerlink" href="#the-extended-berkeley-packet-filter-ebpf-backend" title="Permalink to this headline">¶</a></h3>
-<p>Extended BPF (or eBPF) is similar to the original (&#8220;classic&#8221;) BPF (cBPF) used
+<p>Extended BPF (or eBPF) is similar to the original (“classic”) BPF (cBPF) used
 to filter network packets.  The
 <a class="reference external" href="http://man7.org/linux/man-pages/man2/bpf.2.html">bpf() system call</a>
 performs a range of operations related to eBPF.  For both cBPF and eBPF
@@ -2290,18 +2285,18 @@ them, in order to ensure that they cannot harm the running system.  eBPF is
 a 64-bit RISC instruction set designed for one to one mapping to 64-bit CPUs.
 Opcodes are 8-bit encoded, and 87 instructions are defined.  There are 10
 registers, grouped by function as outlined below.</p>
-<div class="highlight-python"><div class="highlight"><pre>R0        return value from in-kernel functions; exit value for eBPF program
-R1 - R5   function call arguments to in-kernel functions
-R6 - R9   callee-saved registers preserved by in-kernel functions
-R10       stack frame pointer (read only)
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">R0</span>        <span class="k">return</span> <span class="n">value</span> <span class="kn">from</span> <span class="nn">in</span><span class="o">-</span><span class="n">kernel</span> <span class="n">functions</span><span class="p">;</span> <span class="n">exit</span> <span class="n">value</span> <span class="k">for</span> <span class="n">eBPF</span> <span class="n">program</span>
+<span class="n">R1</span> <span class="o">-</span> <span class="n">R5</span>   <span class="n">function</span> <span class="n">call</span> <span class="n">arguments</span> <span class="n">to</span> <span class="ow">in</span><span class="o">-</span><span class="n">kernel</span> <span class="n">functions</span>
+<span class="n">R6</span> <span class="o">-</span> <span class="n">R9</span>   <span class="n">callee</span><span class="o">-</span><span class="n">saved</span> <span class="n">registers</span> <span class="n">preserved</span> <span class="n">by</span> <span class="ow">in</span><span class="o">-</span><span class="n">kernel</span> <span class="n">functions</span>
+<span class="n">R10</span>       <span class="n">stack</span> <span class="n">frame</span> <span class="n">pointer</span> <span class="p">(</span><span class="n">read</span> <span class="n">only</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="instruction-encoding-arithmetic-and-jump">
 <h4><a class="toc-backref" href="#id95">Instruction encoding (arithmetic and jump)</a><a class="headerlink" href="#instruction-encoding-arithmetic-and-jump" title="Permalink to this headline">¶</a></h4>
 <p>eBPF is reusing most of the opcode encoding from classic to simplify conversion
-of classic BPF to eBPF.  For arithmetic and jump instructions the 8-bit &#8216;code&#8217;
+of classic BPF to eBPF.  For arithmetic and jump instructions the 8-bit ‘code’
 field is divided into three parts:</p>
-<div class="highlight-python"><div class="highlight"><pre>+----------------+--------+--------------------+
+<div class="highlight-default"><div class="highlight"><pre><span></span>+----------------+--------+--------------------+
 |   4 bits       |  1 bit |   3 bits           |
 | operation code | source | instruction class  |
 +----------------+--------+--------------------+
@@ -2309,57 +2304,57 @@ field is divided into three parts:</p>
 </pre></div>
 </div>
 <p>Three LSB bits store instruction class which is one of:</p>
-<div class="highlight-python"><div class="highlight"><pre>BPF_LD     0x0
-BPF_LDX    0x1
-BPF_ST     0x2
-BPF_STX    0x3
-BPF_ALU    0x4
-BPF_JMP    0x5
-(unused)   0x6
-BPF_ALU64  0x7
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BPF_LD</span>     <span class="mh">0x0</span>
+<span class="n">BPF_LDX</span>    <span class="mh">0x1</span>
+<span class="n">BPF_ST</span>     <span class="mh">0x2</span>
+<span class="n">BPF_STX</span>    <span class="mh">0x3</span>
+<span class="n">BPF_ALU</span>    <span class="mh">0x4</span>
+<span class="n">BPF_JMP</span>    <span class="mh">0x5</span>
+<span class="p">(</span><span class="n">unused</span><span class="p">)</span>   <span class="mh">0x6</span>
+<span class="n">BPF_ALU64</span>  <span class="mh">0x7</span>
 </pre></div>
 </div>
 <p>When BPF_CLASS(code) == BPF_ALU or BPF_ALU64 or BPF_JMP,
 4th bit encodes source operand</p>
-<div class="highlight-python"><div class="highlight"><pre>BPF_X     0x0  use src_reg register as source operand
-BPF_K     0x1  use 32 bit immediate as source operand
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BPF_X</span>     <span class="mh">0x0</span>  <span class="n">use</span> <span class="n">src_reg</span> <span class="n">register</span> <span class="k">as</span> <span class="n">source</span> <span class="n">operand</span>
+<span class="n">BPF_K</span>     <span class="mh">0x1</span>  <span class="n">use</span> <span class="mi">32</span> <span class="n">bit</span> <span class="n">immediate</span> <span class="k">as</span> <span class="n">source</span> <span class="n">operand</span>
 </pre></div>
 </div>
 <p>and four MSB bits store operation code</p>
-<div class="highlight-python"><div class="highlight"><pre>BPF_ADD   0x0  add
-BPF_SUB   0x1  subtract
-BPF_MUL   0x2  multiply
-BPF_DIV   0x3  divide
-BPF_OR    0x4  bitwise logical OR
-BPF_AND   0x5  bitwise logical AND
-BPF_LSH   0x6  left shift
-BPF_RSH   0x7  right shift (zero extended)
-BPF_NEG   0x8  arithmetic negation
-BPF_MOD   0x9  modulo
-BPF_XOR   0xa  bitwise logical XOR
-BPF_MOV   0xb  move register to register
-BPF_ARSH  0xc  right shift (sign extended)
-BPF_END   0xd  endianness conversion
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BPF_ADD</span>   <span class="mh">0x0</span>  <span class="n">add</span>
+<span class="n">BPF_SUB</span>   <span class="mh">0x1</span>  <span class="n">subtract</span>
+<span class="n">BPF_MUL</span>   <span class="mh">0x2</span>  <span class="n">multiply</span>
+<span class="n">BPF_DIV</span>   <span class="mh">0x3</span>  <span class="n">divide</span>
+<span class="n">BPF_OR</span>    <span class="mh">0x4</span>  <span class="n">bitwise</span> <span class="n">logical</span> <span class="n">OR</span>
+<span class="n">BPF_AND</span>   <span class="mh">0x5</span>  <span class="n">bitwise</span> <span class="n">logical</span> <span class="n">AND</span>
+<span class="n">BPF_LSH</span>   <span class="mh">0x6</span>  <span class="n">left</span> <span class="n">shift</span>
+<span class="n">BPF_RSH</span>   <span class="mh">0x7</span>  <span class="n">right</span> <span class="n">shift</span> <span class="p">(</span><span class="n">zero</span> <span class="n">extended</span><span class="p">)</span>
+<span class="n">BPF_NEG</span>   <span class="mh">0x8</span>  <span class="n">arithmetic</span> <span class="n">negation</span>
+<span class="n">BPF_MOD</span>   <span class="mh">0x9</span>  <span class="n">modulo</span>
+<span class="n">BPF_XOR</span>   <span class="mh">0xa</span>  <span class="n">bitwise</span> <span class="n">logical</span> <span class="n">XOR</span>
+<span class="n">BPF_MOV</span>   <span class="mh">0xb</span>  <span class="n">move</span> <span class="n">register</span> <span class="n">to</span> <span class="n">register</span>
+<span class="n">BPF_ARSH</span>  <span class="mh">0xc</span>  <span class="n">right</span> <span class="n">shift</span> <span class="p">(</span><span class="n">sign</span> <span class="n">extended</span><span class="p">)</span>
+<span class="n">BPF_END</span>   <span class="mh">0xd</span>  <span class="n">endianness</span> <span class="n">conversion</span>
 </pre></div>
 </div>
 <p>If BPF_CLASS(code) == BPF_JMP, BPF_OP(code) is one of</p>
-<div class="highlight-python"><div class="highlight"><pre>BPF_JA    0x0  unconditional jump
-BPF_JEQ   0x1  jump ==
-BPF_JGT   0x2  jump &gt;
-BPF_JGE   0x3  jump &gt;=
-BPF_JSET  0x4  jump if (DST &amp; SRC)
-BPF_JNE   0x5  jump !=
-BPF_JSGT  0x6  jump signed &gt;
-BPF_JSGE  0x7  jump signed &gt;=
-BPF_CALL  0x8  function call
-BPF_EXIT  0x9  function return
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BPF_JA</span>    <span class="mh">0x0</span>  <span class="n">unconditional</span> <span class="n">jump</span>
+<span class="n">BPF_JEQ</span>   <span class="mh">0x1</span>  <span class="n">jump</span> <span class="o">==</span>
+<span class="n">BPF_JGT</span>   <span class="mh">0x2</span>  <span class="n">jump</span> <span class="o">&gt;</span>
+<span class="n">BPF_JGE</span>   <span class="mh">0x3</span>  <span class="n">jump</span> <span class="o">&gt;=</span>
+<span class="n">BPF_JSET</span>  <span class="mh">0x4</span>  <span class="n">jump</span> <span class="k">if</span> <span class="p">(</span><span class="n">DST</span> <span class="o">&amp;</span> <span class="n">SRC</span><span class="p">)</span>
+<span class="n">BPF_JNE</span>   <span class="mh">0x5</span>  <span class="n">jump</span> <span class="o">!=</span>
+<span class="n">BPF_JSGT</span>  <span class="mh">0x6</span>  <span class="n">jump</span> <span class="n">signed</span> <span class="o">&gt;</span>
+<span class="n">BPF_JSGE</span>  <span class="mh">0x7</span>  <span class="n">jump</span> <span class="n">signed</span> <span class="o">&gt;=</span>
+<span class="n">BPF_CALL</span>  <span class="mh">0x8</span>  <span class="n">function</span> <span class="n">call</span>
+<span class="n">BPF_EXIT</span>  <span class="mh">0x9</span>  <span class="n">function</span> <span class="k">return</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="instruction-encoding-load-store">
 <h4><a class="toc-backref" href="#id96">Instruction encoding (load, store)</a><a class="headerlink" href="#instruction-encoding-load-store" title="Permalink to this headline">¶</a></h4>
-<p>For load and store instructions the 8-bit &#8216;code&#8217; field is divided as:</p>
-<div class="highlight-python"><div class="highlight"><pre>+--------+--------+-------------------+
+<p>For load and store instructions the 8-bit ‘code’ field is divided as:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>+--------+--------+-------------------+
 | 3 bits | 2 bits |   3 bits          |
 |  mode  |  size  | instruction class |
 +--------+--------+-------------------+
@@ -2367,20 +2362,20 @@ BPF_EXIT  0x9  function return
 </pre></div>
 </div>
 <p>Size modifier is one of</p>
-<div class="highlight-python"><div class="highlight"><pre>BPF_W       0x0  word
-BPF_H       0x1  half word
-BPF_B       0x2  byte
-BPF_DW      0x3  double word
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BPF_W</span>       <span class="mh">0x0</span>  <span class="n">word</span>
+<span class="n">BPF_H</span>       <span class="mh">0x1</span>  <span class="n">half</span> <span class="n">word</span>
+<span class="n">BPF_B</span>       <span class="mh">0x2</span>  <span class="n">byte</span>
+<span class="n">BPF_DW</span>      <span class="mh">0x3</span>  <span class="n">double</span> <span class="n">word</span>
 </pre></div>
 </div>
 <p>Mode modifier is one of</p>
-<div class="highlight-python"><div class="highlight"><pre>BPF_IMM     0x0  immediate
-BPF_ABS     0x1  used to access packet data
-BPF_IND     0x2  used to access packet data
-BPF_MEM     0x3  memory
-(reserved)  0x4
-(reserved)  0x5
-BPF_XADD    0x6  exclusive add
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">BPF_IMM</span>     <span class="mh">0x0</span>  <span class="n">immediate</span>
+<span class="n">BPF_ABS</span>     <span class="mh">0x1</span>  <span class="n">used</span> <span class="n">to</span> <span class="n">access</span> <span class="n">packet</span> <span class="n">data</span>
+<span class="n">BPF_IND</span>     <span class="mh">0x2</span>  <span class="n">used</span> <span class="n">to</span> <span class="n">access</span> <span class="n">packet</span> <span class="n">data</span>
+<span class="n">BPF_MEM</span>     <span class="mh">0x3</span>  <span class="n">memory</span>
+<span class="p">(</span><span class="n">reserved</span><span class="p">)</span>  <span class="mh">0x4</span>
+<span class="p">(</span><span class="n">reserved</span><span class="p">)</span>  <span class="mh">0x5</span>
+<span class="n">BPF_XADD</span>    <span class="mh">0x6</span>  <span class="n">exclusive</span> <span class="n">add</span>
 </pre></div>
 </div>
 </div>
@@ -2419,7 +2414,7 @@ these registers if needed across function calls.  The stack can be accessed
 using the read-only frame pointer R10.  eBPF registers map 1:1 to hardware
 registers on x86_64 and other 64-bit architectures.  For example, x86_64
 in-kernel JIT maps them as</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">R0</span> <span class="o">-</span> <span class="n">rax</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">R0</span> <span class="o">-</span> <span class="n">rax</span>
 <span class="n">R1</span> <span class="o">-</span> <span class="n">rdi</span>
 <span class="n">R2</span> <span class="o">-</span> <span class="n">rsi</span>
 <span class="n">R3</span> <span class="o">-</span> <span class="n">rdx</span>
@@ -2448,123 +2443,9 @@ to ensure valid register usage and operand types.</p>
 </div>
 <div class="section" id="the-amdgpu-backend">
 <h3><a class="toc-backref" href="#id101">The AMDGPU backend</a><a class="headerlink" href="#the-amdgpu-backend" title="Permalink to this headline">¶</a></h3>
-<p>The AMDGPU code generator lives in the lib/Target/AMDGPU directory, and is an
-open source native AMD GCN ISA code generator.</p>
-<div class="section" id="target-triples-supported">
-<h4><a class="toc-backref" href="#id102">Target triples supported</a><a class="headerlink" href="#target-triples-supported" title="Permalink to this headline">¶</a></h4>
-<p>The following are the known target triples that are supported by the AMDGPU
-backend.</p>
-<ul class="simple">
-<li><strong>amdgcn&#8211;</strong> &#8212; AMD GCN GPUs (AMDGPU.7.0.0+)</li>
-<li><strong>amdgcn&#8211;amdhsa</strong> &#8212; AMD GCN GPUs (AMDGPU.7.0.0+) with HSA support</li>
-<li><strong>r600&#8211;</strong> &#8212; AMD GPUs HD2XXX-HD6XXX</li>
-</ul>
-</div>
-<div class="section" id="relocations">
-<h4><a class="toc-backref" href="#id103">Relocations</a><a class="headerlink" href="#relocations" title="Permalink to this headline">¶</a></h4>
-<p>Supported relocatable fields are:</p>
-<ul class="simple">
-<li><strong>word32</strong> &#8212; This specifies a 32-bit field occupying 4 bytes with arbitrary
-byte alignment. These values use the same byte order as other word values in
-the AMD GPU architecture</li>
-<li><strong>word64</strong> &#8212; This specifies a 64-bit field occupying 8 bytes with arbitrary
-byte alignment. These values use the same byte order as other word values in
-the AMD GPU architecture</li>
-</ul>
-<p>Following notations are used for specifying relocation calculations:</p>
-<ul class="simple">
-<li><strong>A</strong> &#8212; Represents the addend used to compute the value of the relocatable
-field</li>
-<li><strong>G</strong> &#8212; Represents the offset into the global offset table at which the
-relocation entry’s symbol will reside during execution.</li>
-<li><strong>GOT</strong> &#8212; Represents the address of the global offset table.</li>
-<li><strong>P</strong> &#8212; Represents the place (section offset or address) of the storage unit
-being relocated (computed using <code class="docutils literal"><span class="pre">r_offset</span></code>)</li>
-<li><strong>S</strong> &#8212; Represents the value of the symbol whose index resides in the
-relocation entry</li>
-</ul>
-<p>AMDGPU Backend generates <em>Elf64_Rela</em> relocation records with the following
-supported relocation types:</p>
-<blockquote>
-<div><table border="1" class="docutils">
-<colgroup>
-<col width="37%" />
-<col width="7%" />
-<col width="14%" />
-<col width="42%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Relocation type</th>
-<th class="head">Value</th>
-<th class="head">Field</th>
-<th class="head">Calculation</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">R_AMDGPU_NONE</span></code></td>
-<td>0</td>
-<td><code class="docutils literal"><span class="pre">none</span></code></td>
-<td><code class="docutils literal"><span class="pre">none</span></code></td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">R_AMDGPU_ABS32_LO</span></code></td>
-<td>1</td>
-<td><code class="docutils literal"><span class="pre">word32</span></code></td>
-<td>(S + A) &amp; 0xFFFFFFFF</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">R_AMDGPU_ABS32_HI</span></code></td>
-<td>2</td>
-<td><code class="docutils literal"><span class="pre">word32</span></code></td>
-<td>(S + A) &gt;&gt; 32</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">R_AMDGPU_ABS64</span></code></td>
-<td>3</td>
-<td><code class="docutils literal"><span class="pre">word64</span></code></td>
-<td>S + A</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">R_AMDGPU_REL32</span></code></td>
-<td>4</td>
-<td><code class="docutils literal"><span class="pre">word32</span></code></td>
-<td>S + A - P</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">R_AMDGPU_REL64</span></code></td>
-<td>5</td>
-<td><code class="docutils literal"><span class="pre">word64</span></code></td>
-<td>S + A - P</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">R_AMDGPU_ABS32</span></code></td>
-<td>6</td>
-<td><code class="docutils literal"><span class="pre">word32</span></code></td>
-<td>S + A</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">R_AMDGPU_GOTPCREL</span></code></td>
-<td>7</td>
-<td><code class="docutils literal"><span class="pre">word32</span></code></td>
-<td>G + GOT + A - P</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">R_AMDGPU_GOTPCREL32_LO</span></code></td>
-<td>8</td>
-<td><code class="docutils literal"><span class="pre">word32</span></code></td>
-<td>(G + GOT + A - P) &amp; 0xFFFFFFFF</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">R_AMDGPU_GOTPCREL32_HI</span></code></td>
-<td>9</td>
-<td><code class="docutils literal"><span class="pre">word32</span></code></td>
-<td>(G + GOT + A - P) &gt;&gt; 32</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">R_AMDGPU_REL32_LO</span></code></td>
-<td>10</td>
-<td><code class="docutils literal"><span class="pre">word32</span></code></td>
-<td>(S + A - P) &amp; 0xFFFFFFFF</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">R_AMDGPU_REL32_HI</span></code></td>
-<td>11</td>
-<td><code class="docutils literal"><span class="pre">word32</span></code></td>
-<td>(S + A - P) &gt;&gt; 32</td>
-</tr>
-</tbody>
-</table>
-</div></blockquote>
-</div>
+<p>The AMDGPU code generator lives in the <code class="docutils literal"><span class="pre">lib/Target/AMDGPU</span></code>
+directory. This code generator is capable of targeting a variety of
+AMD GPU processors. Refer to <a class="reference internal" href="AMDGPUUsage.html"><span class="doc">User Guide for AMDGPU Backend</span></a> for more information.</p>
 </div>
 </div>
 </div>
@@ -2592,9 +2473,9 @@ supported relocation types:</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

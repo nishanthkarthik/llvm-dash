@@ -1,31 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>4. Building a JIT: Extreme Laziness - Using Compile Callbacks to JIT from ASTs &mdash; LLVM 4 documentation</title>
-    
+    <title>4. Building a JIT: Extreme Laziness - Using Compile Callbacks to JIT from ASTs &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="../index.html" />
-    <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="5. Building a JIT: Remote-JITing – Process Isolation and Laziness at a Distance" href="BuildingAJIT5.html" />
     <link rel="prev" title="3. Building a JIT: Per-function Lazy Compilation" href="BuildingAJIT3.html" />
 <style type="text/css">
@@ -34,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -56,7 +54,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
 
@@ -78,7 +76,7 @@ change frequently.</strong> Nonetheless we invite you to try it out as it stands
 we welcome any feedback.</p>
 <div class="section" id="chapter-4-introduction">
 <h2><a class="toc-backref" href="#id1">4.1. Chapter 4 Introduction</a><a class="headerlink" href="#chapter-4-introduction" title="Permalink to this headline">¶</a></h2>
-<p>Welcome to Chapter 4 of the &#8220;Building an ORC-based JIT in LLVM&#8221; tutorial. This
+<p>Welcome to Chapter 4 of the “Building an ORC-based JIT in LLVM” tutorial. This
 chapter introduces the Compile Callbacks and Indirect Stubs APIs and shows how
 they can be used to replace the CompileOnDemand layer from
 <a class="reference external" href="BuildingAJIT3.html">Chapter 3</a> with a custom lazy-JITing scheme that JITs
@@ -93,14 +91,14 @@ which reduces the benefits of laziness).</strong></p>
 <h2><a class="toc-backref" href="#id2">4.2. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="Permalink to this headline">¶</a></h2>
 <p>Here is the complete code listing for our running example that JITs lazily from
 Kaleidoscope ASTS. To build this example, use:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="c1"># Compile</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
 clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --system-libs --libs core orc native<span class="sb">`</span> -O3 -o toy
 <span class="c1"># Run</span>
 ./toy
 </pre></div>
 </div>
 <p>Here is the code:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="c1">//===----- KaleidoscopeJIT.h - A simple JIT for Kaleidoscope ----*- C++ -*-===//</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="c1">//===- KaleidoscopeJIT.h - A simple JIT for Kaleidoscope --------*- C++ -*-===//</span>
 <span class="c1">//</span>
 <span class="c1">//                     The LLVM Compiler Infrastructure</span>
 <span class="c1">//</span>
@@ -119,14 +117,14 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/ADT/STLExtras.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/ExecutionEngine.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/JITSymbol.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/RuntimeDyld.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/RTDyldMemoryManager.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/SectionMemoryManager.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/CompileOnDemandLayer.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/CompileUtils.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/IndirectionUtils.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/IRCompileLayer.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/IRTransformLayer.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/LambdaResolver.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/ObjectLinkingLayer.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/DataLayout.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/LegacyPassManager.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/Mangler.h&quot;</span><span class="cp"></span>
@@ -175,11 +173,11 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 <span class="k">private</span><span class="o">:</span>
   <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">TargetMachine</span><span class="o">&gt;</span> <span class="n">TM</span><span class="p">;</span>
   <span class="k">const</span> <span class="n">DataLayout</span> <span class="n">DL</span><span class="p">;</span>
-  <span class="n">ObjectLinkingLayer</span><span class="o">&lt;&gt;</span> <span class="n">ObjectLayer</span><span class="p">;</span>
-  <span class="n">IRCompileLayer</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">ObjectLayer</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">CompileLayer</span><span class="p">;</span>
+  <span class="n">RTDyldObjectLinkingLayer</span> <span class="n">ObjectLayer</span><span class="p">;</span>
+  <span class="n">IRCompileLayer</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">ObjectLayer</span><span class="p">),</span> <span class="n">SimpleCompiler</span><span class="o">&gt;</span> <span class="n">CompileLayer</span><span class="p">;</span>
 
-  <span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span>
-    <span class="n">OptimizeFunction</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">OptimizeFunction</span> <span class="o">=</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
 
   <span class="n">IRTransformLayer</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">CompileLayer</span><span class="p">),</span> <span class="n">OptimizeFunction</span><span class="o">&gt;</span> <span class="n">OptimizeLayer</span><span class="p">;</span>
 
@@ -187,14 +185,15 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">IndirectStubsManager</span><span class="o">&gt;</span> <span class="n">IndirectStubsMgr</span><span class="p">;</span>
 
 <span class="k">public</span><span class="o">:</span>
-  <span class="k">typedef</span> <span class="k">decltype</span><span class="p">(</span><span class="n">OptimizeLayer</span><span class="p">)</span><span class="o">::</span><span class="n">ModuleSetHandleT</span> <span class="n">ModuleHandle</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">ModuleHandle</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">(</span><span class="n">OptimizeLayer</span><span class="p">)</span><span class="o">::</span><span class="n">ModuleHandleT</span><span class="p">;</span>
 
   <span class="n">KaleidoscopeJIT</span><span class="p">()</span>
       <span class="o">:</span> <span class="n">TM</span><span class="p">(</span><span class="n">EngineBuilder</span><span class="p">().</span><span class="n">selectTarget</span><span class="p">()),</span>
         <span class="n">DL</span><span class="p">(</span><span class="n">TM</span><span class="o">-&gt;</span><span class="n">createDataLayout</span><span class="p">()),</span>
+        <span class="n">ObjectLayer</span><span class="p">([]()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">SectionMemoryManager</span><span class="o">&gt;</span><span class="p">();</span> <span class="p">}),</span>
         <span class="n">CompileLayer</span><span class="p">(</span><span class="n">ObjectLayer</span><span class="p">,</span> <span class="n">SimpleCompiler</span><span class="p">(</span><span class="o">*</span><span class="n">TM</span><span class="p">)),</span>
         <span class="n">OptimizeLayer</span><span class="p">(</span><span class="n">CompileLayer</span><span class="p">,</span>
-                      <span class="p">[</span><span class="k">this</span><span class="p">](</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">)</span> <span class="p">{</span>
+                      <span class="p">[</span><span class="k">this</span><span class="p">](</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">return</span> <span class="n">optimizeModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">M</span><span class="p">));</span>
                       <span class="p">}),</span>
         <span class="n">CompileCallbackMgr</span><span class="p">(</span>
@@ -208,7 +207,6 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <span class="n">TargetMachine</span> <span class="o">&amp;</span><span class="n">getTargetMachine</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="o">*</span><span class="n">TM</span><span class="p">;</span> <span class="p">}</span>
 
   <span class="n">ModuleHandle</span> <span class="n">addModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">)</span> <span class="p">{</span>
-
     <span class="c1">// Build our symbol resolver:</span>
     <span class="c1">// Lambda 1: Look back into the JIT itself to find symbols that are part of</span>
     <span class="c1">//           the same &quot;logical dylib&quot;.</span>
@@ -228,15 +226,10 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
           <span class="k">return</span> <span class="nf">JITSymbol</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
         <span class="p">});</span>
 
-    <span class="c1">// Build a singleton module set to hold our module.</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;&gt;</span> <span class="n">Ms</span><span class="p">;</span>
-    <span class="n">Ms</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">M</span><span class="p">));</span>
-
     <span class="c1">// Add the set to the JIT with the resolver we created above and a newly</span>
     <span class="c1">// created SectionMemoryManager.</span>
-    <span class="k">return</span> <span class="n">OptimizeLayer</span><span class="p">.</span><span class="n">addModuleSet</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Ms</span><span class="p">),</span>
-                                      <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">SectionMemoryManager</span><span class="o">&gt;</span><span class="p">(),</span>
-                                      <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Resolver</span><span class="p">));</span>
+    <span class="k">return</span> <span class="nf">cantFail</span><span class="p">(</span><span class="n">OptimizeLayer</span><span class="p">.</span><span class="n">addModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">M</span><span class="p">),</span>
+                                            <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Resolver</span><span class="p">)));</span>
   <span class="p">}</span>
 
   <span class="n">Error</span> <span class="n">addFunctionAST</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">FunctionAST</span><span class="o">&gt;</span> <span class="n">FnAST</span><span class="p">)</span> <span class="p">{</span>
@@ -282,7 +275,7 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
         <span class="n">addModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">M</span><span class="p">));</span>
         <span class="k">auto</span> <span class="n">Sym</span> <span class="o">=</span> <span class="n">findSymbol</span><span class="p">(</span><span class="n">SharedFnAST</span><span class="o">-&gt;</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;$impl&quot;</span><span class="p">);</span>
         <span class="n">assert</span><span class="p">(</span><span class="n">Sym</span> <span class="o">&amp;&amp;</span> <span class="s">&quot;Couldn&#39;t find compiled function?&quot;</span><span class="p">);</span>
-        <span class="n">JITTargetAddress</span> <span class="n">SymAddr</span> <span class="o">=</span> <span class="n">Sym</span><span class="p">.</span><span class="n">getAddress</span><span class="p">();</span>
+        <span class="n">JITTargetAddress</span> <span class="n">SymAddr</span> <span class="o">=</span> <span class="n">cantFail</span><span class="p">(</span><span class="n">Sym</span><span class="p">.</span><span class="n">getAddress</span><span class="p">());</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">Err</span> <span class="o">=</span>
               <span class="n">IndirectStubsMgr</span><span class="o">-&gt;</span><span class="n">updatePointer</span><span class="p">(</span><span class="n">mangle</span><span class="p">(</span><span class="n">SharedFnAST</span><span class="o">-&gt;</span><span class="n">getName</span><span class="p">()),</span>
                                               <span class="n">SymAddr</span><span class="p">))</span> <span class="p">{</span>
@@ -302,7 +295,7 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <span class="p">}</span>
 
   <span class="kt">void</span> <span class="n">removeModule</span><span class="p">(</span><span class="n">ModuleHandle</span> <span class="n">H</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">OptimizeLayer</span><span class="p">.</span><span class="n">removeModuleSet</span><span class="p">(</span><span class="n">H</span><span class="p">);</span>
+    <span class="n">cantFail</span><span class="p">(</span><span class="n">OptimizeLayer</span><span class="p">.</span><span class="n">removeModule</span><span class="p">(</span><span class="n">H</span><span class="p">));</span>
   <span class="p">}</span>
 
 <span class="k">private</span><span class="o">:</span>
@@ -313,7 +306,7 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
     <span class="k">return</span> <span class="n">MangledNameStream</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
   <span class="p">}</span>
 
-  <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span> <span class="n">optimizeModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span> <span class="n">optimizeModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Create a function pass manager.</span>
     <span class="k">auto</span> <span class="n">FPM</span> <span class="o">=</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">legacy</span><span class="o">::</span><span class="n">FunctionPassManager</span><span class="o">&gt;</span><span class="p">(</span><span class="n">M</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
 
@@ -339,7 +332,7 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 <span class="cp">#endif </span><span class="c1">// LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H</span>
 </pre></div>
 </div>
-<p><a class="reference external" href="BuildingAJIT5.html">Next: Remote-JITing &#8211; Process-isolation and laziness-at-a-distance</a></p>
+<p><a class="reference external" href="BuildingAJIT5.html">Next: Remote-JITing – Process-isolation and laziness-at-a-distance</a></p>
 </div>
 </div>
 
@@ -363,13 +356,13 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

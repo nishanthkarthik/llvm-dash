@@ -1,30 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Type Metadata &mdash; LLVM 4 documentation</title>
-    
+    <title>Type Metadata &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="FaultMaps and implicit checks" href="FaultMaps.html" />
     <link rel="prev" title="MergeFunctions pass, how it works" href="MergeFunctions.html" />
 <style type="text/css">
@@ -33,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -66,7 +65,7 @@
   <div class="section" id="type-metadata">
 <h1>Type Metadata<a class="headerlink" href="#type-metadata" title="Permalink to this headline">¶</a></h1>
 <p>Type metadata is a mechanism that allows IR modules to co-operatively build
-pointer sets corresponding to addresses within a given set of globals. LLVM&#8217;s
+pointer sets corresponding to addresses within a given set of globals. LLVM’s
 <a class="reference external" href="http://clang.llvm.org/docs/ControlFlowIntegrity.html">control flow integrity</a> implementation uses this metadata to efficiently
 check (at each call site) that a given address corresponds to either a
 valid vtable or function pointer for a given class or function type, and its
@@ -86,14 +85,14 @@ or functions.</p>
 <p class="last">The current implementation only supports attaching metadata to functions on
 the x86-32 and x86-64 architectures.</p>
 </div>
-<p>An intrinsic, <a class="reference internal" href="LangRef.html#type-test"><span>llvm.type.test</span></a>, is used to test whether a
+<p>An intrinsic, <a class="reference internal" href="LangRef.html#type-test"><span class="std std-ref">llvm.type.test</span></a>, is used to test whether a
 given pointer is associated with a type identifier.</p>
 <div class="section" id="representing-type-information-using-type-metadata">
 <h2>Representing Type Information using Type Metadata<a class="headerlink" href="#representing-type-information-using-type-metadata" title="Permalink to this headline">¶</a></h2>
 <p>This section describes how Clang represents C++ type information associated with
 virtual tables using type metadata.</p>
 <p>Consider the following inheritance hierarchy:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">A</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">A</span> <span class="p">{</span>
   <span class="k">virtual</span> <span class="kt">void</span> <span class="n">f</span><span class="p">();</span>
 <span class="p">};</span>
 
@@ -141,28 +140,28 @@ virtual tables using type metadata.</p>
 <td>A::offset-to-top</td>
 <td>&amp;A::rtti</td>
 <td>&amp;A::f</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
 </tr>
 <tr class="row-odd"><td>B</td>
 <td>B::offset-to-top</td>
 <td>&amp;B::rtti</td>
 <td>&amp;B::f</td>
 <td>&amp;B::g</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
 </tr>
 <tr class="row-even"><td>C</td>
 <td>C::offset-to-top</td>
 <td>&amp;C::rtti</td>
 <td>&amp;C::h</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
+<td>&#160;</td>
 </tr>
 <tr class="row-odd"><td>D</td>
 <td>D::offset-to-top</td>
@@ -175,20 +174,20 @@ virtual tables using type metadata.</p>
 </tr>
 </tbody>
 </table>
-<p>When an object of type A is constructed, the address of <code class="docutils literal"><span class="pre">&amp;A::f</span></code> in A&#8217;s
-virtual table object is stored in the object&#8217;s vtable pointer.  In ABI parlance
+<p>When an object of type A is constructed, the address of <code class="docutils literal"><span class="pre">&amp;A::f</span></code> in A’s
+virtual table object is stored in the object’s vtable pointer.  In ABI parlance
 this address is known as an <a class="reference external" href="https://mentorembedded.github.io/cxx-abi/abi.html#vtable-general">address point</a>. Similarly, when an object of type
 B is constructed, the address of <code class="docutils literal"><span class="pre">&amp;B::f</span></code> is stored in the vtable pointer. In
-this way, the vtable in B&#8217;s virtual table object is compatible with A&#8217;s vtable.</p>
+this way, the vtable in B’s virtual table object is compatible with A’s vtable.</p>
 <p>D is a little more complicated, due to the use of multiple inheritance. Its
-virtual table object contains two vtables, one compatible with A&#8217;s vtable and
-the other compatible with C&#8217;s vtable. Objects of type D contain two virtual
+virtual table object contains two vtables, one compatible with A’s vtable and
+the other compatible with C’s vtable. Objects of type D contain two virtual
 pointers, one belonging to the A subobject and containing the address of
-the vtable compatible with A&#8217;s vtable, and the other belonging to the C
-subobject and containing the address of the vtable compatible with C&#8217;s vtable.</p>
+the vtable compatible with A’s vtable, and the other belonging to the C
+subobject and containing the address of the vtable compatible with C’s vtable.</p>
 <p>The full set of compatibility information for the above class hierarchy is
 shown below. The following table shows the name of a class, the offset of an
-address point within that class&#8217;s vtable and the name of one of the classes
+address point within that class’s vtable and the name of one of the classes
 with which that address point is compatible.</p>
 <table border="1" class="docutils" id="id2">
 <caption><span class="caption-text">Type Offsets for A, B, C, D</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
@@ -212,8 +211,8 @@ with which that address point is compatible.</p>
 <td>16</td>
 <td>A</td>
 </tr>
-<tr class="row-even"><td>&nbsp;</td>
-<td>&nbsp;</td>
+<tr class="row-even"><td>&#160;</td>
+<td>&#160;</td>
 <td>B</td>
 </tr>
 <tr class="row-odd"><td>C</td>
@@ -224,11 +223,11 @@ with which that address point is compatible.</p>
 <td>16</td>
 <td>A</td>
 </tr>
-<tr class="row-odd"><td>&nbsp;</td>
-<td>&nbsp;</td>
+<tr class="row-odd"><td>&#160;</td>
+<td>&#160;</td>
 <td>D</td>
 </tr>
-<tr class="row-even"><td>&nbsp;</td>
+<tr class="row-even"><td>&#160;</td>
 <td>48</td>
 <td>C</td>
 </tr>
@@ -239,7 +238,7 @@ this is done is to create type metadata named after each of the compatible
 classes, with which we associate each of the compatible address points in
 each vtable. For example, these type metadata entries encode the compatibility
 information for the above hierarchy:</p>
-<div class="highlight-python"><div class="highlight"><pre>@_ZTV1A = constant [...], !type !0
+<div class="highlight-default"><div class="highlight"><pre><span></span>@_ZTV1A = constant [...], !type !0
 @_ZTV1B = constant [...], !type !0, !type !1
 @_ZTV1C = constant [...], !type !2
 @_ZTV1D = constant [...], !type !0, !type !3, !type !4
@@ -271,13 +270,13 @@ the pass will lay out referenced globals in a consecutive memory region in
 the object file, construct bit vectors that map onto that memory region,
 and generate code at each of the <code class="docutils literal"><span class="pre">llvm.type.test</span></code> call sites to test
 pointers against those bit vectors. Because of the layout manipulation, the
-globals&#8217; definitions must be available at LTO time. For more information,
+globals’ definitions must be available at LTO time. For more information,
 see the <a class="reference external" href="http://clang.llvm.org/docs/ControlFlowIntegrityDesign.html">control flow integrity design document</a>.</p>
 <p>A type identifier that identifies functions is transformed into a jump table,
 which is a block of code consisting of one branch instruction for each
 of the functions associated with the type identifier that branches to the
 target function. The pass will redirect any taken function addresses to the
-corresponding jump table entry. In the object file&#8217;s symbol table, the jump
+corresponding jump table entry. In the object file’s symbol table, the jump
 table entries take the identities of the original functions, so that addresses
 taken outside the module will pass any verification done inside the module.</p>
 <p>Jump tables may call external functions, so their definitions need not
@@ -295,7 +294,7 @@ efficiently to minimize the sizes of the underlying bitsets.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-python"><div class="highlight"><pre>target datalayout = &quot;e-p:32:32&quot;
+<div class="highlight-default"><div class="highlight"><pre><span></span>target datalayout = &quot;e-p:32:32&quot;
 
 @a = internal global i32 0, !type !0
 @b = internal global i32 0, !type !0, !type !1
@@ -379,9 +378,9 @@ define void @main() {
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

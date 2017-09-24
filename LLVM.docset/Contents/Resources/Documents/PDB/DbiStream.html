@@ -1,31 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>The PDB DBI (Debug Info) Stream &mdash; LLVM 4 documentation</title>
-    
+    <title>The PDB DBI (Debug Info) Stream &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="../index.html" />
-    <link rel="up" title="The PDB File Format" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The Module Information Stream" href="ModiStream.html" />
     <link rel="prev" title="The PDB TPI Stream" href="TpiStream.html" />
 <style type="text/css">
@@ -34,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -56,7 +54,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The PDB File Format</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The PDB File Format</a> &#187;</li> 
       </ul>
     </div>
 
@@ -97,7 +95,7 @@ functions and other symbols within each compiland.</p>
 <div class="section" id="stream-header">
 <span id="dbi-header"></span><h2><a class="toc-backref" href="#id2">Stream Header</a><a class="headerlink" href="#stream-header" title="Permalink to this headline">¶</a></h2>
 <p>At offset 0 of the DBI Stream is a header with the following layout:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">DbiStreamHeader</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">DbiStreamHeader</span> <span class="p">{</span>
   <span class="kt">int32_t</span> <span class="n">VersionSignature</span><span class="p">;</span>
   <span class="kt">uint32_t</span> <span class="n">VersionHeader</span><span class="p">;</span>
   <span class="kt">uint32_t</span> <span class="n">Age</span><span class="p">;</span>
@@ -125,7 +123,7 @@ functions and other symbols within each compiland.</p>
 <li><strong>VersionSignature</strong> - Unknown meaning.  Appears to always be <code class="docutils literal"><span class="pre">-1</span></code>.</li>
 <li><strong>VersionHeader</strong> - A value from the following enum.</li>
 </ul>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">enum</span> <span class="k">class</span> <span class="nc">DbiStreamVersion</span> <span class="o">:</span> <span class="kt">uint32_t</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">DbiStreamVersion</span> <span class="o">:</span> <span class="kt">uint32_t</span> <span class="p">{</span>
   <span class="n">VC41</span> <span class="o">=</span> <span class="mi">930803</span><span class="p">,</span>
   <span class="n">V50</span> <span class="o">=</span> <span class="mi">19960307</span><span class="p">,</span>
   <span class="n">V60</span> <span class="o">=</span> <span class="mi">19970606</span><span class="p">,</span>
@@ -134,19 +132,19 @@ functions and other symbols within each compiland.</p>
 <span class="p">};</span>
 </pre></div>
 </div>
-<p>Similar to the <a class="reference internal" href="PdbStream.html"><em>PDB Stream</em></a>, this value always appears to be
+<p>Similar to the <a class="reference internal" href="PdbStream.html"><span class="doc">PDB Stream</span></a>, this value always appears to be
 <code class="docutils literal"><span class="pre">V70</span></code>, and it is not clear what the other values are for.</p>
 <ul class="simple">
 <li><strong>Age</strong> - The number of times the PDB has been written.  Equal to the same
-field from the <a class="reference internal" href="PdbStream.html#pdb-stream-header"><span>PDB Stream header</span></a>.</li>
-<li><strong>GlobalStreamIndex</strong> - The index of the <a class="reference internal" href="GlobalStream.html"><em>Global Symbol Stream</em></a>,
+field from the <a class="reference internal" href="PdbStream.html#pdb-stream-header"><span class="std std-ref">PDB Stream header</span></a>.</li>
+<li><strong>GlobalStreamIndex</strong> - The index of the <a class="reference internal" href="GlobalStream.html"><span class="doc">Global Symbol Stream</span></a>,
 which contains CodeView symbol records for all global symbols.  Actual records
 are stored in the symbol record stream, and are referenced from this stream.</li>
 <li><strong>BuildNumber</strong> - A bitfield containing values representing the major and minor
 version number of the toolchain (e.g. 12.0 for MSVC 2013) used to build the
 program, with the following layout:</li>
 </ul>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">uint16_t</span> <span class="nl">MinorVersion</span> <span class="p">:</span> <span class="mi">8</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">uint16_t</span> <span class="nl">MinorVersion</span> <span class="p">:</span> <span class="mi">8</span><span class="p">;</span>
 <span class="kt">uint16_t</span> <span class="nl">MajorVersion</span> <span class="p">:</span> <span class="mi">7</span><span class="p">;</span>
 <span class="kt">uint16_t</span> <span class="nl">NewVersionFormat</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span>
 </pre></div>
@@ -156,7 +154,7 @@ If it is <code class="docutils literal"><span class="pre">false</span></code>, t
 the <a class="reference external" href="https://github.com/Microsoft/microsoft-pdb">Microsoft Source Code</a> for
 further guidance.</p>
 <ul class="simple">
-<li><strong>PublicStreamIndex</strong> - The index of the <a class="reference internal" href="PublicStream.html"><em>Public Symbol Stream</em></a>,
+<li><strong>PublicStreamIndex</strong> - The index of the <a class="reference internal" href="PublicStream.html"><span class="doc">Public Symbol Stream</span></a>,
 which contains CodeView symbol records for all public symbols.  Actual records
 are stored in the symbol record stream, and are referenced from this stream.</li>
 <li><strong>PdbDllVersion</strong> - The version number of <code class="docutils literal"><span class="pre">mspdbXXXX.dll</span></code> used to produce this
@@ -170,7 +168,7 @@ content inside of each module stream.</li>
 <li><strong>Flags</strong> - A bitfield with the following layout, containing various
 information about how the program was built:</li>
 </ul>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">uint16_t</span> <span class="nl">WasIncrementallyLinked</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">uint16_t</span> <span class="nl">WasIncrementallyLinked</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span>
 <span class="kt">uint16_t</span> <span class="nl">ArePrivateSymbolsStripped</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span>
 <span class="kt">uint16_t</span> <span class="nl">HasConflictingTypes</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span>
 <span class="kt">uint16_t</span> <span class="nl">Reserved</span> <span class="p">:</span> <span class="mi">13</span><span class="p">;</span>
@@ -187,29 +185,29 @@ enumeration.  Common values are <code class="docutils literal"><span class="pre"
 </ul>
 <p>Immediately after the fixed-size DBI Stream header are <code class="docutils literal"><span class="pre">7</span></code> variable-length
 <cite>substreams</cite>.  The following <code class="docutils literal"><span class="pre">7</span></code> fields of the DBI Stream header specify the
-number of bytes of the corresponding substream.  Each substream&#8217;s contents will
-be described in detail <a class="reference internal" href="#dbi-substreams"><span>below</span></a>.  The length of the entire
+number of bytes of the corresponding substream.  Each substream’s contents will
+be described in detail <a class="reference internal" href="#dbi-substreams"><span class="std std-ref">below</span></a>.  The length of the entire
 DBI Stream should equal <code class="docutils literal"><span class="pre">64</span></code> (the length of the header above) plus the value
 of each of the following <code class="docutils literal"><span class="pre">7</span></code> fields.</p>
 <ul class="simple">
-<li><strong>ModInfoSize</strong> - The length of the <a class="reference internal" href="#dbi-mod-info-substream"><span>Module Info Substream</span></a>.</li>
-<li><strong>SectionContributionSize</strong> - The length of the <a class="reference internal" href="#dbi-sec-contr-substream"><span>Section Contribution Substream</span></a>.</li>
-<li><strong>SectionMapSize</strong> - The length of the <a class="reference internal" href="#dbi-section-map-substream"><span>Section Map Substream</span></a>.</li>
-<li><strong>SourceInfoSize</strong> - The length of the <a class="reference internal" href="#dbi-file-info-substream"><span>File Info Substream</span></a>.</li>
-<li><strong>TypeServerSize</strong> - The length of the <a class="reference internal" href="#dbi-type-server-substream"><span>Type Server Substream</span></a>.</li>
-<li><strong>OptionalDbgHeaderSize</strong> - The length of the <a class="reference internal" href="#dbi-optional-dbg-stream"><span>Optional Debug Header Stream</span></a>.</li>
-<li><strong>ECSubstreamSize</strong> - The length of the <a class="reference internal" href="#dbi-ec-substream"><span>EC Substream</span></a>.</li>
+<li><strong>ModInfoSize</strong> - The length of the <a class="reference internal" href="#dbi-mod-info-substream"><span class="std std-ref">Module Info Substream</span></a>.</li>
+<li><strong>SectionContributionSize</strong> - The length of the <a class="reference internal" href="#dbi-sec-contr-substream"><span class="std std-ref">Section Contribution Substream</span></a>.</li>
+<li><strong>SectionMapSize</strong> - The length of the <a class="reference internal" href="#dbi-section-map-substream"><span class="std std-ref">Section Map Substream</span></a>.</li>
+<li><strong>SourceInfoSize</strong> - The length of the <a class="reference internal" href="#dbi-file-info-substream"><span class="std std-ref">File Info Substream</span></a>.</li>
+<li><strong>TypeServerSize</strong> - The length of the <a class="reference internal" href="#dbi-type-server-substream"><span class="std std-ref">Type Server Substream</span></a>.</li>
+<li><strong>OptionalDbgHeaderSize</strong> - The length of the <a class="reference internal" href="#dbi-optional-dbg-stream"><span class="std std-ref">Optional Debug Header Stream</span></a>.</li>
+<li><strong>ECSubstreamSize</strong> - The length of the <a class="reference internal" href="#dbi-ec-substream"><span class="std std-ref">EC Substream</span></a>.</li>
 </ul>
 </div>
 <div class="section" id="substreams">
 <span id="dbi-substreams"></span><h2><a class="toc-backref" href="#id3">Substreams</a><a class="headerlink" href="#substreams" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-info-substream">
 <span id="dbi-mod-info-substream"></span><h3><a class="toc-backref" href="#id4">Module Info Substream</a><a class="headerlink" href="#module-info-substream" title="Permalink to this headline">¶</a></h3>
-<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-header"><span>header</span></a>.  The
+<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-header"><span class="std std-ref">header</span></a>.  The
 module info substream is an array of variable-length records, each one
 describing a single module (e.g. object file) linked into the program.  Each
 record in the array has the format:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">SectionContribEntry</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">SectionContribEntry</span> <span class="p">{</span>
   <span class="kt">uint16_t</span> <span class="n">Section</span><span class="p">;</span>
   <span class="kt">char</span> <span class="n">Padding1</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
   <span class="kt">int32_t</span> <span class="n">Offset</span><span class="p">;</span>
@@ -226,7 +224,7 @@ record in the array has the format:</p>
 warrants some elaboration.  It corresponds to the <code class="docutils literal"><span class="pre">Characteristics</span></code>
 field of the <a class="reference external" href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms680341(v=vs.85).aspx">IMAGE_SECTION_HEADER</a>
 structure.</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">ModInfo</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">ModInfo</span> <span class="p">{</span>
   <span class="kt">uint32_t</span> <span class="n">Unused1</span><span class="p">;</span>
   <span class="n">SectionContribEntry</span> <span class="n">SectionContr</span><span class="p">;</span>
   <span class="kt">uint16_t</span> <span class="n">Flags</span><span class="p">;</span>
@@ -249,7 +247,7 @@ structure.</p>
 which contain the code and data from this module.</li>
 <li><strong>Flags</strong> - A bitfield with the following format:</li>
 </ul>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">uint16_t</span> <span class="nl">Dirty</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// ``true`` if this ModInfo has been written since reading the PDB.</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="kt">uint16_t</span> <span class="nl">Dirty</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span>  <span class="c1">// ``true`` if this ModInfo has been written since reading the PDB.</span>
 <span class="kt">uint16_t</span> <span class="nl">EC</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span>     <span class="c1">// ``true`` if EC information is present for this module. It is unknown what EC actually is.</span>
 <span class="kt">uint16_t</span> <span class="nl">Unused</span> <span class="p">:</span> <span class="mi">6</span><span class="p">;</span>
 <span class="kt">uint16_t</span> <span class="nl">TSM</span> <span class="p">:</span> <span class="mi">8</span><span class="p">;</span>    <span class="c1">// Type Server Index for this module.  It is unknown what this is used for, but it is not used by LLVM.</span>
@@ -272,7 +270,7 @@ module during compilation.</li>
 translation unit used to build this module.  All PDB files observed to date
 always have this value equal to 0.</li>
 <li><strong>PdbFilePathNameIndex</strong> - The offset in the names buffer of the PDB file
-containing this module&#8217;s symbol information.  This has only been observed
+containing this module’s symbol information.  This has only been observed
 to be non-zero for the special <code class="docutils literal"><span class="pre">*</span> <span class="pre">Linker</span> <span class="pre">*</span></code> module.</li>
 <li><strong>ModuleName</strong> - The module name.  This is usually either a full path to an
 object file (either directly passed to <code class="docutils literal"><span class="pre">link.exe</span></code> or from an archive) or
@@ -285,10 +283,10 @@ path to the archive.</li>
 </div>
 <div class="section" id="section-contribution-substream">
 <span id="dbi-sec-contr-substream"></span><h3><a class="toc-backref" href="#id5">Section Contribution Substream</a><a class="headerlink" href="#section-contribution-substream" title="Permalink to this headline">¶</a></h3>
-<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-mod-info-substream"><span>Module Info Substream</span></a> ends,
+<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-mod-info-substream"><span class="std std-ref">Module Info Substream</span></a> ends,
 and consumes <code class="docutils literal"><span class="pre">Header-&gt;SectionContributionSize</span></code> bytes.  This substream begins
 with a single <code class="docutils literal"><span class="pre">uint32_t</span></code> which will be one of the following values:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">enum</span> <span class="k">class</span> <span class="nc">SectionContrSubstreamVersion</span> <span class="o">:</span> <span class="kt">uint32_t</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">SectionContrSubstreamVersion</span> <span class="o">:</span> <span class="kt">uint32_t</span> <span class="p">{</span>
   <span class="n">Ver60</span> <span class="o">=</span> <span class="mh">0xeffe0000</span> <span class="o">+</span> <span class="mi">19970605</span><span class="p">,</span>
   <span class="n">V2</span> <span class="o">=</span> <span class="mh">0xeffe0000</span> <span class="o">+</span> <span class="mi">20140516</span>
 <span class="p">};</span>
@@ -299,7 +297,7 @@ this <code class="docutils literal"><span class="pre">4</span></code> byte field
 is <code class="docutils literal"><span class="pre">Ver60</span></code>, it is an array of <code class="docutils literal"><span class="pre">SectionContribEntry</span></code> structures.  If the
 version is <code class="docutils literal"><span class="pre">V2</span></code>, it is an array of <code class="docutils literal"><span class="pre">SectionContribEntry2</span></code> structures,
 defined as follows:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">SectionContribEntry2</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">SectionContribEntry2</span> <span class="p">{</span>
   <span class="n">SectionContribEntry</span> <span class="n">SC</span><span class="p">;</span>
   <span class="kt">uint32_t</span> <span class="n">ISectCoff</span><span class="p">;</span>
 <span class="p">};</span>
@@ -309,11 +307,11 @@ defined as follows:</p>
 </div>
 <div class="section" id="section-map-substream">
 <span id="dbi-section-map-substream"></span><h3><a class="toc-backref" href="#id6">Section Map Substream</a><a class="headerlink" href="#section-map-substream" title="Permalink to this headline">¶</a></h3>
-<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-sec-contr-substream"><span>Section Contribution Substream</span></a> ends,
+<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-sec-contr-substream"><span class="std std-ref">Section Contribution Substream</span></a> ends,
 and consumes <code class="docutils literal"><span class="pre">Header-&gt;SectionMapSize</span></code> bytes.  This substream begins with an <code class="docutils literal"><span class="pre">8</span></code>
 byte header followed by an array of fixed-length records.  The header and records
 have the following layout:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">SectionMapHeader</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">SectionMapHeader</span> <span class="p">{</span>
   <span class="kt">uint16_t</span> <span class="n">Count</span><span class="p">;</span>    <span class="c1">// Number of segment descriptors</span>
   <span class="kt">uint16_t</span> <span class="n">LogCount</span><span class="p">;</span> <span class="c1">// Number of logical segment descriptors</span>
 <span class="p">};</span>
@@ -344,14 +342,14 @@ have the following layout:</p>
 </div>
 <div class="section" id="file-info-substream">
 <span id="dbi-file-info-substream"></span><h3><a class="toc-backref" href="#id7">File Info Substream</a><a class="headerlink" href="#file-info-substream" title="Permalink to this headline">¶</a></h3>
-<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-section-map-substream"><span>Section Map Substream</span></a> ends,
+<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-section-map-substream"><span class="std std-ref">Section Map Substream</span></a> ends,
 and consumes <code class="docutils literal"><span class="pre">Header-&gt;SourceInfoSize</span></code> bytes.  This substream defines the mapping
 from module to the source files that contribute to that module.  Since multiple
 modules can use the same source file (for example, a header file), this substream
 uses a string table to store each unique file name only once, and then have each
-module use offsets into the string table rather than embedding the string&#8217;s value
+module use offsets into the string table rather than embedding the string’s value
 directly.  The format of this substream is as follows:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">FileInfoSubstream</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">FileInfoSubstream</span> <span class="p">{</span>
   <span class="kt">uint16_t</span> <span class="n">NumModules</span><span class="p">;</span>
   <span class="kt">uint16_t</span> <span class="n">NumSourceFiles</span><span class="p">;</span>
 
@@ -377,7 +375,7 @@ ignored.</p>
 <p><strong>ModFileCountArray</strong> - An array of <code class="docutils literal"><span class="pre">NumModules</span></code> integers, each one containing
 the number of source files which contribute to the module at the specified index.
 While each individual module is limited to 64K contributing source files, the
-union of all modules&#8217; source files may be greater than 64K.  The real number of
+union of all modules’ source files may be greater than 64K.  The real number of
 source files is thus computed by summing this array.  Note that summing this array
 does not give the number of <cite>unique</cite> source files, only the total number of source
 file contributions to modules.</p>
@@ -389,26 +387,26 @@ file names.</p>
 </div>
 <div class="section" id="type-server-substream">
 <span id="dbi-type-server-substream"></span><h3><a class="toc-backref" href="#id8">Type Server Substream</a><a class="headerlink" href="#type-server-substream" title="Permalink to this headline">¶</a></h3>
-<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-file-info-substream"><span>File Info Substream</span></a> ends,
+<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-file-info-substream"><span class="std std-ref">File Info Substream</span></a> ends,
 and consumes <code class="docutils literal"><span class="pre">Header-&gt;TypeServerSize</span></code> bytes.  Neither the purpose nor the layout
 of this substream is understood, although it is assumed to related somehow to the
 usage of <code class="docutils literal"><span class="pre">/Zi</span></code> and <code class="docutils literal"><span class="pre">mspdbsrv.exe</span></code>.  This substream will not be discussed further.</p>
 </div>
 <div class="section" id="ec-substream">
 <span id="dbi-ec-substream"></span><h3><a class="toc-backref" href="#id9">EC Substream</a><a class="headerlink" href="#ec-substream" title="Permalink to this headline">¶</a></h3>
-<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-type-server-substream"><span>Type Server Substream</span></a> ends,
+<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-type-server-substream"><span class="std std-ref">Type Server Substream</span></a> ends,
 and consumes <code class="docutils literal"><span class="pre">Header-&gt;ECSubstreamSize</span></code> bytes.  Neither the purpose nor the layout
 of this substream is understood, and it will not be discussed further.</p>
 </div>
 <div class="section" id="optional-debug-header-stream">
 <span id="dbi-optional-dbg-stream"></span><h3><a class="toc-backref" href="#id10">Optional Debug Header Stream</a><a class="headerlink" href="#optional-debug-header-stream" title="Permalink to this headline">¶</a></h3>
-<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-ec-substream"><span>EC Substream</span></a> ends, and
+<p>Begins at offset <code class="docutils literal"><span class="pre">0</span></code> immediately after the <a class="reference internal" href="#dbi-ec-substream"><span class="std std-ref">EC Substream</span></a> ends, and
 consumes <code class="docutils literal"><span class="pre">Header-&gt;OptionalDbgHeaderSize</span></code> bytes.  This field is an array of
-stream indices (e.g. <code class="docutils literal"><span class="pre">uint16_t</span></code>&#8216;s), each of which identifies a stream
+stream indices (e.g. <code class="docutils literal"><span class="pre">uint16_t</span></code>’s), each of which identifies a stream
 index in the larger MSF file which contains some additional debug information.
 Each position of this array has a special meaning, allowing one to determine
 what kind of debug information is at the referenced stream.  <code class="docutils literal"><span class="pre">11</span></code> indices
-are currently understood, although it&#8217;s possible there may be more.  The
+are currently understood, although it’s possible there may be more.  The
 layout of each stream generally corresponds exactly to a particular type
 of debug data directory from the PE/COFF file.  The format of these fields
 can be found in the <a class="reference external" href="https://www.microsoft.com/en-us/download/details.aspx?id=19509">Microsoft PE/COFF Specification</a>.</p>
@@ -439,7 +437,7 @@ understood.</p>
 <p><strong>New FPO Data</strong> - <code class="docutils literal"><span class="pre">DbgStreamArray[9]</span></code>.  The data in the referenced stream is a
 debug data directory of type <code class="docutils literal"><span class="pre">IMAGE_DEBUG_TYPE_FPO</span></code>.  It is not clear how this
 differs from <code class="docutils literal"><span class="pre">DbgStreamArray[0]</span></code>, but in practice all observed PDB files have
-used the &#8220;new&#8221; format rather than the &#8220;old&#8221; format.</p>
+used the “new” format rather than the “old” format.</p>
 <p><strong>Original Section Header Data</strong> - <code class="docutils literal"><span class="pre">DbgStreamArray[10]</span></code>.  Assumed to be similar
 to <code class="docutils literal"><span class="pre">DbgStreamArray[5]</span></code>, but has not been observed in practice.</p>
 </div>
@@ -466,13 +464,13 @@ to <code class="docutils literal"><span class="pre">DbgStreamArray[5]</span></co
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >The PDB File Format</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >The PDB File Format</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

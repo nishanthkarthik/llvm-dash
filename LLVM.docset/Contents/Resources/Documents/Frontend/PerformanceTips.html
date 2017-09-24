@@ -1,30 +1,29 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Performance Tips for Frontend Authors &mdash; LLVM 4 documentation</title>
-    
+    <title>Performance Tips for Frontend Authors &#8212; LLVM 5 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4',
+        VERSION:     '5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 4 documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="MCJIT Design and Implementation" href="../MCJITDesignAndImplementation.html" />
     <link rel="prev" title="The Often Misunderstood GEP Instruction" href="../GetElementPtr.html" />
 <style type="text/css">
@@ -33,7 +32,7 @@
 </style>
 
   </head>
-  <body role="document">
+  <body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -83,7 +82,7 @@
 <li><a class="reference internal" href="#describing-aliasing-properties" id="id13">Describing Aliasing Properties</a></li>
 <li><a class="reference internal" href="#modeling-memory-effects" id="id14">Modeling Memory Effects</a></li>
 <li><a class="reference internal" href="#pass-ordering" id="id15">Pass Ordering</a></li>
-<li><a class="reference internal" href="#i-still-can-t-find-what-i-m-looking-for" id="id16">I Still Can&#8217;t Find What I&#8217;m Looking For</a></li>
+<li><a class="reference internal" href="#i-still-can-t-find-what-i-m-looking-for" id="id16">I Still Can’t Find What I’m Looking For</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#adding-to-this-document" id="id17">Adding to this document</a></li>
@@ -100,14 +99,14 @@ generate IR that optimizes well.</p>
 <p>As with any optimizer, LLVM has its strengths and weaknesses.  In some cases,
 surprisingly small changes in the source IR can have a large effect on the
 generated code.</p>
-<p>Beyond the specific items on the list below, it&#8217;s worth noting that the most
+<p>Beyond the specific items on the list below, it’s worth noting that the most
 mature frontend for LLVM is Clang.  As a result, the further your IR gets from what Clang might emit, the less likely it is to be effectively optimized.  It
-can often be useful to write a quick C program with the semantics you&#8217;re trying
-to model and see what decisions Clang&#8217;s IRGen makes about what IR to emit.
-Studying Clang&#8217;s CodeGen directory can also be a good source of ideas.  Note
-that Clang and LLVM are explicitly version locked so you&#8217;ll need to make sure
-you&#8217;re using a Clang built from the same svn revision or release as the LLVM
-library you&#8217;re using.  As always, it&#8217;s <em>strongly</em> recommended that you track
+can often be useful to write a quick C program with the semantics you’re trying
+to model and see what decisions Clang’s IRGen makes about what IR to emit.
+Studying Clang’s CodeGen directory can also be a good source of ideas.  Note
+that Clang and LLVM are explicitly version locked so you’ll need to make sure
+you’re using a Clang built from the same svn revision or release as the LLVM
+library you’re using.  As always, it’s <em>strongly</em> recommended that you track
 tip of tree development, particularly during bring up of a new project.</p>
 <div class="section" id="the-basics">
 <h3><a class="toc-backref" href="#id4">The Basics</a><a class="headerlink" href="#the-basics" title="Permalink to this headline">¶</a></h3>
@@ -117,7 +116,7 @@ target triple. Without these pieces, non of the target specific optimization
 will be enabled.  This can have a major effect on the generated code quality.</li>
 <li>For each function or global emitted, use the most private linkage type
 possible (private, internal or linkonce_odr preferably).  Doing so will
-make LLVM&#8217;s inter-procedural optimizations much more effective.</li>
+make LLVM’s inter-procedural optimizations much more effective.</li>
 <li>Avoid high in-degree basic blocks (e.g. basic blocks with dozens or hundreds
 of predecessors).  Among other issues, the register allocator is known to
 perform badly with confronted with such structures.  The only exception to
@@ -141,7 +140,7 @@ effective than it could be.</p>
 </div>
 <div class="section" id="avoid-loads-and-stores-of-large-aggregate-type">
 <h3><a class="toc-backref" href="#id6">Avoid loads and stores of large aggregate type</a><a class="headerlink" href="#avoid-loads-and-stores-of-large-aggregate-type" title="Permalink to this headline">¶</a></h3>
-<p>LLVM currently does not optimize well loads and stores of large <a class="reference internal" href="../LangRef.html#t-aggregate"><span>aggregate
+<p>LLVM currently does not optimize well loads and stores of large <a class="reference internal" href="../LangRef.html#t-aggregate"><span class="std std-ref">aggregate
 types</span></a> (i.e. structs and arrays).  As an alternative, consider
 loading individual fields from memory.</p>
 <p>Aggregates that are smaller than the largest (performant) load or store
@@ -155,7 +154,7 @@ instruction whereas zero extension can be folded into a load.  LLVM will try to
 replace a sext with a zext when it can be proven safe, but if you have
 information in your source language about the range of a integer value, it can
 be profitable to use a zext rather than a sext.</p>
-<p>Alternatively, you can <a class="reference internal" href="../LangRef.html#range-metadata"><span>specify the range of the value using metadata</span></a> and LLVM can do the sext to zext conversion for you.</p>
+<p>Alternatively, you can <a class="reference internal" href="../LangRef.html#range-metadata"><span class="std std-ref">specify the range of the value using metadata</span></a> and LLVM can do the sext to zext conversion for you.</p>
 </div>
 <div class="section" id="zext-gep-indices-to-machine-register-width">
 <h3><a class="toc-backref" href="#id8">Zext GEP indices to machine register width</a><a class="headerlink" href="#zext-gep-indices-to-machine-register-width" title="Permalink to this headline">¶</a></h3>
@@ -213,7 +212,7 @@ difference in code placement and thus the performance of tight loops.</li>
 the loop earlier than necessary.  If the terminator of the loop header
 block is a loop exiting conditional branch, the effectiveness of LICM will
 be limited for loads not in the header.  (This is due to the fact that LLVM
-may not know such a load is safe to speculatively execute and thus can&#8217;t
+may not know such a load is safe to speculatively execute and thus can’t
 lift an otherwise loop invariant load unless it can prove the exiting
 condition is not taken.)  It can be profitable, in some cases, to emit such
 instructions into the header even if they are not used along a rarely
@@ -239,9 +238,9 @@ not anywhere near as strong at reasoning about the various intrinsics.  If
 profitable for code generation purposes, the optimizer will likely form the
 intrinsics itself late in the optimization pipeline.  It is <em>very</em> rarely
 profitable to emit these directly in the language frontend.  This item
-explicitly includes the use of the <a class="reference internal" href="../LangRef.html#int-overflow"><span>overflow intrinsics</span></a>.</li>
-<li>Avoid using the <a class="reference internal" href="../LangRef.html#int-assume"><span>assume intrinsic</span></a> until you&#8217;ve
-established that a) there&#8217;s no other way to express the given fact and b)
+explicitly includes the use of the <a class="reference internal" href="../LangRef.html#int-overflow"><span class="std std-ref">overflow intrinsics</span></a>.</li>
+<li>Avoid using the <a class="reference internal" href="../LangRef.html#int-assume"><span class="std std-ref">assume intrinsic</span></a> until you’ve
+established that a) there’s no other way to express the given fact and b)
 that fact is critical for optimization purposes.  Assumes are a great
 prototyping mechanism, but they can have negative effects on both compile
 time and optimization effectiveness.  The former is fixable with enough
@@ -253,8 +252,8 @@ effort, but the later is fairly fundamental to their designed purpose.</li>
 <h2><a class="toc-backref" href="#id11">Describing Language Specific Properties</a><a class="headerlink" href="#describing-language-specific-properties" title="Permalink to this headline">¶</a></h2>
 <p>When translating a source language to LLVM, finding ways to express concepts
 and guarantees available in your source language which are not natively
-provided by LLVM IR will greatly improve LLVM&#8217;s ability to optimize your code.
-As an example, C/C++&#8217;s ability to mark every add as &#8220;no signed wrap (nsw)&#8221; goes
+provided by LLVM IR will greatly improve LLVM’s ability to optimize your code.
+As an example, C/C++’s ability to mark every add as “no signed wrap (nsw)” goes
 a long way to assisting the optimizer in reasoning about loop induction
 variables and thus generating more optimal code for loops.</p>
 <p>The LLVM LangRef includes a number of mechanisms for annotating the IR with
@@ -267,7 +266,7 @@ couple of items of particular interest, but is by no means exhaustive.</p>
 <li>Add nsw/nuw flags as appropriate.  Reasoning about overflow is
 generally hard for an optimizer so providing these facts from the frontend
 can be very impactful.</li>
-<li>Use fast-math flags on floating point operations if legal.  If you don&#8217;t
+<li>Use fast-math flags on floating point operations if legal.  If you don’t
 need strict IEEE floating point semantics, there are a number of additional
 optimizations that can be performed.  This can be highly impactful for
 floating point intensive computations.</li>
@@ -294,7 +293,7 @@ functions that the optimizer can not analyze.</li>
 intrinsics where possible.  Common profitable uses are for stack like data
 structures (thus allowing dead store elimination) and for describing
 life times of allocas (thus allowing smaller stack sizes).</li>
-<li>Mark invariant locations using !invariant.load and TBAA&#8217;s constant flags</li>
+<li>Mark invariant locations using !invariant.load and TBAA’s constant flags</li>
 </ol>
 </div>
 <div class="section" id="pass-ordering">
@@ -319,14 +318,14 @@ you likely need to adjust your pass order.</li>
 </ol>
 </div>
 <div class="section" id="i-still-can-t-find-what-i-m-looking-for">
-<h3><a class="toc-backref" href="#id16">I Still Can&#8217;t Find What I&#8217;m Looking For</a><a class="headerlink" href="#i-still-can-t-find-what-i-m-looking-for" title="Permalink to this headline">¶</a></h3>
-<p>If you didn&#8217;t find what you were looking for above, consider proposing an piece
+<h3><a class="toc-backref" href="#id16">I Still Can’t Find What I’m Looking For</a><a class="headerlink" href="#i-still-can-t-find-what-i-m-looking-for" title="Permalink to this headline">¶</a></h3>
+<p>If you didn’t find what you were looking for above, consider proposing an piece
 of metadata which provides the optimization hint you need.  Such extensions are
 relatively common and are generally well received by the community.  You will
 need to ensure that your proposal is sufficiently general so that it benefits
 others if you wish to contribute it upstream.</p>
-<p>You should also consider describing the problem you&#8217;re facing on <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">llvm-dev</a> and asking for advice.
-It&#8217;s entirely possible someone has encountered your problem before and can
+<p>You should also consider describing the problem you’re facing on <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">llvm-dev</a> and asking for advice.
+It’s entirely possible someone has encountered your problem before and can
 give good advice.  If there are multiple interested parties, that also
 increases the chances that a metadata extension would be well received by the
 community as a whole.</p>
@@ -365,9 +364,9 @@ answered.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2017, LLVM Project.
-      Last updated on 2017-07-14.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+        &#169; Copyright 2003-2017, LLVM Project.
+      Last updated on 2017-09-25.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>
